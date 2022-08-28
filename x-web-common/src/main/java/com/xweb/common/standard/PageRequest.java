@@ -1,0 +1,16 @@
+package com.xweb.common.standard;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class PageRequest {
+
+    @ApiModelProperty(value = "每页数据大小")
+    private Long pageSize;
+
+    @ApiModelProperty(value = "当前页数")
+    private Long page;
+}
