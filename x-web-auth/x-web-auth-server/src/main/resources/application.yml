@@ -1,14 +1,10 @@
 spring:
-  session:
-    store-type: redis #session存储方式
-    redis:
-      host: 192.168.0.204
-      password:
-      port: 6379
-  thymeleaf:
-    prefix: classpath:/templates/
-    suffix: .html
-    cache: false
+  redis:
+    host: 192.168.0.204
+    port: 6379
+    database: 0
+  swagger:
+    enabled: true
   flyway:
     # 是否启用flyway
     enabled: true
@@ -23,27 +19,9 @@ spring:
     # 迁移sql脚本文件名称的后缀
     sql-migration-suffixes: .sql
     # 迁移时是否进行校验，默认true
-    validate-on-migrate: true
+    validate-on-migrate: false
     # 当迁移发现数据库非空且存在没有元数据的表时，自动执行基准迁移，新建schema_version表
     baseline-on-migrate: true
-  freemarker:
-    #指定HttpServletRequest的属性是否可以覆盖controller的model的同名项
-    allow-request-override: false
-    #req访问request
-    request-context-attribute: req
-    #后缀名freemarker默认后缀为.ftl，当然你也可以改成自己习惯的.html
-    suffix: .html
-
-    #设置响应的内容类型
-    content-type: text/html;charset=utf-8
-    #是否允许mvc使用freemarker
-    enabled: true
-    #是否开启template caching
-    cache: false
-    #设定模板的加载路径，多个以逗号分隔，默认: [“classpath:/templates/”]
-    template-loader-path: classpath:/templates/
-    #设定Template的编码
-    charset: UTF-8
   datasource:
     dynamic:
       primary: master

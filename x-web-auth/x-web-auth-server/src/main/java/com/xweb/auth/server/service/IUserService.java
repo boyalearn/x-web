@@ -16,4 +16,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface IUserService extends IService<User> {
 
     LoginUser createLoginUser(User user, Client client);
+
+    void register(User user);
+
 }

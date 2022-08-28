@@ -21,7 +21,8 @@ import org.springframework.web.bind.annotation.*;
  * @since 2022-08-27
  */
 @Api(tags = "应用管理")
-@RestController("clients")
+@RestController
+@RequestMapping("clients")
 public class ClientController {
 
     private final IClientService clientService;

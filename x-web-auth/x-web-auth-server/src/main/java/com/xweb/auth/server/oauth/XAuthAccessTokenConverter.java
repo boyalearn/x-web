@@ -1,4 +1,4 @@
-package com.xweb.auth.server.auth;
+package com.xweb.auth.server.oauth;
 
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;

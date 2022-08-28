@@ -13,7 +13,9 @@ import com.xweb.common.auth.interceptor.XWebAuthInterceptor;
 import com.xweb.common.converter.NumberEnumConverterFactory;
 import com.xweb.common.resolver.FormParamHandlerMethodArgumentResolver;
 import com.xweb.common.standard.IEnum;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
@@ -23,12 +25,23 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Configuration
+@EnableSwagger2
 public class WebConfig implements WebMvcConfigurer {
+
+    @Value("${spring.swagger.enabled:false}")
+    private boolean enable;
 
     @Bean
     public XWebTokenEnhancer webTokenEnhancer() {
@@ -88,5 +101,21 @@ public class WebConfig implements WebMvcConfigurer {
         simpleModule.addDeserializer(Enum.class, new NumEnumDeserializer(Enum.class));
         objectMapper.registerModule(simpleModule);
         return objectMapper;
+    }
+
+    @Bean
+    public Docket productApi() {
+        return new Docket(DocumentationType.SWAGGER_2).enable(enable)
+                .apiInfo(apiInfo())
+                .select()
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .paths(PathSelectors.any())
+                .build();
+
+    }
+
+    private ApiInfo apiInfo() {
+        return new ApiInfoBuilder().title("XAuth API").description("API 文档")
+                .version("1.0").build();
     }
 }

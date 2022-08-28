@@ -1,4 +1,4 @@
-package com.xweb.auth.server.auth;
+package com.xweb.auth.server.oauth;
 
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 

@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class PageRequest {
 
-    @ApiModelProperty(value = "每页数据大小")
+    @ApiModelProperty(name = "page_size",value = "每页数据大小")
     private Long pageSize;
 
     @ApiModelProperty(value = "当前页数")

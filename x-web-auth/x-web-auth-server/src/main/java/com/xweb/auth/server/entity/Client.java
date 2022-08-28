@@ -41,16 +41,16 @@ public class Client implements Serializable {
     @NotEmpty(message = "名字不能为空", groups = {Insert.class})
     private String name;
 
-    @ApiModelProperty(value = "应用ID")
+    @ApiModelProperty(name = "client_id",value = "应用ID")
     private String clientId;
 
-    @ApiModelProperty(value = "应用密钥")
+    @ApiModelProperty(name = "client_secret",value = "应用密钥")
     private String clientSecret;
 
-    @ApiModelProperty(value = "授权范围")
+    @ApiModelProperty(name = "authorized_grant_types",value = "授权范围")
     private String authorizedGrantTypes;
 
-    @ApiModelProperty(value = "授权地址")
+    @ApiModelProperty(name = "redirect_uris",value = "授权地址")
     private String redirectUris;
 
     @ApiModelProperty(value = "授权范围")
@@ -60,7 +60,7 @@ public class Client implements Serializable {
     @ApiModelProperty(value = "应用描述")
     private String description;
 
-    @ApiModelProperty(value = "创建时间")
+    @ApiModelProperty(name = "create_time",value = "创建时间")
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 

@@ -1,3 +1,7 @@
 /.idea/
 /x-web-auth/x-web-auth-server/target/
 /x-web-common/target/
+/x-web-auth/x-web-auth-server/x-web-auth-server.iml
+/x-web-auth/x-web-auth.iml
+/x-web.iml
+/x-web-common/x-web-common.iml

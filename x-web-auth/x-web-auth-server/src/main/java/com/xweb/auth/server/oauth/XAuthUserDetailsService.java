@@ -1,7 +1,6 @@
-package com.xweb.auth.server.auth;
+package com.xweb.auth.server.oauth;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.xweb.auth.server.entity.LoginUser;
 import com.xweb.auth.server.entity.User;
 import com.xweb.auth.server.service.IUserService;
 import org.springframework.security.core.userdetails.UserDetails;

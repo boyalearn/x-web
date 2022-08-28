@@ -2,6 +2,8 @@ package com.xweb.auth.server.service;
 
 import com.xweb.auth.server.entity.Tenant;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xweb.common.standard.PageEntity;
+import com.xweb.common.standard.PageRequest;
 
 /**
  * <p>
@@ -12,5 +14,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2022-08-27
  */
 public interface ITenantService extends IService<Tenant> {
+
+    PageEntity<Tenant> selectTenants(PageRequest request);
 
 }

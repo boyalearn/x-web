@@ -4,12 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xweb.auth.server.entity.*;
 import com.xweb.auth.server.mapper.UserMapper;
+import com.xweb.auth.server.oauth.XAuthPasswordEncoder;
 import com.xweb.auth.server.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +39,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Autowired
     private IResourceService resourceService;
 
+    @Autowired
+    private XAuthPasswordEncoder passwordEncoder;
+
     @Override
     public LoginUser createLoginUser(User user, Client client) {
         LoginUser loginUser = new LoginUser();
@@ -51,7 +54,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         List<ClientUserRole> roleList = clientUserRoleService.list(new QueryWrapper<>(clientUserRole));
 
         Set<Integer> roleIds = roleList.stream().map(ClientUserRole::getRoleId).collect(Collectors.toSet());
-        if(CollectionUtils.isEmpty(roleIds)){
+        if (CollectionUtils.isEmpty(roleIds)) {
             return loginUser;
         }
         List<Role> roles = roleService.listByIds(roleIds);
@@ -65,12 +68,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             List<RoleResource> list = roleResourceService.list(new QueryWrapper<>(resource));
             resourceIds.addAll(list.stream().map(RoleResource::getResourceId).collect(Collectors.toSet()));
         });
-        if(CollectionUtils.isEmpty(resourceIds)){
+        if (CollectionUtils.isEmpty(resourceIds)) {
             return loginUser;
         }
         List<Resource> resources = resourceService.listByIds(resourceIds);
         Set<String> resourceSet = resources.stream().map(Resource::getCode).collect(Collectors.toSet());
         loginUser.setRoles(resourceSet);
         return loginUser;
+    }
+
+    @Override
+    public void register(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        save(user);
     }
 }

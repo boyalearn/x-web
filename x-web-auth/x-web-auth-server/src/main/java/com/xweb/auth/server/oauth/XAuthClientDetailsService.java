@@ -1,4 +1,4 @@
-package com.xweb.auth.server.auth;
+package com.xweb.auth.server.oauth;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.xweb.auth.server.entity.Client;

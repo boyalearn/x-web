@@ -25,7 +25,7 @@ import java.util.UUID;
 public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> implements IClientService {
 
 
-    private static final String ALL_GRANT_TYPE = "authorization_code, password, implicit,client_credentials";
+    private static final String ALL_GRANT_TYPE = "authorization_code,password,implicit,client_credentials";
 
     @Override
     public void addClient(Client client) throws BusinessException {

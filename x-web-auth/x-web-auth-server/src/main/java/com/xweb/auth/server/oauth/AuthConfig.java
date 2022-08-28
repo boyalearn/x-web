@@ -1,4 +1,4 @@
-package com.xweb.auth.server.auth;
+package com.xweb.auth.server.oauth;
 
 import com.xweb.auth.server.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -24,6 +25,11 @@ import org.springframework.security.oauth2.provider.token.store.InMemoryTokenSto
 
 @Configuration
 public class AuthConfig {
+
+    @Bean
+    public XAuthPasswordEncoder passwordEncoder() {
+        return new XAuthPasswordEncoder();
+    }
 
     @Bean
     public XAuthAuthenticationDetailsSource authAuthenticationDetailsSource() {
@@ -47,6 +53,7 @@ public class AuthConfig {
         return tokenEnhancer;
     }
 
+
     @EnableAuthorizationServer
     @Configuration
     public class OAuth2AuthorizationServerConfigurerAdapter extends AuthorizationServerConfigurerAdapter {
@@ -60,12 +67,15 @@ public class AuthConfig {
         @Autowired
         private XAuthTokenEnhancer tokenEnhancer;
 
+        @Autowired
+        private XAuthPasswordEncoder passwordEncoder;
+
         @Override
         public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
             security.tokenKeyAccess("permitAll()")
                     .checkTokenAccess("permitAll()")
                     .allowFormAuthenticationForClients()
-                    .passwordEncoder(new XAuthPasswordEncoder());
+                    .passwordEncoder(passwordEncoder);
         }
 
         /**
@@ -134,7 +144,11 @@ public class AuthConfig {
                     .antMatchers(
                             "/xauth/**",
                             "/login",
-                            "/xauth/token"
+                            "/xauth/token",
+                            "swagger-ui.html",
+                            "/webjars/**",
+                            "/v2/**",
+                            "/swagger-resources/**"
                     )
                     .permitAll() // 允许匿名访问的地址
                     .and()
@@ -147,8 +161,6 @@ public class AuthConfig {
                     .loginProcessingUrl("/login")
                     .authenticationDetailsSource(authenticationDetailsSource)
                     .and()
-                    .sessionManagement()
-                    .and()
                     .csrf()
                     .disable();
         }
@@ -159,5 +171,20 @@ public class AuthConfig {
             auth.userDetailsService(userDetailsService).passwordEncoder(new XAuthPasswordEncoder());
         }
 
+        @Override
+        public void configure(WebSecurity web) throws Exception {
+            web.ignoring().antMatchers(
+                    "/login",
+                    "/logout",
+                    "/css/",
+                    "/js/",
+                    "/index.html",
+                    "/favicon.ico",
+                    "/doc.html",
+                    "/swagger-ui.html",
+                    "/webjars/",
+                    "/swagger-resources/",
+                    "/v2/api-docs/**");
+        }
     }
 }

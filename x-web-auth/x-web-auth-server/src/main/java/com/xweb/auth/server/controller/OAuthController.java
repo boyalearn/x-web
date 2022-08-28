@@ -1,8 +1,10 @@
 package com.xweb.auth.server.controller;
 
 
-import com.xweb.auth.server.auth.XAuthTokenEnhancer;
+import com.xweb.auth.server.oauth.XAuthTokenEnhancer;
 import com.xweb.auth.server.service.IXAuthLoginService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,7 @@ import java.util.Map;
  * 创建时间: 2022/8/27 14:05
  ******************************/
 @Controller
+@Api(tags = "授权管理")
 @SessionAttributes("authorizationRequest")
 public class OAuthController {
 
@@ -72,6 +75,7 @@ public class OAuthController {
      * @param token
      * @return
      */
+    @ApiOperation(value = "token解析")
     @GetMapping("/xauth/token")
     @ResponseBody
     public Map<String, Object> token(String token) {

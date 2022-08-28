@@ -1,4 +1,4 @@
-package com.xweb.auth.server.auth;
+package com.xweb.auth.server.oauth;
 
 import lombok.Getter;
 import lombok.Setter;

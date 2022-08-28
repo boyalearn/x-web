@@ -26,7 +26,8 @@
 
     <repositories>
         <repository>
-            <id>aliyun</id>
+            <id>central</id>
+            <name>aliyun maven</name>
             <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
         </repository>
     </repositories>
@@ -48,7 +49,7 @@
                 <enabled>true</enabled>
             </releases>
             <snapshots>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
             </snapshots>
         </pluginRepository>
     </pluginRepositories>

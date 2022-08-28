@@ -2,6 +2,8 @@ package com.xweb.auth.server.service;
 
 import com.xweb.auth.server.entity.Resource;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xweb.common.standard.PageEntity;
+import com.xweb.common.standard.PageRequest;
 
 /**
  * <p>
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IResourceService extends IService<Resource> {
 
+    PageEntity selectResources(PageRequest request);
 }
