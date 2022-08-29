@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.util.Optional;
+
 /******************************
  * 用途说明:
  * 作者姓名: zouhuixing
@@ -24,8 +26,11 @@ public class XAuthUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = new User();
         user.setAccount(username);
-        User dbUser = userService.getOne(new QueryWrapper<>(user));
-        XAuthUserDetails xAuthUserDetails = new XAuthUserDetails(dbUser.getAccount(), dbUser.getPassword());
+        User findUser = userService.getOne(new QueryWrapper<>(user));
+        if(!Optional.ofNullable(findUser).isPresent()){
+            throw new UsernameNotFoundException("");
+        }
+        XAuthUserDetails xAuthUserDetails = new XAuthUserDetails(findUser.getAccount(), findUser.getPassword());
         return xAuthUserDetails;
     }
 }

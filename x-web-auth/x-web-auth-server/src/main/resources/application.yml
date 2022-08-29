@@ -1,4 +1,10 @@
 spring:
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
   redis:
     host: 192.168.0.204
     port: 6379
@@ -36,4 +42,4 @@ mybatis-plus:
   configuration:
     default-enum-type-handler: com.xweb.common.mybatis.NumEnumTypeHandler
 server:
-  port: 9090
+  port: 9093

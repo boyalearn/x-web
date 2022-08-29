@@ -8,6 +8,8 @@ import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /******************************
  * 用途说明:
  * 作者姓名: zouhuixing
@@ -29,6 +31,9 @@ public class XAuthClientDetailsService implements ClientDetailsService {
         Client client = new Client();
         client.setClientId(clientId);
         Client appClient = clientService.getOne(new QueryWrapper<>(client));
+        if (!Optional.ofNullable(appClient).isPresent()) {
+            throw new ClientRegistrationException(clientId + " is not found");
+        }
         XAuthClientDetails clientDetails = new XAuthClientDetails();
         clientDetails.setClientId(appClient.getClientId());
         clientDetails.setClientSecret(appClient.getClientSecret());

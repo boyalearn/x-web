@@ -6,7 +6,9 @@ import com.xweb.auth.server.service.IXAuthLoginService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,12 +38,12 @@ public class OAuthController {
      * 登录
      *
      * @param request  HttpServletRequest
-     * @param response HttpServletResponse
+     * @param model Model
      * @throws Exception
      */
     @GetMapping("/login")
-    public void doLogin(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        loginService.doLogin(request, response);
+    public String doLogin(HttpServletRequest request, Model model) throws Exception {
+        return loginService.doLogin(request, model);
     }
 
 
@@ -52,9 +54,9 @@ public class OAuthController {
      * @param response HttpServletResponse
      * @throws Exception
      */
-    @GetMapping("/")
-    public void home(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.getWriter().write("Hello XAuth!!!");
+    @GetMapping("/home")
+    public String home(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return "index";
     }
 
     /**
@@ -65,8 +67,8 @@ public class OAuthController {
      * @throws Exception
      */
     @RequestMapping("/xauth/confirm_access")
-    public void confirm(Map<String, Object> model, HttpServletResponse response) throws Exception {
-        loginService.doConfirm(model, response);
+    public ModelAndView confirm(Map<String, Object> model, HttpServletResponse response) throws Exception {
+        return loginService.doConfirm(model, response);
     }
 
     /**

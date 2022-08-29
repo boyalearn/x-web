@@ -1,15 +1,14 @@
 package com.xweb.auth.server.service.impl;
 
 import com.xweb.auth.server.service.IXAuthLoginService;
-import com.xweb.auth.server.util.TemplateUtil;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -21,17 +20,11 @@ import java.util.Optional;
 @Service
 public class XAuthLoginServiceImpl implements IXAuthLoginService {
 
-    private static final String LOGIN_URL = "/login";
-
-    private static final String LOGIN_KEY = "login_url";
-
     private static final String ERROR_KEY = "error_msg";
 
-    private static final String CONTEXT_TYPE = "text/html;charset=UTF-8";
+    private static final String LOGIN_TEMPLATE = "xauth_login";
 
-    private static final String LOGIN_TEMPLATE = "login.html";
-
-    private static final String GRANT_TEMPLATE = "grant.html";
+    private static final String GRANT_TEMPLATE = "xauth_grant.html";
 
     private static final String LAST_EXCEPTION_KEY = "SPRING_SECURITY_LAST_EXCEPTION";
 
@@ -42,29 +35,21 @@ public class XAuthLoginServiceImpl implements IXAuthLoginService {
     private static final String AUTHORIZATION_REQUEST = "authorizationRequest";
 
     @Override
-    public void doLogin(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Map model = new HashMap();
-        model.put(LOGIN_KEY, LOGIN_URL);
-
+    public String doLogin(HttpServletRequest request, Model model) throws Exception {
         AuthenticationException exception = (AuthenticationException) request.getSession().getAttribute(LAST_EXCEPTION_KEY);
         if (Optional.ofNullable(exception).isPresent()) {
-            model.put(ERROR_KEY, exception.getMessage());
+            model.addAttribute(ERROR_KEY, exception.getMessage());
         }
-        String template = TemplateUtil.getTemplate(model, LOGIN_TEMPLATE);
-        response.setContentType(CONTEXT_TYPE);
-        response.setContentLength(template.getBytes(StandardCharsets.UTF_8).length);
-        response.getWriter().write(template);
+        return LOGIN_TEMPLATE;
     }
 
     @Override
-    public void doConfirm(Map<String, Object> model, HttpServletResponse response) throws Exception {
+    public ModelAndView doConfirm(Map<String, Object> model, HttpServletResponse response) throws Exception {
         AuthorizationRequest authorizationRequest = (AuthorizationRequest) model.get(AUTHORIZATION_REQUEST);
-        Map data = new HashMap();
-        data.put(CLIENT_ID, authorizationRequest.getClientId());
-        data.put(SCOPE, authorizationRequest.getScope());
-        String template = TemplateUtil.getTemplate(data, GRANT_TEMPLATE);
-        response.setContentType(CONTEXT_TYPE);
-        response.setContentLength(template.getBytes(StandardCharsets.UTF_8).length);
-        response.getWriter().write(template);
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject(CLIENT_ID, authorizationRequest.getClientId());
+        modelAndView.addObject(SCOPE, authorizationRequest.getScope());
+        modelAndView.setViewName(GRANT_TEMPLATE);
+        return modelAndView;
     }
 }

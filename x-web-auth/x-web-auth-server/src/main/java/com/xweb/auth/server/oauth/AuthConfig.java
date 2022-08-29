@@ -10,12 +10,19 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /******************************
  * 用途说明:
@@ -141,28 +148,16 @@ public class AuthConfig {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.authorizeRequests()
-                    .antMatchers(
-                            "/xauth/**",
-                            "/login",
-                            "/xauth/token",
-                            "swagger-ui.html",
-                            "/webjars/**",
-                            "/v2/**",
-                            "/swagger-resources/**"
-                    )
-                    .permitAll() // 允许匿名访问的地址
+                    .antMatchers("/xauth/**", "/login", "/v2/**").permitAll() // 允许匿名访问的地址
                     .and()
-                    .authorizeRequests()
-                    .anyRequest()
-                    .authenticated() // 其它地址都需进行认证
+                    .authorizeRequests().anyRequest().authenticated() // 其它地址都需进行认证
                     .and()
-                    .formLogin()
-                    .loginPage("/login")
-                    .loginProcessingUrl("/login")
+                    .formLogin().loginPage("/login").loginProcessingUrl("/login")
                     .authenticationDetailsSource(authenticationDetailsSource)
+                    .successHandler(new XAuthLoginSuccessHandler())
                     .and()
-                    .csrf()
-                    .disable();
+                    .csrf().disable();
+            http.headers().frameOptions().sameOrigin();
         }
 
         @Override
@@ -174,11 +169,11 @@ public class AuthConfig {
         @Override
         public void configure(WebSecurity web) throws Exception {
             web.ignoring().antMatchers(
-                    "/login",
-                    "/logout",
-                    "/css/",
-                    "/js/",
-                    "/index.html",
+                    "/css/**",
+                    "/fonts/**",
+                    "/images/**",
+                    "/lib/layui/**",
+                    "/js/**",
                     "/favicon.ico",
                     "/doc.html",
                     "/swagger-ui.html",
