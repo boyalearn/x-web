@@ -22,7 +22,7 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource> i
 
     @Override
     public PageEntity selectResources(PageRequest request) {
-        PageUtil.startPage(request);
+        PageUtil.startPageDefault(request);
         return PageUtil.buildResult(list());
     }
 }

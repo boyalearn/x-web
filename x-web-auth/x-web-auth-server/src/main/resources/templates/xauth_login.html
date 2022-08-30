@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="./css/login.css">
     <link rel="stylesheet" href="./css/xadmin.css">
     <script src="./lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/xadmin.js"></script>
     <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 
     <!--[if lt IE 9]>
@@ -37,6 +38,8 @@
 
 <script>
     $(function() {
+        alert(window.parent)
+        //xadmin.father_reload();
         layui.use('form', function () {
             var form = layui.form;
             var error = "[[${error_msg}]]";

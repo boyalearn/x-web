@@ -6,6 +6,9 @@ import com.xweb.auth.server.entity.*;
 import com.xweb.auth.server.mapper.UserMapper;
 import com.xweb.auth.server.oauth.XAuthPasswordEncoder;
 import com.xweb.auth.server.service.*;
+import com.xweb.common.standard.PageEntity;
+import com.xweb.common.standard.PageRequest;
+import com.xweb.common.utils.PageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -81,5 +84,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public void register(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         save(user);
+    }
+
+    @Override
+    public PageEntity<User> selectUsers(PageRequest request) {
+        PageUtil.startPageDefault(request);
+        return PageUtil.buildResult(list());
     }
 }

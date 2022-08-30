@@ -48,38 +48,28 @@
                 </div>
                 <div class="layui-card-header">
                     <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
-                    <button class="layui-btn" onclick="xadmin.open('添加用户','./member-add.html',600,400)"><i class="layui-icon"></i>添加</button>
+                    <button class="layui-btn" onclick="xadmin.open('添加用户','./add.html?type=user',600,400)"><i class="layui-icon"></i>添加</button>
                 </div>
                 <div class="layui-card-body layui-table-body layui-table-main">
                     <table class="layui-table layui-form">
                         <thead>
                         <tr>
                             <th>
-                                <input type="checkbox" lay-filter="checkall" name="" lay-skin="primary">
+                                <input type="checkbox" lay-filter="checkall" name="" lay-skin="primary">ID
                             </th>
-                            <th>应用ID</th>
-                            <th>应用密钥</th>
-                            <th>名字</th>
-                            <th>描述</th>
-                            <th>权限</th>
-                            <th>地址</th>
-                            <th>SCOPE</th>
+                            <th>账号</th>
+                            <th>姓名</th>
                             <th>操作</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr th:each="item:${list}">
                             <td>
-                                <input type="checkbox" name="id" th:value="${item.id}"   lay-skin="primary">
+                                <input type="checkbox" name="id" th:value="${item.id}" th:text="${item.id}"   lay-skin="primary">
                             </td>
 
-                            <td th:text="${item.clientId}"></td>
-                            <td th:text="${item.clientSecret}"></td>
+                            <td th:text="${item.account}"></td>
                             <td th:text="${item.name}"></td>
-                            <td th:text="${item.description}"></td>
-                            <td th:text="${item.authorizedGrantTypes}"></td>
-                            <td th:text="${item.redirectUris}"></td>
-                            <td th:text="${item.scope}"></td>
                             <td class="td-manage">
                                 <a onclick="member_stop(this,'10001')" href="javascript:;"  title="启用">
                                     <i class="layui-icon">&#xe601;</i>
@@ -101,12 +91,7 @@
                 <div class="layui-card-body ">
                     <div class="page">
                         <div>
-                            <a class="prev" href="">&lt;&lt;</a>
-                            <a class="num" href="">1</a>
-                            <span class="current">2</span>
-                            <a class="num" href="">3</a>
-                            <a class="num" href="">489</a>
-                            <a class="next" href="">&gt;&gt;</a>
+                            <a th:each="item:${pages}" class="prev" th:text="${item.tag}" th:href="${item.url}"></a>
                         </div>
                     </div>
                 </div>

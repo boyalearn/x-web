@@ -22,7 +22,7 @@ public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> impleme
 
     @Override
     public PageEntity<Tenant> selectTenants(PageRequest request) {
-        PageUtil.startPage(request);
+        PageUtil.startPageDefault(request);
         return PageUtil.buildResult(list());
     }
 }

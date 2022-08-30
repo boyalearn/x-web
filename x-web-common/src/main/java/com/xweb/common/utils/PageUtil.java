@@ -20,6 +20,26 @@ public class PageUtil {
         PageHelper.startPage(request.getPage().intValue(), request.getPageSize().intValue());
     }
 
+    public static void startPageDefault(PageRequest request) {
+        if (!Optional.ofNullable(request).isPresent()) {
+            PageHelper.startPage(1, 10);
+            return;
+        }
+        int page;
+        int pageSize;
+        if (Optional.ofNullable(request.getPage()).isPresent()) {
+            page = request.getPage().intValue();
+        } else {
+            page = 1;
+        }
+        if (Optional.ofNullable(request.getPageSize()).isPresent()) {
+            pageSize = request.getPageSize().intValue();
+        } else {
+            pageSize = 10;
+        }
+        PageHelper.startPage(page, pageSize);
+    }
+
     public static void endPage() {
         PageHelper.clearPage();
     }
@@ -30,7 +50,7 @@ public class PageUtil {
         pageEntity.setList(pageInfo.getList());
 
         pageEntity.setPage(Long.valueOf(pageInfo.getPageNum()));
-        pageEntity.setPageSize(Long.valueOf(pageInfo.getPageSize()));
+        pageEntity.setPageSize(Long.valueOf(PageHelper.getLocalPage().getPageSize()));
 
         pageEntity.setTotal(pageInfo.getTotal());
         return pageEntity;

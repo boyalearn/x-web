@@ -9,7 +9,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @SpringBootApplication
 @EnableGlobalExceptionHandler(value = true)
 @MapperScan("com.xweb.auth.server.mapper")
-@EnableRedisHttpSession
+//@EnableRedisHttpSession
 public class Application {
 
     public static void main(String[] args) {

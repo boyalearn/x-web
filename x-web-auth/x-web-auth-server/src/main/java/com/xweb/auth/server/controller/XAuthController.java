@@ -1,14 +1,18 @@
 package com.xweb.auth.server.controller;
 
 import com.xweb.auth.server.entity.Client;
+import com.xweb.auth.server.entity.Role;
+import com.xweb.auth.server.entity.Tenant;
+import com.xweb.auth.server.entity.User;
 import com.xweb.auth.server.request.ClientRequest;
-import com.xweb.auth.server.service.IClientService;
+import com.xweb.auth.server.service.*;
+import com.xweb.auth.server.ui.FromUtil;
+import com.xweb.auth.server.util.PageUIUtil;
 import com.xweb.common.resolver.FormBody;
 import com.xweb.common.standard.PageEntity;
 import com.xweb.common.standard.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -22,36 +26,77 @@ public class XAuthController {
     @Autowired
     private IClientService clientService;
 
+    @Autowired
+    private IUserService userService;
+
+    @Autowired
+    private IRoleService roleService;
+
+    @Autowired
+    private IResourceService resourceService;
+
+    @Autowired
+    private ITenantService tenantService;
+
+    @Autowired
+    private IXAuthService authService;
+
     @GetMapping("/tenant_list.html")
-    public String tenant() {
-        return "tenant_list";
+    public ModelAndView tenant(@FormBody PageRequest request) {
+        PageEntity<Tenant> tenantData = tenantService.selectTenants(request);
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("list", tenantData.getList());
+        modelAndView.setViewName("business/tenant_list.html");
+        PageUIUtil.buildPageInfo("/tenant_list.html", tenantData, modelAndView);
+        return modelAndView;
     }
 
     @GetMapping("/client_list.html")
-    public ModelAndView client( @FormBody ClientRequest request) {
-        PageEntity<Client> clientData= clientService.selectClients(request);
+    public ModelAndView client(@FormBody ClientRequest request) {
+        PageEntity<Client> clientData = clientService.selectClients(request);
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("list",clientData.getList());
-        modelAndView.setViewName("client_list.html");
+        modelAndView.addObject("list", clientData.getList());
+        modelAndView.setViewName("business/client_list.html");
+        PageUIUtil.buildPageInfo("/client_list.html", clientData, modelAndView);
+
         return modelAndView;
     }
 
     @GetMapping("/user_list.html")
-    public ModelAndView user(@FormBody ClientRequest request) {
-        PageEntity<Client> clientData= clientService.selectClients(request);
+    public ModelAndView user(@FormBody PageRequest request) {
+        PageEntity<User> userData = userService.selectUsers(request);
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("list",clientData.getList());
-        modelAndView.setViewName("user_list.html");
+        modelAndView.addObject("list", userData.getList());
+        modelAndView.setViewName("business/user_list.html");
+        PageUIUtil.buildPageInfo("/user_list.html", userData, modelAndView);
         return modelAndView;
     }
 
     @GetMapping("/role_list.html")
-    public String role() {
-        return "role_list";
+    public ModelAndView role(@FormBody PageRequest request) {
+        PageEntity<Role> roleData = roleService.selectRoles(request);
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("list", roleData.getList());
+        modelAndView.setViewName("business/role_list.html");
+        PageUIUtil.buildPageInfo("/role_list.html", roleData, modelAndView);
+        return modelAndView;
     }
 
     @GetMapping("/resource_list.html")
-    public String resource() {
-        return "resource_list";
+    public ModelAndView resource(@FormBody PageRequest request) {
+        PageEntity resourcesData = resourceService.selectResources(request);
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("list", resourcesData.getList());
+        modelAndView.setViewName("business/resource_list.html");
+        PageUIUtil.buildPageInfo("/resource_list.html", resourcesData, modelAndView);
+        return modelAndView;
+    }
+
+    @GetMapping("/add.html")
+    public ModelAndView add(String type) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("forms", FromUtil.buildForm(type));
+        modelAndView.setViewName("business/add.html");
+        return modelAndView;
     }
 }

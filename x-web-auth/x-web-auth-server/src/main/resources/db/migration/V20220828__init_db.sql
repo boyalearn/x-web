@@ -179,6 +179,6 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (6, '18328508416', NULL, '123');
+INSERT INTO `user` VALUES (1, 'admin', "超级管理员", '12345678');
 
 SET FOREIGN_KEY_CHECKS = 1;

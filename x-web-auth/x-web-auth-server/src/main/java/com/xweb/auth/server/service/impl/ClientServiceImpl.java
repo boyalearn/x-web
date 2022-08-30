@@ -35,7 +35,7 @@ public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> impleme
 
     @Override
     public PageEntity<Client> selectClients(ClientRequest clientRequest) {
-        PageUtil.startPage(clientRequest);
+        PageUtil.startPageDefault(clientRequest);
         return PageUtil.buildResult(list());
     }
 

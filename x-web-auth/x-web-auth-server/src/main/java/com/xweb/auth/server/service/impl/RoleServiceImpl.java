@@ -22,7 +22,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 
     @Override
     public PageEntity<Role> selectRoles(PageRequest request) {
-        PageUtil.startPage(request);
+        PageUtil.startPageDefault(request);
         return PageUtil.buildResult(list());
     }
 }

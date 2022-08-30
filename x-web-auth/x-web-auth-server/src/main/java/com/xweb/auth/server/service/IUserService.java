@@ -4,6 +4,8 @@ import com.xweb.auth.server.entity.Client;
 import com.xweb.auth.server.entity.LoginUser;
 import com.xweb.auth.server.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xweb.common.standard.PageEntity;
+import com.xweb.common.standard.PageRequest;
 
 /**
  * <p>
@@ -19,4 +21,6 @@ public interface IUserService extends IService<User> {
 
     void register(User user);
 
+    PageEntity<User> selectUsers(PageRequest request);
 }
+
