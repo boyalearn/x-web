@@ -32,6 +32,20 @@
             <div class="layui-card">
                 <div class="layui-card-body ">
                     <form class="layui-form layui-col-space5">
+                        <div class="layui-input-inline layui-show-xs-block">
+                            <select name="contrller">
+                                <option value="">租户筛选</option>
+                                <option th:each="item:${tenants}" th:text="${item.name}" th:value="${item.id}">待确认
+                                </option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline layui-show-xs-block">
+                            <select name="contrller">
+                                <option value="">应用筛选</option>
+                                <option th:each="item:${clients}" th:text="${item.name}" th:value="${item.id}">待确认
+                                </option>
+                            </select>
+                        </div>
                         <div class="layui-inline layui-show-xs-block">
                             <input class="layui-input"  autocomplete="off" placeholder="开始日" name="start" id="start">
                         </div>
@@ -48,7 +62,7 @@
                 </div>
                 <div class="layui-card-header">
                     <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
-                    <button class="layui-btn" onclick="xadmin.open('添加用户','./add.html?type=role',600,400)"><i class="layui-icon"></i>添加</button>
+                    <button class="layui-btn" onclick="xadmin.open('添加角色','./add.html?type=roles',600,400)"><i class="layui-icon"></i>添加</button>
                 </div>
                 <div class="layui-card-body layui-table-body layui-table-main">
                     <table class="layui-table layui-form">
@@ -82,7 +96,7 @@
                                 <a onclick="xadmin.open('修改密码','member-password.html',600,400)" title="修改密码" href="javascript:;">
                                     <i class="layui-icon">&#xe631;</i>
                                 </a>
-                                <a title="删除" onclick="member_del(this,'要删除的id')" href="javascript:;">
+                                <a title="删除" th:onclick="member_del(this,'[[${item.id}]]')" href="javascript:;">
                                     <i class="layui-icon">&#xe640;</i>
                                 </a>
                             </td>
@@ -155,13 +169,20 @@
 
         });
     }
-
-    /*用户-删除*/
-    function member_del(obj,id){
-        layer.confirm('确认要删除吗？',function(index){
-            //发异步删除数据
-            $(obj).parents("tr").remove();
-            layer.msg('已删除!',{icon:1,time:1000});
+    function member_del(obj,id) {
+        layer.confirm('确认要删除吗？', function (index) {
+            $.ajax({
+                url: "/roles/" + id,
+                type: "delete",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    layer.msg(data.message, {icon: 1, time: 1000});
+                    setTimeout(function () {
+                        xadmin.father_reload();
+                    }, 1000)
+                }
+            })
         });
     }
 

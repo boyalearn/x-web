@@ -38,8 +38,9 @@
 
 <script>
     $(function() {
-        alert(window.parent)
-        //xadmin.father_reload();
+        if (self != top) {
+            xadmin.father_reload();
+        }
         layui.use('form', function () {
             var form = layui.form;
             var error = "[[${error_msg}]]";

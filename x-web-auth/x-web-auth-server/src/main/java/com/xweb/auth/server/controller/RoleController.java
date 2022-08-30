@@ -51,5 +51,16 @@ public class RoleController {
     public RespPageResult<String> selectRoles(PageRequest request) {
         return RespPageResult.builder().data(roleService.selectRoles(request)).message("查询成功").build();
     }
+
+    /**
+     * @param id 角色ID
+     * @return
+     */
+    @ApiOperation("删除角色")
+    @DeleteMapping("/{id}")
+    public RespResult<String> deleteClient(@PathVariable("id") String id) {
+        roleService.removeById(id);
+        return RespResult.builder().data("").message("删除成功").build();
+    }
 }
 

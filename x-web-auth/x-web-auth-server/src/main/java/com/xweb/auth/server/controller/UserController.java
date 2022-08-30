@@ -32,6 +32,7 @@ public class UserController {
 
     /**
      * 用户注册
+     *
      * @param user
      * @return
      */
@@ -42,11 +43,34 @@ public class UserController {
         return RespResult.builder().data("").message("注册成功").build();
     }
 
+    /**
+     * 添加用户
+     *
+     * @param user
+     * @return
+     */
+    @ApiOperation(value = "添加用户")
+    @PostMapping("")
+    public RespResult<String> addUser(@Validated(Insert.class) @RequestBody User user) {
+        userService.register(user);
+        return RespResult.builder().data("").message("添加用户成功").build();
+    }
 
     @ApiOperation(value = "查询用户列表")
     @GetMapping("")
     public RespPageResult<User> selectUsers(@FormBody PageRequest request) {
         return RespPageResult.builder().data(userService.selectUsers(request)).message("查询成功").build();
+    }
+
+    /**
+     * @param id ID
+     * @return
+     */
+    @ApiOperation("删除用户")
+    @DeleteMapping("/{id}")
+    public RespResult<String> deleteClient(@PathVariable("id") String id) {
+        userService.removeById(id);
+        return RespResult.builder().data("").message("删除成功").build();
     }
 }
 

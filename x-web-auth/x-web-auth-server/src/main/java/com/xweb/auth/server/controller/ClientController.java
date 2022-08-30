@@ -72,5 +72,15 @@ public class ClientController {
         return RespPageResult.builder().data(clientService.selectClients(clientRequest)).message("查询成功").build();
     }
 
+    /**
+     * @param id 应用ID
+     * @return
+     */
+    @ApiOperation("删除应用")
+    @DeleteMapping("/{id}")
+    public RespResult<String> deleteClient(@PathVariable("id") String id) {
+        clientService.removeById(id);
+        return RespResult.builder().data("").message("删除成功").build();
+    }
 }
 

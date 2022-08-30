@@ -56,6 +56,7 @@ public class XAuthController {
         PageEntity<Client> clientData = clientService.selectClients(request);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("list", clientData.getList());
+        modelAndView.addObject("tenants",tenantService.list());
         modelAndView.setViewName("business/client_list.html");
         PageUIUtil.buildPageInfo("/client_list.html", clientData, modelAndView);
 
@@ -77,6 +78,8 @@ public class XAuthController {
         PageEntity<Role> roleData = roleService.selectRoles(request);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("list", roleData.getList());
+        modelAndView.addObject("tenants",tenantService.list());
+        modelAndView.addObject("clients",clientService.list());
         modelAndView.setViewName("business/role_list.html");
         PageUIUtil.buildPageInfo("/role_list.html", roleData, modelAndView);
         return modelAndView;
@@ -87,6 +90,8 @@ public class XAuthController {
         PageEntity resourcesData = resourceService.selectResources(request);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("list", resourcesData.getList());
+        modelAndView.addObject("tenants",tenantService.list());
+        modelAndView.addObject("clients",clientService.list());
         modelAndView.setViewName("business/resource_list.html");
         PageUIUtil.buildPageInfo("/resource_list.html", resourcesData, modelAndView);
         return modelAndView;
@@ -97,6 +102,7 @@ public class XAuthController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("forms", FromUtil.buildForm(type));
         modelAndView.setViewName("business/add.html");
+        modelAndView.addObject("url", type);
         return modelAndView;
     }
 }
