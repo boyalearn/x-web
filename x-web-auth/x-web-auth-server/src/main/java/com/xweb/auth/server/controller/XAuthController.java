@@ -1,9 +1,8 @@
 package com.xweb.auth.server.controller;
 
-import com.xweb.auth.server.entity.Client;
-import com.xweb.auth.server.entity.Role;
-import com.xweb.auth.server.entity.Tenant;
-import com.xweb.auth.server.entity.User;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.xweb.auth.server.bean.ResourceSelect;
+import com.xweb.auth.server.entity.*;
 import com.xweb.auth.server.request.ClientRequest;
 import com.xweb.auth.server.service.*;
 import com.xweb.auth.server.ui.FromUtil;
@@ -15,6 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /******************************
  * 用途说明:
@@ -41,6 +46,9 @@ public class XAuthController {
     @Autowired
     private IXAuthService authService;
 
+    @Autowired
+    private IRoleResourceService roleResourceService;
+
     @GetMapping("/tenant_list.html")
     public ModelAndView tenant(@FormBody PageRequest request) {
         PageEntity<Tenant> tenantData = tenantService.selectTenants(request);
@@ -56,12 +64,20 @@ public class XAuthController {
         PageEntity<Client> clientData = clientService.selectClients(request);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("list", clientData.getList());
-        modelAndView.addObject("tenants",tenantService.list());
+        modelAndView.addObject("tenants", tenantService.list());
         modelAndView.setViewName("business/client_list.html");
         PageUIUtil.buildPageInfo("/client_list.html", clientData, modelAndView);
 
         return modelAndView;
     }
+
+    @GetMapping("/client_detail.html")
+    public ModelAndView clientDetail(@FormBody ClientRequest request) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("business/client_detail.html");
+        return modelAndView;
+    }
+
 
     @GetMapping("/user_list.html")
     public ModelAndView user(@FormBody PageRequest request) {
@@ -78,11 +94,53 @@ public class XAuthController {
         PageEntity<Role> roleData = roleService.selectRoles(request);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("list", roleData.getList());
-        modelAndView.addObject("tenants",tenantService.list());
-        modelAndView.addObject("clients",clientService.list());
+        modelAndView.addObject("tenants", tenantService.list());
+        modelAndView.addObject("clients", clientService.list());
         modelAndView.setViewName("business/role_list.html");
         PageUIUtil.buildPageInfo("/role_list.html", roleData, modelAndView);
         return modelAndView;
+    }
+
+    @GetMapping("/role_detail.html")
+    public ModelAndView roleDetail(String id) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("business/role_detail.html");
+        Role role = roleService.getById(id);
+        if (!Optional.ofNullable(role).isPresent()) {
+            return modelAndView;
+        }
+        Resource resource = new Resource();
+        resource.setClientId(role.getClientId());
+        List<Resource> list = resourceService.list(new QueryWrapper<>(resource));
+        List<ResourceSelect> resourceSelects = buildResourceSelect(list, getRoleResource(role));
+        modelAndView.addObject("resources", resourceSelects);
+        return modelAndView;
+    }
+
+    private List<ResourceSelect> buildResourceSelect(List<Resource> all, List<Resource> selected) {
+        List<ResourceSelect> list = new ArrayList<>();
+        for (Resource resource : all) {
+            ResourceSelect select = new ResourceSelect();
+            select.setId(resource.getId());
+            select.setName(resource.getName());
+            select.setSelected(selected.contains(resource));
+            list.add(select);
+        }
+        return list;
+    }
+
+    private List<Resource> getRoleResource(Role role) {
+        if (!Optional.ofNullable(role).isPresent()) {
+            return new ArrayList<>();
+        }
+        RoleResource roleResource = new RoleResource();
+        roleResource.setRoleId(role.getId());
+        Set<Integer> resourceIds = roleResourceService.list(new QueryWrapper<>(roleResource)).stream()
+                .map(RoleResource::getResourceId).collect(Collectors.toSet());
+        if (resourceIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return resourceService.listByIds(resourceIds);
     }
 
     @GetMapping("/resource_list.html")
@@ -90,8 +148,8 @@ public class XAuthController {
         PageEntity resourcesData = resourceService.selectResources(request);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("list", resourcesData.getList());
-        modelAndView.addObject("tenants",tenantService.list());
-        modelAndView.addObject("clients",clientService.list());
+        modelAndView.addObject("tenants", tenantService.list());
+        modelAndView.addObject("clients", clientService.list());
         modelAndView.setViewName("business/resource_list.html");
         PageUIUtil.buildPageInfo("/resource_list.html", resourcesData, modelAndView);
         return modelAndView;
