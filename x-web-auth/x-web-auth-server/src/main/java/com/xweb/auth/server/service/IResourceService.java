@@ -1,13 +1,13 @@
 package com.xweb.auth.server.service;
 
-import com.xweb.auth.server.entity.Resource;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xweb.auth.server.entity.Resource;
+import com.xweb.auth.server.request.ResourceRequest;
 import com.xweb.common.standard.PageEntity;
-import com.xweb.common.standard.PageRequest;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author zhx
@@ -15,5 +15,5 @@ import com.xweb.common.standard.PageRequest;
  */
 public interface IResourceService extends IService<Resource> {
 
-    PageEntity selectResources(PageRequest request);
+    PageEntity selectResources(ResourceRequest request);
 }

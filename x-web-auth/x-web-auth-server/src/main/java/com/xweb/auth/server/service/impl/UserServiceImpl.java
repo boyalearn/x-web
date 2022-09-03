@@ -50,6 +50,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         LoginUser loginUser = new LoginUser();
         loginUser.setUserName(user.getName());
         loginUser.setAccount(user.getAccount());
+        loginUser.setUserId(String.valueOf(user.getId()));
 
         ClientUserRole clientUserRole = new ClientUserRole();
         clientUserRole.setUserId(user.getId());
@@ -76,7 +77,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         List<Resource> resources = resourceService.listByIds(resourceIds);
         Set<String> resourceSet = resources.stream().map(Resource::getCode).collect(Collectors.toSet());
-        loginUser.setRoles(resourceSet);
+        loginUser.setAuthorities(resourceSet);
         return loginUser;
     }
 

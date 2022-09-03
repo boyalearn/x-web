@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.xweb.common.valid.Insert;
 import com.xweb.common.valid.Update;
 import lombok.Getter;
@@ -36,8 +38,9 @@ public class Tenant implements Serializable {
 
     private String description;
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private Date createTime;
 
 
 }

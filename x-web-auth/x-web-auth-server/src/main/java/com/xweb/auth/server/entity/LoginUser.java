@@ -18,6 +18,8 @@ public class LoginUser {
 
     private String userName;
 
+    private String userId;
+
     private String clientId;
 
     private Set<String> roles;

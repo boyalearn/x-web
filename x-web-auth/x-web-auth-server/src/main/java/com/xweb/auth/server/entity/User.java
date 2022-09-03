@@ -3,7 +3,9 @@ package com.xweb.auth.server.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.xweb.common.valid.Insert;
 import com.xweb.common.valid.Update;
 import lombok.Getter;
@@ -36,6 +38,9 @@ public class User implements Serializable {
 
     @NotEmpty(message = "密码不能为空",groups = {Insert.class})
     private String password;
+
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
 
 
 }

@@ -142,7 +142,8 @@ public class AuthConfig {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.authorizeRequests()
-                    .antMatchers("/xauth/**", "/login", "/v2/**").permitAll() // 允许匿名访问的地址
+                    .antMatchers("/tenants/**","/clients/**","/users/**","/resources/**","/roles/**",
+                            "/token","/login", "/v2/**").permitAll() // 允许匿名访问的地址
                     .and()
                     .authorizeRequests().anyRequest().authenticated() // 其它地址都需进行认证
                     .and()
@@ -164,6 +165,7 @@ public class AuthConfig {
         public void configure(WebSecurity web) throws Exception {
             web.ignoring().antMatchers(
                     "/css/**",
+                    "/xauth/**",
                     "/fonts/**",
                     "/images/**",
                     "/lib/layui/**",

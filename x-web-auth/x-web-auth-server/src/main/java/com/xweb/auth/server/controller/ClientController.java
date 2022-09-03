@@ -9,6 +9,7 @@ import com.xweb.common.resolver.FormBody;
 import com.xweb.common.standard.RespPageResult;
 import com.xweb.common.standard.RespResult;
 import com.xweb.common.valid.Insert;
+import com.xweb.common.valid.Update;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
@@ -81,6 +82,30 @@ public class ClientController {
     public RespResult<String> deleteClient(@PathVariable("id") String id) {
         clientService.removeById(id);
         return RespResult.builder().data("").message("删除成功").build();
+    }
+
+    /**
+     * @param client 应用ID
+     * @return
+     */
+    @ApiOperation("修改应用")
+    @PutMapping("/{id}")
+    public RespResult<String> updateClient(@Validated(Update.class)@RequestBody Client client) {
+        clientService.updateById(client);
+        return RespResult.builder().data("").message("修改成功").build();
+    }
+
+    /**
+     * @param clientId 应用ID
+     * @param userId 用户ID
+     * @return
+     */
+    @ApiOperation("修改应用")
+    @PutMapping("/{client_id}/users/{user_id}")
+    public RespResult<String> updateClient(@PathVariable("client_id") String clientId,
+                                           @PathVariable("user_id") String userId,@RequestBody String[] roleIds) {
+        clientService.updateClientUserRole(clientId,userId,roleIds);
+        return RespResult.builder().data("").message("修改成功").build();
     }
 }
 

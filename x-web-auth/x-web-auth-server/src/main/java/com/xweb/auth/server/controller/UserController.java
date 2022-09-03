@@ -68,9 +68,20 @@ public class UserController {
      */
     @ApiOperation("删除用户")
     @DeleteMapping("/{id}")
-    public RespResult<String> deleteClient(@PathVariable("id") String id) {
+    public RespResult<String> deleteUser(@PathVariable("id") String id) {
         userService.removeById(id);
         return RespResult.builder().data("").message("删除成功").build();
+    }
+
+    /**
+     * @param user User
+     * @return
+     */
+    @ApiOperation("删除用户")
+    @PutMapping("/{id}")
+    public RespResult<String> updateUser(@RequestBody User user) {
+        userService.updateById(user);
+        return RespResult.builder().data("").message("更新成功").build();
     }
 }
 

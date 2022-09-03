@@ -34,12 +34,17 @@ spring:
       strict: false
       datasource:
         master:
-          url: jdbc:mysql://localhost:3306/x-auth?characterEncoding=UTF-8&serverTimezone=UTC
+          url: jdbc:mysql://192.168.0.204:3306/x-auth?characterEncoding=UTF-8&serverTimezone=UTC
           username: root
-          password: 123456
+          password: 12345678
           driver-class-name: com.mysql.jdbc.Driver
 mybatis-plus:
   configuration:
     default-enum-type-handler: com.xweb.common.mybatis.NumEnumTypeHandler
 server:
   port: 9090
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql

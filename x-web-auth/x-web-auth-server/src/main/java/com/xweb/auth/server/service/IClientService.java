@@ -19,5 +19,7 @@ public interface IClientService extends IService<Client> {
     void addClient(Client client) throws BusinessException;
 
     PageEntity<Client> selectClients(ClientRequest clientRequest);
+
+    void updateClientUserRole(String clientId, String userId, String[] roleIds);
 }
 

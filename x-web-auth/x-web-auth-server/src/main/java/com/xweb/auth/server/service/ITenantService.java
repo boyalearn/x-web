@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.xweb.common.standard.PageEntity;
 import com.xweb.common.standard.PageRequest;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -17,4 +19,7 @@ public interface ITenantService extends IService<Tenant> {
 
     PageEntity<Tenant> selectTenants(PageRequest request);
 
+    List selectTree(PageRequest request);
+
+    Object selectRole(String tenantId, String clientId, String userId);
 }

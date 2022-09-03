@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.xweb.auth.server.bean.ResourceSelect;
 import com.xweb.auth.server.entity.*;
 import com.xweb.auth.server.request.ClientRequest;
+import com.xweb.auth.server.request.ResourceRequest;
+import com.xweb.auth.server.request.RoleRequest;
 import com.xweb.auth.server.service.*;
 import com.xweb.auth.server.ui.FromUtil;
 import com.xweb.auth.server.util.PageUIUtil;
@@ -90,7 +92,7 @@ public class XAuthController {
     }
 
     @GetMapping("/role_list.html")
-    public ModelAndView role(@FormBody PageRequest request) {
+    public ModelAndView role(@FormBody RoleRequest request) {
         PageEntity<Role> roleData = roleService.selectRoles(request);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("list", roleData.getList());
@@ -144,7 +146,7 @@ public class XAuthController {
     }
 
     @GetMapping("/resource_list.html")
-    public ModelAndView resource(@FormBody PageRequest request) {
+    public ModelAndView resource(@FormBody ResourceRequest request) {
         PageEntity resourcesData = resourceService.selectResources(request);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("list", resourcesData.getList());

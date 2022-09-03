@@ -2,6 +2,7 @@ package com.xweb.auth.server.controller;
 
 
 import com.xweb.auth.server.auth.XAuthRole;
+import com.xweb.auth.server.bean.TenantClientTree;
 import com.xweb.auth.server.entity.Tenant;
 import com.xweb.auth.server.service.ITenantService;
 import com.xweb.common.auth.Auth;
@@ -14,6 +15,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 租户管理
@@ -66,10 +69,37 @@ public class TenantController {
      */
     @ApiOperation(value = "查询租户列表")
     @GetMapping()
-    @Auth(roles = XAuthRole.SUPPER_ADMIN)
     public RespPageResult<Tenant> selectTenants(@FormBody PageRequest request) {
         return RespPageResult.builder()
                 .data(tenantService.selectTenants(request)).message("查询成功").build();
+    }
+
+    /**
+     * 查询租户列表
+     *
+     * @param request
+     * @return
+     */
+    @ApiOperation(value = "查询应用树")
+    @GetMapping("/tree")
+    public RespResult<List> selectTenantTree(@FormBody PageRequest request) {
+        return RespResult.builder()
+                .data(tenantService.selectTree(request)).message("查询成功").build();
+    }
+
+    /**
+     * @param tenantId
+     * @param clientId
+     * @param userId
+     * @return
+     */
+    @ApiOperation(value = "查询租户列表")
+    @GetMapping("/{tenant_id}/clients/{client_id}/users/{user_id}")
+    public RespResult selectRole(@PathVariable("tenant_id") String tenantId,
+                                                       @PathVariable("client_id") String clientId,
+                                                       @PathVariable("user_id") String userId) {
+        return RespResult.builder()
+                .data(tenantService.selectRole(tenantId,clientId,userId)).message("查询成功").build();
     }
 
 }

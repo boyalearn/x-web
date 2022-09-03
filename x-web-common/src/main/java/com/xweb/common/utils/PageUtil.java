@@ -50,7 +50,7 @@ public class PageUtil {
         pageEntity.setList(pageInfo.getList());
 
         pageEntity.setPage(Long.valueOf(pageInfo.getPageNum()));
-        pageEntity.setPageSize(Long.valueOf(PageHelper.getLocalPage().getPageSize()));
+        pageEntity.setPageSize(Long.valueOf(pageInfo.getPageSize()));
 
         pageEntity.setTotal(pageInfo.getTotal());
         return pageEntity;

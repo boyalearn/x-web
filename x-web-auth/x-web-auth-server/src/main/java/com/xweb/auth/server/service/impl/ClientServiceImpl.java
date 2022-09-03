@@ -1,15 +1,20 @@
 package com.xweb.auth.server.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xweb.auth.server.entity.Client;
+import com.xweb.auth.server.entity.ClientUserRole;
 import com.xweb.auth.server.mapper.ClientMapper;
 import com.xweb.auth.server.request.ClientRequest;
 import com.xweb.auth.server.service.IClientService;
+import com.xweb.auth.server.service.IClientUserRoleService;
 import com.xweb.common.exception.BusinessException;
 import com.xweb.common.standard.PageEntity;
 import com.xweb.common.utils.PageUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,6 +32,9 @@ public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> impleme
 
     private static final String ALL_GRANT_TYPE = "authorization_code,password,implicit,client_credentials";
 
+    @Autowired
+    private IClientUserRoleService clientUserRoleService;
+
     @Override
     public void addClient(Client client) throws BusinessException {
         validationAndSettingsClient(client);
@@ -37,6 +45,46 @@ public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> impleme
     public PageEntity<Client> selectClients(ClientRequest clientRequest) {
         PageUtil.startPageDefault(clientRequest);
         return PageUtil.buildResult(list());
+    }
+
+    @Override
+    public void updateClientUserRole(String clientId, String userId, String[] roleIds) {
+        ClientUserRole clientUserRole = new ClientUserRole();
+        clientUserRole.setClientId(Integer.valueOf(clientId));
+        clientUserRole.setUserId(Integer.valueOf(userId));
+        List<ClientUserRole> userRoles = clientUserRoleService.list(new QueryWrapper<>(clientUserRole));
+        for (String roleId : roleIds) {
+            if (!include(userRoles, roleId)) {
+                ClientUserRole addRole = new ClientUserRole();
+                addRole.setClientId(Integer.valueOf(clientId));
+                addRole.setUserId(Integer.valueOf(userId));
+                addRole.setRoleId(Integer.valueOf(roleId));
+                clientUserRoleService.save(addRole);
+            }
+        }
+        for (ClientUserRole userRole : userRoles) {
+            if (!include(roleIds, String.valueOf(userRole.getRoleId()))) {
+                clientUserRoleService.remove(new QueryWrapper<>(userRole));
+            }
+        }
+    }
+
+    private boolean include(List<ClientUserRole> userRoles, String item) {
+        for (ClientUserRole role : userRoles) {
+            if (role.getRoleId().equals(Integer.valueOf(item))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean include(String[] arr, String item) {
+        for (String s : arr) {
+            if (s.equals(item)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void validationAndSettingsClient(Client client) throws BusinessException {

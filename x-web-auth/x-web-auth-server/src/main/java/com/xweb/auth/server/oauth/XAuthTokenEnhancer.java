@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.xweb.auth.server.entity.LoginUser;
 import com.xweb.auth.server.entity.User;
 import com.xweb.auth.server.service.IUserService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.jwt.JwtHelper;
 import org.springframework.security.oauth2.common.*;
 import org.springframework.security.oauth2.common.util.JsonParser;
@@ -14,6 +15,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /******************************
  * 用途说明:
@@ -38,16 +40,21 @@ public class XAuthTokenEnhancer extends JwtAccessTokenConverter {
         if (!info.containsKey("jti")) {
             info.put("jti", tokenId);
         } else {
-            tokenId = (String)info.get("jti");
+            tokenId = (String) info.get("jti");
         }
 
         //add customer info
-        User user=new User();
+        User user = new User();
         user.setAccount(String.valueOf(authentication.getPrincipal()));
         User dbUser = userService.getOne(new QueryWrapper<>(user));
+        if (!Optional.ofNullable(dbUser).isPresent()) {
+            throw new UsernameNotFoundException("用户名或密码错误");
+        }
         LoginUser loginUser = userService.createLoginUser(dbUser, XAuthClientDetailsService.CLIENT.get());
-        info.put("roles",loginUser.getRoles());
-        info.put("resources",loginUser.getAuthorities());
+        info.put("roles", loginUser.getRoles());
+        info.put("resources", loginUser.getAuthorities());
+        info.put("account", loginUser.getAccount());
+        info.put("user_id", dbUser.getId());
         //add customer info end
         result.setAdditionalInformation(info);
         result.setValue(this.encode(result, authentication));
@@ -55,7 +62,7 @@ public class XAuthTokenEnhancer extends JwtAccessTokenConverter {
         if (refreshToken != null) {
             DefaultOAuth2AccessToken encodedRefreshToken = new DefaultOAuth2AccessToken(accessToken);
             encodedRefreshToken.setValue(refreshToken.getValue());
-            encodedRefreshToken.setExpiration((Date)null);
+            encodedRefreshToken.setExpiration((Date) null);
 
             try {
                 Map<String, Object> claims = this.objectMapper.parseMap(JwtHelper.decode(refreshToken.getValue()).getClaims());
@@ -71,12 +78,12 @@ public class XAuthTokenEnhancer extends JwtAccessTokenConverter {
             encodedRefreshToken.setAdditionalInformation(refreshTokenInfo);
             DefaultOAuth2RefreshToken token = new DefaultOAuth2RefreshToken(this.encode(encodedRefreshToken, authentication));
             if (refreshToken instanceof ExpiringOAuth2RefreshToken) {
-                Date expiration = ((ExpiringOAuth2RefreshToken)refreshToken).getExpiration();
+                Date expiration = ((ExpiringOAuth2RefreshToken) refreshToken).getExpiration();
                 encodedRefreshToken.setExpiration(expiration);
                 token = new DefaultExpiringOAuth2RefreshToken(this.encode(encodedRefreshToken, authentication), expiration);
             }
 
-            result.setRefreshToken((OAuth2RefreshToken)token);
+            result.setRefreshToken((OAuth2RefreshToken) token);
         }
 
         return result;
