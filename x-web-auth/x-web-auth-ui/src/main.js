@@ -29,7 +29,17 @@ axios.interceptors.request.use(config => {
   // return config是固定用法 必须有返回值
   return config
 });
-
+axios.interceptors.response.use((config)=>{
+  if("token error" == config.data.message){
+    router.push({
+      path: "/login"
+    });
+  }
+  console.log(config.data);
+  return config
+},(error)=>{
+  return Promise.reject(error)
+})
 Vue.prototype.$axios = axios
 Vue.filter('limitContext', function (cellValue, num) {
   if (!cellValue) return "";

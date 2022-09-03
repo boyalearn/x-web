@@ -37,7 +37,7 @@ public class XWebAuthInterceptor implements HandlerInterceptor {
         if (Optional.ofNullable(auth).isPresent()) {
             Map<String, Object> loginInfo;
             try {
-                loginInfo = tokenEnhancer.decode(request.getHeader("token"));
+                loginInfo = tokenEnhancer.decode(request.getHeader("x-access-token"));
             } catch (Exception e) {
                 throw new BusinessException(BusinessException.SYSTEM_EXCEPTION, "token error");
             }

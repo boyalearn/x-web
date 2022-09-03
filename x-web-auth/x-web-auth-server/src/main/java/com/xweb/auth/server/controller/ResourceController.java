@@ -1,9 +1,11 @@
 package com.xweb.auth.server.controller;
 
 
+import com.xweb.auth.server.auth.XAuthRole;
 import com.xweb.auth.server.entity.Resource;
 import com.xweb.auth.server.request.ResourceRequest;
 import com.xweb.auth.server.service.IResourceService;
+import com.xweb.common.auth.Auth;
 import com.xweb.common.resolver.FormBody;
 import com.xweb.common.standard.RespPageResult;
 import com.xweb.common.standard.RespResult;
@@ -38,6 +40,7 @@ public class ResourceController {
      */
     @ApiOperation(value = "创建资源")
     @PostMapping("")
+    @Auth(roles = {XAuthRole.SUPPER_ADMIN})
     public RespResult<String> addResource(@Validated(Insert.class) @RequestBody Resource resource) {
         resourceService.save(resource);
         return RespResult.builder().data("").message("添加成功").build();
@@ -63,6 +66,7 @@ public class ResourceController {
      */
     @ApiOperation(value = "删除资源")
     @DeleteMapping("/{id}")
+    @Auth(roles = {XAuthRole.SUPPER_ADMIN})
     public RespResult<String> deleteResource(@PathVariable("id") String id) {
         resourceService.removeById(id);
         return RespResult.builder().data("").message("删除成功").build();
@@ -76,6 +80,7 @@ public class ResourceController {
      */
     @ApiOperation(value = "删除资源")
     @PutMapping("/{id}")
+    @Auth(roles = {XAuthRole.SUPPER_ADMIN})
     public RespResult<String> updateResource(@Validated @RequestBody Resource resource) {
         resourceService.updateById(resource);
         return RespResult.builder().data("").message("更新成功").build();

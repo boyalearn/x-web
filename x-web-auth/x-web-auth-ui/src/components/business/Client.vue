@@ -63,7 +63,7 @@
         align="center"
         background
         layout="prev, pager, next"
-        :current-page="selectClients"
+        @current-page="selectClients"
         :total="client_total">
       </el-pagination>
     </div>

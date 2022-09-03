@@ -1,8 +1,10 @@
 package com.xweb.auth.server.controller;
 
 
+import com.xweb.auth.server.auth.XAuthRole;
 import com.xweb.auth.server.entity.User;
 import com.xweb.auth.server.service.IUserService;
+import com.xweb.common.auth.Auth;
 import com.xweb.common.resolver.FormBody;
 import com.xweb.common.standard.PageRequest;
 import com.xweb.common.standard.RespPageResult;
@@ -51,6 +53,7 @@ public class UserController {
      */
     @ApiOperation(value = "添加用户")
     @PostMapping("")
+    @Auth(roles = {XAuthRole.SUPPER_ADMIN})
     public RespResult<String> addUser(@Validated(Insert.class) @RequestBody User user) {
         userService.register(user);
         return RespResult.builder().data("").message("添加用户成功").build();
@@ -68,6 +71,7 @@ public class UserController {
      */
     @ApiOperation("删除用户")
     @DeleteMapping("/{id}")
+    @Auth(roles = {XAuthRole.SUPPER_ADMIN})
     public RespResult<String> deleteUser(@PathVariable("id") String id) {
         userService.removeById(id);
         return RespResult.builder().data("").message("删除成功").build();
@@ -77,8 +81,9 @@ public class UserController {
      * @param user User
      * @return
      */
-    @ApiOperation("删除用户")
+    @ApiOperation("修改用户")
     @PutMapping("/{id}")
+    @Auth(roles = {XAuthRole.SUPPER_ADMIN})
     public RespResult<String> updateUser(@RequestBody User user) {
         userService.updateById(user);
         return RespResult.builder().data("").message("更新成功").build();

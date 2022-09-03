@@ -25,13 +25,6 @@ export default {
     Main
   },
   methods: {
-    limitContext(num, cellValue) {
-      if (!cellValue) return "";
-      if (cellValue.length > num) {
-        return cellValue.slice(0, num-1) + "...";
-      }
-      return cellValue;
-    },
   }
 }
 </script>

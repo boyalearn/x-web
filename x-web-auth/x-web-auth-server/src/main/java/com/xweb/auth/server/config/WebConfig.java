@@ -46,7 +46,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public XWebTokenEnhancer webTokenEnhancer() {
         XWebTokenEnhancer webTokenEnhancer = new XWebTokenEnhancer();
-        webTokenEnhancer.setSigningKey("123");
+        webTokenEnhancer.setSigningKey("1234");
         return webTokenEnhancer;
     }
 
