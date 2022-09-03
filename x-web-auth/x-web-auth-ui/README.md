@@ -3,6 +3,8 @@
 > Vue2 Element UI 2
 > Npm 8.18.0
 > @vue/cli 5.0.8
+> 文档
+> https://element.eleme.cn/#/zh-CN/component/installation
 
 ## Build Setup
 
