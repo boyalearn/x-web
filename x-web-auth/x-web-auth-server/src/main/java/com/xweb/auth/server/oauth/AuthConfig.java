@@ -149,7 +149,6 @@ public class AuthConfig {
                     .and()
                     .formLogin().loginPage("/login").loginProcessingUrl("/login")
                     .authenticationDetailsSource(authenticationDetailsSource)
-                    .successHandler(new XAuthLoginSuccessHandler())
                     .and()
                     .csrf().disable();
             http.headers().frameOptions().sameOrigin();

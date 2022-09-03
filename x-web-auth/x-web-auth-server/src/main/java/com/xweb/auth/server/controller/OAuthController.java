@@ -37,8 +37,8 @@ public class OAuthController {
     /**
      * 登录
      *
-     * @param request  HttpServletRequest
-     * @param model Model
+     * @param request HttpServletRequest
+     * @param model   Model
      * @throws Exception
      */
     @GetMapping("/login")
@@ -69,6 +69,11 @@ public class OAuthController {
     @RequestMapping("/xauth/confirm_access")
     public ModelAndView confirm(Map<String, Object> model, HttpServletResponse response) throws Exception {
         return loginService.doConfirm(model, response);
+    }
+
+    @GetMapping("/xauth/error")
+    public String error(Model model) {
+        return "xauth-error";
     }
 
     /**

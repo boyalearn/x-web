@@ -1,6 +1,7 @@
 package com.xweb.auth.server.oauth;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.google.common.collect.Lists;
 import com.xweb.auth.server.entity.LoginUser;
 import com.xweb.auth.server.entity.User;
 import com.xweb.auth.server.service.IUserService;
@@ -12,10 +13,7 @@ import org.springframework.security.oauth2.common.util.JsonParserFactory;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /******************************
  * 用途说明:
@@ -23,6 +21,9 @@ import java.util.Optional;
  * 创建时间: 2022/8/27 4:09
  ******************************/
 public class XAuthTokenEnhancer extends JwtAccessTokenConverter {
+
+
+    private static final Set<String> CUSTOM_GRANT_TYPES = new HashSet<String>(Arrays.asList(new String[]{"password", "implicit"}));
 
     private JsonParser objectMapper = JsonParserFactory.create();
 
@@ -44,17 +45,9 @@ public class XAuthTokenEnhancer extends JwtAccessTokenConverter {
         }
 
         //add customer info
-        User user = new User();
-        user.setAccount(String.valueOf(authentication.getPrincipal()));
-        User dbUser = userService.getOne(new QueryWrapper<>(user));
-        if (!Optional.ofNullable(dbUser).isPresent()) {
-            throw new UsernameNotFoundException("用户名或密码错误");
+        if (CUSTOM_GRANT_TYPES.contains(authentication.getOAuth2Request().getGrantType())) {
+            customInfo(info, authentication);
         }
-        LoginUser loginUser = userService.createLoginUser(dbUser, XAuthClientDetailsService.CLIENT.get());
-        info.put("roles", loginUser.getRoles());
-        info.put("resources", loginUser.getAuthorities());
-        info.put("account", loginUser.getAccount());
-        info.put("user_id", dbUser.getId());
         //add customer info end
         result.setAdditionalInformation(info);
         result.setValue(this.encode(result, authentication));
@@ -82,13 +75,23 @@ public class XAuthTokenEnhancer extends JwtAccessTokenConverter {
                 encodedRefreshToken.setExpiration(expiration);
                 token = new DefaultExpiringOAuth2RefreshToken(this.encode(encodedRefreshToken, authentication), expiration);
             }
-
             result.setRefreshToken((OAuth2RefreshToken) token);
         }
-
         return result;
+    }
 
-
+    private void customInfo(Map<String, Object> info, OAuth2Authentication authentication) {
+        User user = new User();
+        user.setAccount(String.valueOf(authentication.getPrincipal()));
+        User dbUser = userService.getOne(new QueryWrapper<>(user));
+        if (!Optional.ofNullable(dbUser).isPresent()) {
+            throw new UsernameNotFoundException("用户名或密码错误");
+        }
+        LoginUser loginUser = userService.createLoginUser(dbUser, XAuthClientDetailsService.CLIENT.get());
+        info.put("roles", loginUser.getRoles());
+        info.put("resources", loginUser.getAuthorities());
+        info.put("account", loginUser.getAccount());
+        info.put("user_id", dbUser.getId());
     }
 
     public Map<String, Object> decode(String token) {
