@@ -2,13 +2,13 @@
   <el-aside>
     <el-menu :router="true" id="menu">
       <el-submenu id="first-item" index="1">
-        <template slot="title"><i class="el-icon-setting"></i>数据总览</template>
+        <template slot="title"><i type="success" class="el-icon-s-data"></i>数据总览</template>
         <el-menu-item-group>
-          <el-menu-item index="/business/home"><i class="el-icon-office-building"></i>主页</el-menu-item>
+          <el-menu-item index="/business/home"><i class="el-icon-s-home"></i>主页</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <el-submenu index="2">
-        <template slot="title"><i class="el-icon-setting"></i>权限管理</template>
+        <template slot="title"><i class="el-icon-s-platform"></i>权限管理</template>
         <el-menu-item-group>
           <el-menu-item index="/business/tenant"><i class="el-icon-office-building"></i>租户管理</el-menu-item>
           <el-menu-item index="/business/client"><i class="el-icon-mobile-phone"></i>应用管理</el-menu-item>
@@ -16,9 +16,9 @@
         </el-menu-item-group>
       </el-submenu>
       <el-submenu index="3">
-        <template slot="title"><i class="el-icon-setting"></i>日志管理</template>
+        <template slot="title"><i class="el-icon-document"></i>日志管理</template>
         <el-menu-item-group>
-          <el-menu-item index="/business/tenant"><i class="el-icon-office-building"></i>操作日志</el-menu-item>
+          <el-menu-item index="/business/tenant"><i class="el-icon-date"></i>操作日志</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
     </el-menu>
