@@ -71,6 +71,11 @@ public class OAuthController {
         return loginService.doConfirm(model, response);
     }
 
+    /**
+     * 错误页面
+     * @param model
+     * @return
+     */
     @GetMapping("/xauth/error")
     public String error(Model model) {
         return "xauth-error";
