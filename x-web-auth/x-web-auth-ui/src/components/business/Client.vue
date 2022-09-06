@@ -264,6 +264,13 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination
+        align="center"
+        background
+        layout="prev, pager, next"
+        @current-page="selectRoles"
+        :total="role_total">
+      </el-pagination>
     </el-drawer>
     <el-drawer
       title="资源管理"
@@ -311,6 +318,13 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination
+        align="center"
+        background
+        layout="prev, pager, next"
+        @current-page="selectAuthPage"
+        :total="auth_total">
+      </el-pagination>
     </el-drawer>
   </el-main>
 </template>
@@ -356,7 +370,11 @@ export default {
       clients: [],
       client_total: 0,
       roles: [],
+      current_role_page: 1,
+      role_total: 0,
       auths: [],
+      current_auth_page: 1,
+      auth_total: 0,
       clientForm: {
         name: '',
         tenant_id: 0,
@@ -414,6 +432,7 @@ export default {
     },
     showAddRole() {
       this.roleAddDialog = true;
+      this.roleForm = {}
     },
     showEditRole(item) {
       this.roleForm = item;
@@ -445,6 +464,7 @@ export default {
       this.authEditDialog = true;
     },
     showAddAuth() {
+      this.authForm = {}
       this.authAddDialog = true;
     },
     addRole() {
@@ -456,6 +476,7 @@ export default {
           message: data.data.message,
           type: 'success'
         });
+        _this.refreshRoles();
       })
     },
     updateRole() {
@@ -467,6 +488,7 @@ export default {
           message: data.data.message,
           type: 'success'
         });
+        _this.refreshRoles();
       })
     },
     deleteRole() {
@@ -483,6 +505,7 @@ export default {
             message: data.data.message,
             type: 'success'
           });
+          _this.refreshRoles();
         })
       }).catch(() => {
         this.$message({
@@ -501,6 +524,7 @@ export default {
           message: data.data.message,
           type: 'success'
         });
+        _this.refreshAuths();
       })
     },
     updateAuth() {
@@ -512,6 +536,7 @@ export default {
           message: data.data.message,
           type: 'success'
         });
+        _this.refreshAuths();
       })
     },
     deleteAuth(item) {
@@ -528,6 +553,7 @@ export default {
             message: data.data.message,
             type: 'success'
           });
+          _this.refreshAuths();
         })
       }).catch(() => {
         this.$message({
@@ -598,9 +624,35 @@ export default {
       this.$axios.get(url + "?client_id=" + row.id).then(function (data) {
         if (_url.indexOf("roles") >= 0) {
           _this.roles = data.data.data.list;
+          _this.role_total = data.data.data.total;
         } else {
           _this.auths = data.data.data.list;
+          _this.auth_total = data.data.data.total;
         }
+      });
+    },
+    selectRoles(page) {
+      this.current_role_page = page;
+      this.refreshRoles();
+    },
+    refreshRoles() {
+      var _this = this;
+      this.$axios.get("/xauth/roles?client_id=" + _this.current_client_id + "&page=" + _this.current_role_page).then(function (data) {
+        _this.roles = data.data.data.list;
+        _this.role_total = data.data.data.total;
+      });
+    },
+    selectAuthPage(page) {
+      var _this = this;
+      _this.current_auth_page = page;
+      _this.refreshAuths();
+    },
+    refreshAuths() {
+      var _this = this;
+      this.$axios.get("/xauth/resources?client_id=" + _this.current_client_id + "&page=" + _this.current_auth_page).then(function (data) {
+        _this.auths = data.data.data.list;
+        _this.auth_total = data.data.data.total;
+
       });
     },
     handleClose(done) {
