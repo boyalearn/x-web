@@ -34,9 +34,9 @@ spring:
       strict: false
       datasource:
         master:
-          url: jdbc:mysql://192.168.0.204:3306/x-auth?characterEncoding=UTF-8&serverTimezone=UTC
-          username: root
-          password: 12345678
+          url: jdbc:mysql://172.16.0.240:3306/x-auth?characterEncoding=UTF-8&serverTimezone=UTC
+          username: dev
+          password: chinacloud
           driver-class-name: com.mysql.jdbc.Driver
 mybatis-plus:
   configuration:
