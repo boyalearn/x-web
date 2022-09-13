@@ -43,6 +43,13 @@ export default new Router({
           components: {
             business: () => import('@/components/business/User')
           }
+        },
+        {
+          path: 'option',
+          name: 'Option',
+          components: {
+            business: () => import('@/components/business/Option')
+          }
         }
       ]
     },

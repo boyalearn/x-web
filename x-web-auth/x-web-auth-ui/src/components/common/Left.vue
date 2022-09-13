@@ -17,7 +17,7 @@
       <el-submenu index="3">
         <template slot="title"><i style="color: #F56C6C" class="el-icon-document"></i>日志管理</template>
         <el-menu-item-group>
-          <el-menu-item index="/business/tenant"><i class="el-icon-date"></i>操作日志</el-menu-item>
+          <el-menu-item index="/business/option"><i class="el-icon-date"></i>操作日志</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
     </el-menu>
