@@ -51,6 +51,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         loginUser.setUserName(user.getName());
         loginUser.setAccount(user.getAccount());
         loginUser.setUserId(String.valueOf(user.getId()));
+        loginUser.setClientId(String.valueOf(client.getId()));
 
         ClientUserRole clientUserRole = new ClientUserRole();
         clientUserRole.setUserId(user.getId());

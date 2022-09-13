@@ -63,7 +63,7 @@
         align="center"
         background
         layout="prev, pager, next"
-        @current-page="selectClients"
+        @current-change="selectClients"
         :total="client_total">
       </el-pagination>
     </div>
@@ -268,18 +268,18 @@
         align="center"
         background
         layout="prev, pager, next"
-        @current-page="selectRoles"
+        @current-change="selectRoles"
         :total="role_total">
       </el-pagination>
     </el-drawer>
     <el-drawer
-      title="资源管理"
+      title="权限管理"
       :visible.sync="auth"
       :with-header="false"
       :direction="direction"
       size="50%"
       :before-close="handleClose">
-      <el-button style="margin-bottom: 10px" @click="showAddAuth()" size="small">添加资源</el-button>
+      <el-button style="margin-bottom: 10px" @click="showAddAuth()" size="small">添加权限</el-button>
       <el-table
         :data="auths"
         border
@@ -296,7 +296,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="资源名称">
+          label="权限名称">
           <template slot-scope="scope">
             <span style="margin-left: 10px">{{ scope.row.name }}</span>
           </template>
@@ -322,7 +322,7 @@
         align="center"
         background
         layout="prev, pager, next"
-        @current-page="selectAuthPage"
+        @current-change="selectClientAuths"
         :total="auth_total">
       </el-pagination>
     </el-drawer>
@@ -642,14 +642,14 @@ export default {
         _this.role_total = data.data.data.total;
       });
     },
-    selectAuthPage(page) {
+    selectClientAuths(page) {
       var _this = this;
       _this.current_auth_page = page;
       _this.refreshAuths();
     },
     refreshAuths() {
       var _this = this;
-      this.$axios.get("/xauth/resources?client_id=" + _this.current_client_id + "&page=" + _this.current_auth_page).then(function (data) {
+      _this.$axios.get("/xauth/resources?client_id=" + _this.current_client_id + "&page=" + _this.current_auth_page).then(function (data) {
         _this.auths = data.data.data.list;
         _this.auth_total = data.data.data.total;
 

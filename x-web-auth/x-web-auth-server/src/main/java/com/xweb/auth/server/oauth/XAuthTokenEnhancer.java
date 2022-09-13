@@ -92,6 +92,7 @@ public class XAuthTokenEnhancer extends JwtAccessTokenConverter {
         info.put("resources", loginUser.getAuthorities());
         info.put("account", loginUser.getAccount());
         info.put("user_id", dbUser.getId());
+        info.put("application_id", loginUser.getClientId());
     }
 
     public Map<String, Object> decode(String token) {

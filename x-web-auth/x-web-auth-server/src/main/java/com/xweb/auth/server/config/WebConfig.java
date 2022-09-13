@@ -13,6 +13,8 @@ import com.xweb.common.auth.interceptor.XWebAuthInterceptor;
 import com.xweb.common.converter.NumberEnumConverterFactory;
 import com.xweb.common.resolver.FormParamHandlerMethodArgumentResolver;
 import com.xweb.common.standard.IEnum;
+import com.xweb.logger.interceptor.XWebLoggerInterceptor;
+import com.xweb.logger.service.ISystemLoggerService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,8 +57,17 @@ public class WebConfig implements WebMvcConfigurer {
         return new XWebAuthInterceptor(webTokenEnhancer);
     }
 
+    @Bean
+    public XWebLoggerInterceptor loggerInterceptor(ISystemLoggerService systemLoggerService,
+                                                   XWebTokenEnhancer webTokenEnhancer) {
+        return new XWebLoggerInterceptor(systemLoggerService, webTokenEnhancer);
+    }
+
     @Autowired
     private XWebAuthInterceptor authInterceptor;
+
+    @Autowired
+    private XWebLoggerInterceptor loggerInterceptor;
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
@@ -68,6 +79,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor);
+        registry.addInterceptor(loggerInterceptor);
     }
 
     @Override

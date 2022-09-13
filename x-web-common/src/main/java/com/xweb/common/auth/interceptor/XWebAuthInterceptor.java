@@ -3,6 +3,7 @@ package com.xweb.common.auth.interceptor;
 import com.xweb.common.auth.Auth;
 import com.xweb.common.auth.XWebTokenEnhancer;
 import com.xweb.common.exception.BusinessException;
+import com.xweb.common.utils.XWebAuthHelper;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,6 +20,14 @@ import java.util.Optional;
  * 创建时间: 2022/8/28 12:52
  ******************************/
 public class XWebAuthInterceptor implements HandlerInterceptor {
+
+    private static final String ACCESS_TOKEN_KEY = "x-access-token";
+
+    private static final String ROLE_KEY = "roles";
+
+    private static final String RESOURCE_KEY = "resources";
+
+    private static final String USER_KEY = "user";
 
     private XWebTokenEnhancer tokenEnhancer;
 
@@ -37,7 +46,9 @@ public class XWebAuthInterceptor implements HandlerInterceptor {
         if (Optional.ofNullable(auth).isPresent()) {
             Map<String, Object> loginInfo;
             try {
-                loginInfo = tokenEnhancer.decode(request.getHeader("x-access-token"));
+                loginInfo = tokenEnhancer.decode(request.getHeader(ACCESS_TOKEN_KEY));
+                XWebAuthHelper.setLoginInfo(loginInfo);
+
             } catch (Exception e) {
                 throw new BusinessException(BusinessException.SYSTEM_EXCEPTION, "token error");
             }
@@ -50,7 +61,7 @@ public class XWebAuthInterceptor implements HandlerInterceptor {
     private void checkRole(Auth annotation, Map<String, Object> loginInfo) throws BusinessException {
         String[] roles = annotation.roles();
         if (null != roles && roles.length != 0) {
-            Object userRoles = loginInfo.get("roles");
+            Object userRoles = loginInfo.get(ROLE_KEY);
             if (null == userRoles) {
                 throw new BusinessException(BusinessException.AUTH_EXCEPTION, "your role not access");
             }
@@ -66,7 +77,7 @@ public class XWebAuthInterceptor implements HandlerInterceptor {
     private void checkResource(Auth annotation, Map<String, Object> loginInfo) throws BusinessException {
         String[] resources = annotation.resources();
         if (null != resources && resources.length != 0) {
-            Object userResources = loginInfo.get("resources");
+            Object userResources = loginInfo.get(RESOURCE_KEY);
             if (null == userResources) {
                 throw new BusinessException(BusinessException.AUTH_EXCEPTION, "your auth not access");
             }
