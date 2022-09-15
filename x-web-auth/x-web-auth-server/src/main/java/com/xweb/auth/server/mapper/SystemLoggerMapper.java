@@ -1,6 +1,6 @@
-package com.xweb.logger.mapper;
+package com.xweb.auth.server.mapper;
 
-import com.xweb.logger.entity.SystemLogger;
+import com.xweb.auth.server.entity.SystemLogger;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * </p>
  *
  * @author zhx
- * @since 2022-09-13
+ * @since 2022-09-14
  */
 public interface SystemLoggerMapper extends BaseMapper<SystemLogger> {
 

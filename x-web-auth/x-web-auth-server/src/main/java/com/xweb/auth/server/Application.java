@@ -5,9 +5,9 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication(scanBasePackages = {"com.xweb.auth.server", "com.xweb.logger"})
+@SpringBootApplication(scanBasePackages = {"com.xweb.auth.server"})
 @EnableGlobalExceptionHandler(value = true)
-@MapperScan(basePackages = {"com.xweb.auth.server.mapper", "com.xweb.logger.mapper"})
+@MapperScan(basePackages = {"com.xweb.auth.server.mapper"})
 //@EnableRedisHttpSession
 public class Application {
 

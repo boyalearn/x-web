@@ -1,11 +1,29 @@
 <template>
   <el-main>
     <div class="tableContent">
-      <el-page-header style="line-height: 56px; height: 56px; margin-bottom: 0px" @back="goBack" content="操作日志">
+      <el-page-header style="line-height: 56px; height: 56px; margin-bottom: 0px" @back="goBack" content="系统日志">
       </el-page-header>
-      <el-button style="margin-bottom: 10px" size="small" type="success" @click="showTenantAddDialog()">添加</el-button>
+      <el-form :inline="true" ref="form" label-width="90px" size="small">
+        <el-form-item label="时间范围：">
+          <el-date-picker
+            style="margin-bottom: 10px" size="small"
+            value-format="yyyy-MM-dd"
+            v-model="timeValue"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="关键字：">
+          <el-input v-model="searchText"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="success" @click="doSearch">搜索</el-button>
+        </el-form-item>
+      </el-form>
       <el-table
-        :data="tenants"
+        :data="systemLogs"
         border
         size="mini"
         :header-cell-style="{'text-align':'center'}"
@@ -21,15 +39,39 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="租户名称">
+          label="用户名称">
           <template slot-scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.name }}</span>
+            <span style="margin-left: 10px">{{ scope.row.user_name }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="描述">
+          label="应用名称">
           <template slot-scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.description }}</span>
+            <span style="margin-left: 10px">{{ scope.row.client_name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="系统模块">
+          <template slot-scope="scope">
+            <span style="margin-left: 10px">{{ scope.row.model }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="操作类型">
+          <template slot-scope="scope">
+            <span style="margin-left: 10px">{{ scope.row.option }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="操作内容">
+          <template slot-scope="scope">
+            <el-popover
+              placement="top-start"
+              width="200"
+              trigger="hover"
+              :content="scope.row.description">
+              <span slot="reference">{{ scope.row.description| limitContext(12) }}</span>
+            </el-popover>
           </template>
         </el-table-column>
         <el-table-column
@@ -39,58 +81,15 @@
             <span style="margin-left: 10px">{{ scope.row.create_time }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              icon="el-icon-edit" type="primary" circle
-              @click="handleEdit(scope.$index, scope.row)">
-            </el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              icon="el-icon-delete" circle
-              @click="handleDelete(scope.$index, scope.row)">
-            </el-button>
-          </template>
-        </el-table-column>
       </el-table>
       <el-pagination
         align="center"
         background
         layout="prev, pager, next"
-        @current-change="selectTenants"
-        :total="tenant_total">
+        @current-change="selectSystemLogs"
+        :total="system_logs_total">
       </el-pagination>
     </div>
-    <el-dialog title="添加租户" :visible.sync="tenantAddDialog">
-      <el-form :model="tenantForm">
-        <el-form-item label="租户名称" :label-width="formLabelWidth">
-          <el-input v-model="tenantForm.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="租户描述" :label-width="formLabelWidth">
-          <el-input v-model="tenantForm.description" autocomplete="off"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="clientAddDialog = false">取 消</el-button>
-        <el-button type="primary" @click="addTenant()">确 定</el-button>
-      </div>
-    </el-dialog>
-    <el-dialog title="编辑租户" :visible.sync="tenantEditDialog">
-      <el-form :model="tenantForm">
-        <el-form-item label="租户名称" :label-width="formLabelWidth">
-          <el-input v-model="tenantForm.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="租户描述" :label-width="formLabelWidth">
-          <el-input v-model="tenantForm.description" autocomplete="off"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="clientAddDialog = false">取 消</el-button>
-        <el-button type="primary" @click="updateTenant()">确 定</el-button>
-      </div>
-    </el-dialog>
   </el-main>
 </template>
 <style>
@@ -102,90 +101,45 @@ export default {
   name: 'Option',
   data() {
     return {
-      tenantEditDialog: false,
-      tenantAddDialog: false,
-      tenantForm: {
-        name: '',
-        description: ''
-      },
-      tenants: [],
-      tenant_total: 0,
+      timeValue: "",
+      searchText: "",
+      systemLogs: [],
+      system_logs_total: 0,
+      system_logs_current_page: 1,
       formLabelWidth: '120px'
     }
   },
   methods: {
     init() {
       var _this = this;
-      this.$axios.get("/xauth/tenants").then(function (data) {
-        _this.tenants = data.data.data.list;
-        _this.tenant_total = data.data.data.total;
-      })
+      _this.doSearch();
     },
-    selectTenants(page) {
+    selectSystemLogs(page) {
       var _this = this;
-      this.$axios.get("/xauth/tenants?page=" + page).then(function (data) {
-        _this.tenants = data.data.data.list;
-        _this.tenant_total = data.data.data.total;
-      })
+      _this.system_logs_current_page = page;
+      _this.doSearch();
     },
-    showTenantAddDialog() {
-      this.tenantForm = {}
-      this.tenantAddDialog = true;
-    },
-    handleEdit(index, row) {
-      this.tenantForm = row;
-      this.tenantEditDialog = true
-    },
-    handleDelete(index, row) {
+    doSearch() {
       var _this = this;
-      this.$confirm('此操作将永久删除, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$axios.delete("/xauth/tenants/" + row.id).then(function (data) {
-          _this.$message({
-            message: data.data.message,
-            type: 'success'
-          });
-          _this.init();
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        });
-      });
-
+      var url = "/xauth/system-logs?page=" + _this.system_logs_current_page;
+      if ('' != _this.timeValue) {
+        var startTime = _this.timeValue[0] + " 00:00:00";
+        var endTime = _this.timeValue[1] + " 23:59:59";
+        url += "&start_time=" + startTime + "&ended_time=" + endTime;
+      }
+      if ('' != _this.searchText) {
+        url += "&search=" + _this.searchText;
+      }
+      this.$axios.get(url).then(function (data) {
+        _this.systemLogs = data.data.data.list;
+        _this.system_logs_total = data.data.data.total;
+      })
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
     goBack() {
-
     },
-    addTenant() {
-      var _this = this;
-      this.$axios.post("/xauth/tenants", JSON.stringify(this.tenantForm)).then(function (data) {
-        _this.tenantAddDialog = false;
-        _this.$message({
-          message: data.data.message,
-          type: 'success'
-        });
-        _this.init();
-      })
-    },
-    updateTenant() {
-      var _this = this;
-      this.$axios.put("/xauth/tenants/" + this.tenantForm.id, JSON.stringify(this.tenantForm)).then(function (data) {
-        _this.tenantEditDialog = false;
-        _this.$message({
-          message: data.data.message,
-          type: 'success'
-        });
-        _this.init();
-      })
-    }
   },
   mounted() {
     this.init();

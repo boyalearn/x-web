@@ -1,6 +1,7 @@
 package com.xweb.common.resolver;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.xweb.common.exception.BusinessException;
 import org.hibernate.validator.HibernateValidator;
 import org.springframework.core.MethodParameter;
@@ -16,6 +17,9 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 
@@ -72,13 +76,30 @@ public class FormParamHandlerMethodArgumentResolver implements HandlerMethodArgu
             field.setAccessible(true);
             try {
                 WebDataBinder binder = webDataBinderFactory.createBinder(request, value, field.getName());
-                Object data = binder.convertIfNecessary(value, field.getType());
+                Object data = binder.convertIfNecessary(convertParameter(value, field), field.getType());
                 field.set(param, field.getType().cast(data));
             } catch (Exception e) {
                 throw new RuntimeException("解析参数失败");
             }
             field.setAccessible(false);
         }
+    }
+
+    private Object convertParameter(String value, Field field) throws ParseException {
+        Class<?> type = field.getType();
+
+        if (Date.class.isAssignableFrom(type)) {
+            JsonFormat annotation = type.getAnnotation(JsonFormat.class);
+            String pattern = "yyyy-MM-dd HH:mm:ss";
+            if (Optional.ofNullable(annotation).isPresent()) {
+                pattern = annotation.pattern();
+            }
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+            return simpleDateFormat.parse(value);
+        }
+
+        return value;
+
     }
 
     public String camelToUnderline(String str) {

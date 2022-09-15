@@ -1,28 +1,27 @@
 package com.xweb.logger.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * <p>
- *
+ * 
  * </p>
  *
  * @author zhx
- * @since 2022-09-13
+ * @since 2022-09-14
  */
 @Getter
 @Setter
-@TableName("system_logger")
-public class SystemLogger implements Serializable {
+public class LoggerBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
@@ -32,7 +31,6 @@ public class SystemLogger implements Serializable {
 
     private String model;
 
-    @TableField(value = "`option`")
     private String option;
 
     private String description;

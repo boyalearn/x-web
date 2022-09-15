@@ -4,8 +4,8 @@ import com.xweb.common.auth.XWebTokenEnhancer;
 import com.xweb.common.exception.BusinessException;
 import com.xweb.common.utils.XWebAuthHelper;
 import com.xweb.logger.annotation.XWebLogger;
-import com.xweb.logger.entity.SystemLogger;
-import com.xweb.logger.service.ISystemLoggerService;
+import com.xweb.logger.entity.LoggerBean;
+import com.xweb.logger.service.ILoggerService;
 import com.xweb.logger.utils.XWebLoggerHelper;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -24,12 +24,12 @@ public class XWebLoggerInterceptor implements HandlerInterceptor {
 
     private static final String ACCESS_TOKEN_KEY = "x-access-token";
 
-    private ISystemLoggerService systemLoggerService;
+    private ILoggerService loggerService;
 
     private XWebTokenEnhancer tokenEnhancer;
 
-    public XWebLoggerInterceptor(ISystemLoggerService systemLoggerService, XWebTokenEnhancer tokenEnhancer) {
-        this.systemLoggerService = systemLoggerService;
+    public XWebLoggerInterceptor(ILoggerService loggerService, XWebTokenEnhancer tokenEnhancer) {
+        this.loggerService = loggerService;
         this.tokenEnhancer = tokenEnhancer;
 
     }
@@ -80,13 +80,13 @@ public class XWebLoggerInterceptor implements HandlerInterceptor {
         Method method = handlerMethod.getMethod();
         XWebLogger loggerAnnotation = method.getAnnotation(XWebLogger.class);
         if (Optional.ofNullable(loggerAnnotation).isPresent()) {
-            SystemLogger systemLogger = new SystemLogger();
+            LoggerBean systemLogger = new LoggerBean();
             systemLogger.setUserId(XWebLoggerHelper.getUserId() == null ? null : Integer.valueOf(XWebLoggerHelper.getUserId()));
             systemLogger.setClientId(XWebLoggerHelper.getClientId() == null ? null : Integer.valueOf(XWebLoggerHelper.getClientId()));
             systemLogger.setModel(XWebLoggerHelper.getModel());
             systemLogger.setDescription(XWebLoggerHelper.getDescription());
             systemLogger.setOption(XWebLoggerHelper.getOption());
-            systemLoggerService.save(systemLogger);
+            loggerService.saveLogger(systemLogger);
         }
     }
 }

@@ -143,7 +143,11 @@ public class AuthConfig {
         protected void configure(HttpSecurity http) throws Exception {
             http.authorizeRequests()
                     .antMatchers("/tenants/**","/clients/**","/users/**","/resources/**","/roles/**",
-                            "/token","/login", "/v2/**").permitAll() // 允许匿名访问的地址
+                            "/token","/login","/system-logs/**",
+                            "/swagger-ui.html",
+                            "/webjars/**",
+                            "/swagger-resources/**",
+                            "/v2/**").permitAll() // 允许匿名访问的地址
                     .and()
                     .authorizeRequests().anyRequest().authenticated() // 其它地址都需进行认证
                     .and()
@@ -163,18 +167,11 @@ public class AuthConfig {
         @Override
         public void configure(WebSecurity web) throws Exception {
             web.ignoring().antMatchers(
-                    "/css/**",
                     "/xauth/**",
-                    "/fonts/**",
-                    "/images/**",
-                    "/lib/layui/**",
-                    "/js/**",
-                    "/favicon.ico",
-                    "/doc.html",
                     "/swagger-ui.html",
-                    "/webjars/",
-                    "/swagger-resources/",
-                    "/v2/api-docs/**");
+                    "/webjars/**",
+                    "/swagger-resources/**",
+                    "/v2/**");
         }
     }
 }

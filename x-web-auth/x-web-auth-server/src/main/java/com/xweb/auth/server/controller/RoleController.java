@@ -22,6 +22,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+
 /**
  * 角色管理
  *
@@ -133,7 +135,7 @@ public class RoleController {
     @XWebLogger(model = "角色管理", option = Option.UPDATE)
     public RespResult<String> addResourceToRole(@PathVariable("id") String id, @RequestBody String[] resourceIds) {
         roleService.addResourceToRole(id, resourceIds);
-        XWebLoggerHelper.setDescription("修改了角色ID:" + id + "的权限资源为：" + resourceIds);
+        XWebLoggerHelper.setDescription("修改了角色ID:" + id + "的权限资源为：" + Arrays.toString(resourceIds));
         return RespResult.builder().data("").message("修改成功").build();
     }
 }

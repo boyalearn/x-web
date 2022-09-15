@@ -200,6 +200,7 @@
         <el-transfer
           filterable
           :filter-method="filterMethod"
+          :titles="transferTitles"
           clearable
           filter-placeholder="请输入权限"
           v-model="selectAuths"
@@ -403,7 +404,8 @@ export default {
       formLabelWidth: '120px',
       current_client_id: '',
       current_role_id: '',
-      current_auth_id: ''
+      current_auth_id: '',
+      transferTitles: ["可选权限", "已选权限"]
     }
   },
   methods: {

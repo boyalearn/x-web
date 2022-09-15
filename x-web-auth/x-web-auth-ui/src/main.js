@@ -29,15 +29,20 @@ axios.interceptors.request.use(config => {
   // return config是固定用法 必须有返回值
   return config
 });
-axios.interceptors.response.use((config)=>{
-  if("token error" == config.data.message){
+axios.interceptors.response.use((config) => {
+  if ("token error" == config.data.message) {
     router.push({
       path: "/login"
     });
+  } else if ("0000" != config.data.code) {
+    ElementUI.Notification.error({
+      title: '错误',
+      message: config.data.message,
+    });
+    return Promise.reject()
   }
-  console.log(config.data);
   return config
-},(error)=>{
+}, (error) => {
   return Promise.reject(error)
 })
 Vue.prototype.$axios = axios

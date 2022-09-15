@@ -22,6 +22,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+
 /**
  * 应用管理类
  *
@@ -143,7 +145,7 @@ public class ClientController {
     public RespResult<String> updateClient(@PathVariable("client_id") String clientId,
                                            @PathVariable("user_id") String userId, @RequestBody String[] roleIds) {
         clientService.updateClientUserRole(clientId, userId, roleIds);
-        XWebLoggerHelper.setDescription("修改了应用ID:" + clientId + "用户ID:" + userId + "的角色ID为：" + roleIds);
+        XWebLoggerHelper.setDescription("修改了应用ID:" + clientId + "用户ID:" + userId + "的角色ID为：" + Arrays.toString(roleIds));
 
         return RespResult.builder().data("").message("修改成功").build();
     }
