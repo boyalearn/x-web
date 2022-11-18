@@ -18,6 +18,7 @@
         <module>x-web-common</module>
         <module>x-web-auth</module>
         <module>x-web-extends</module>
+        <module>x-web-api</module>
     </modules>
 
     <properties>
