@@ -12,6 +12,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>x-web-extends-logger</module>
+        <module>x-web-extends-mybatis</module>
     </modules>
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
