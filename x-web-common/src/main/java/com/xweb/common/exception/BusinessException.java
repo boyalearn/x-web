@@ -24,6 +24,11 @@ public class BusinessException extends Exception {
     private String code;
 
 
+    /**
+     *
+     * @param code code字母加4位数值的形式0000正常返回PE.0001参数异常SE.0001系统异常（不知道属于哪一类的都属于这类异常）BE.0001业务异常TE.0001超时异常
+     * @param message
+     */
     public BusinessException(String code, String message) {
         this.message = message;
         this.code = code;

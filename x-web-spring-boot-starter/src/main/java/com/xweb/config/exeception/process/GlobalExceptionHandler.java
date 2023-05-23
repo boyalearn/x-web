@@ -1,4 +1,4 @@
-package com.xweb.common.process;
+package com.xweb.config.exeception.process;
 
 import com.xweb.common.exception.BusinessException;
 import com.xweb.common.standard.RespResult;

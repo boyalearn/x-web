@@ -1,5 +1,6 @@
-package com.xweb.common.process;
+package com.xweb.config.exeception.process;
 
+import com.xweb.config.exeception.EnableGlobalExceptionHandler;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.MultiValueMap;

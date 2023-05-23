@@ -19,6 +19,8 @@
         <module>x-web-auth</module>
         <module>x-web-extends</module>
         <module>x-web-api</module>
+        <module>x-web-demo</module>
+        <module>x-web-spring-boot-starter</module>
     </modules>
 
     <properties>
@@ -40,6 +42,11 @@
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
                 <version>6.0.14.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>com.xweb</groupId>
+                <artifactId>x-web-common</artifactId>
+                <version>1.0-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

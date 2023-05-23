@@ -1,14 +1,3 @@
 /.idea/
-/x-web-auth/x-web-auth-server/target/
-/x-web-common/target/
-/x-web-auth/x-web-auth-server/x-web-auth-server.iml
-/x-web-auth/x-web-auth.iml
-/x-web.iml
-/x-web-common/x-web-common.iml
-/x-web-auth/x-web-auth-doc/x-web-auth-doc.iml
-/x-web-auth/x-web-auth-ui/x-web-auth-ui.iml
-/x-web-auth/x-web-auth-ui/target/
-/x-web-auth/x-web-auth-doc/target/
-/x-web-extends/x-web-extends.iml
-/x-web-extends/x-web-extends-logger/x-web-extends-logger.iml
-/x-web-api/x-web-api.iml
+*.iml
+/**/target/

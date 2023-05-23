@@ -1,6 +1,6 @@
 package com.xweb.auth.server;
 
-import com.xweb.common.process.EnableGlobalExceptionHandler;
+import com.xweb.spring.config.exeception.process.EnableGlobalExceptionHandler;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

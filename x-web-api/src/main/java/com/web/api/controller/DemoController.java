@@ -1,6 +1,9 @@
 package com.web.api.controller;
 
 import com.web.api.client.DemoClient;
+import com.web.api.entity.RequestParameter;
+import com.xweb.common.resolver.FormBody;
+import com.xweb.common.standard.RespResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,9 +32,9 @@ public class DemoController {
     }
 
     @GetMapping("/home1")
-    public Map<String, Object> home(HttpServletRequest request,@RequestHeader Map<String, Object> header, @RequestBody Map<String, Object> body) {
+    public Map<String, Object> home(HttpServletRequest request, @RequestHeader Map<String, Object> header, @RequestBody Map<String, Object> body) {
         Enumeration<String> headerNames = request.getParameterNames();
-        while (headerNames.hasMoreElements()){
+        while (headerNames.hasMoreElements()) {
             System.out.println(headerNames.nextElement());
         }
         return new HashMap<>();
@@ -42,5 +45,11 @@ public class DemoController {
         System.out.println(header);
         System.out.println(body);
         return new HashMap<>();
+    }
+
+    @GetMapping("/parameter")
+    public RespResult<String> parameter(@FormBody RequestParameter parameter) {
+        System.out.println(parameter.toString());
+        return RespResult.builder().data("222").build();
     }
 }

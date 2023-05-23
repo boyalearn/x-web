@@ -1,4 +1,4 @@
-package com.xweb.common.process;
+package com.xweb.config.exeception.process;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;

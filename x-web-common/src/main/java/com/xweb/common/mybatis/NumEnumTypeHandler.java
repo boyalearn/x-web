@@ -11,13 +11,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class NumEnumTypeHandler<E extends IEnum<E>> extends BaseTypeHandler<E> {
-
-    private Class<E> type;
-
+    
     private E[] enums;
 
     public NumEnumTypeHandler(Class<E> type) {
-        this.type = type;
         if (type != null) {
             enums = (E[]) type.getEnumConstants();
         }

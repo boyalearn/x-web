@@ -1,5 +1,6 @@
-package com.xweb.common.process;
+package com.xweb.config.exeception;
 
+import com.xweb.config.exeception.process.EnableGlobalExceptionHandlerImportSelector;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;

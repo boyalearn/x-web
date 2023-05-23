@@ -21,10 +21,7 @@ public class NumberEnumConverterFactory implements ConverterFactory<String, IEnu
 
         @Override
         public T convert(String source) {
-            if (StringUtils.isEmpty(source)) {
-                return null;
-            }
-            if (!targetType.isEnum()) {
+            if (StringUtils.isEmpty(source) || !targetType.isEnum()) {
                 return null;
             }
             T[] enumConstants = targetType.getEnumConstants();

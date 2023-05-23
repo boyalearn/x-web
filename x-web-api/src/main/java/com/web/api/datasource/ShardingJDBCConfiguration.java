@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
 
-@Configuration
+//@Configuration
 public class ShardingJDBCConfiguration {
     private static final String SHARDING_DATA_SOURCE_NAME = "sharding";
 
@@ -41,6 +41,7 @@ public class ShardingJDBCConfiguration {
     AbstractDataSourceAdapter shardingDataSource;
 
     @Bean
+    @Lazy
     public DynamicDataSourceProvider dynamicDataSourceProvider() throws IOException, SQLException {
         Map<String, DataSourceProperty> datasourceMap = properties.getDatasource();
         String config = this.getClass().getResource("/").getPath() + "sharding-jdbc.yml";
