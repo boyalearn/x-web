@@ -3,7 +3,7 @@ package com.xweb.auth.server.service;
 import com.xweb.auth.server.bean.SystemLogPageRequest;
 import com.xweb.auth.server.entity.SystemLogger;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.xweb.common.standard.PageEntity;
+import com.xweb.common.web.standard.PageEntity;
 import com.xweb.logger.entity.LoggerBean;
 import com.xweb.logger.service.ILoggerService;
 

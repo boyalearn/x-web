@@ -4,8 +4,8 @@ import com.xweb.auth.server.entity.Client;
 import com.xweb.auth.server.entity.LoginUser;
 import com.xweb.auth.server.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.xweb.common.standard.PageEntity;
-import com.xweb.common.standard.PageRequest;
+import com.xweb.common.web.standard.PageEntity;
+import com.xweb.common.web.standard.PageRequest;
 
 /**
  * <p>

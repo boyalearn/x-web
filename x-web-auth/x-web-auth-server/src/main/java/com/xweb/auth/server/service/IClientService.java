@@ -4,7 +4,7 @@ import com.xweb.auth.server.entity.Client;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xweb.auth.server.request.ClientRequest;
 import com.xweb.common.exception.BusinessException;
-import com.xweb.common.standard.PageEntity;
+import com.xweb.common.web.standard.PageEntity;
 
 /**
  * <p>

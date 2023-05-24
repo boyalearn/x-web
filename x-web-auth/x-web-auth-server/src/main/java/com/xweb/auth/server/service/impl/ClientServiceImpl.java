@@ -9,7 +9,7 @@ import com.xweb.auth.server.request.ClientRequest;
 import com.xweb.auth.server.service.IClientService;
 import com.xweb.auth.server.service.IClientUserRoleService;
 import com.xweb.common.exception.BusinessException;
-import com.xweb.common.standard.PageEntity;
+import com.xweb.common.web.standard.PageEntity;
 import com.xweb.common.utils.PageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
 package com.xweb.auth.server.request;
 
-import com.xweb.common.standard.PageRequest;
+import com.xweb.common.web.standard.PageRequest;
 import lombok.Getter;
 import lombok.Setter;
 

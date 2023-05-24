@@ -1,7 +1,7 @@
 package com.xweb.config.exeception.process;
 
 import com.xweb.common.exception.BusinessException;
-import com.xweb.common.standard.RespResult;
+import com.xweb.common.web.response.RespResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = BusinessException.class)
     public RespResult businessExceptionHandler(BusinessException e) {
         log.error("BusinessException", e);
-        return RespResult.builder().code(e.getCode()).message(e.getMessage()).build();
+        return RespResult.builder().code(e.getCode()).message(e.getMessage()).data("").build();
     }
 
     @ResponseBody
@@ -32,7 +32,8 @@ public class GlobalExceptionHandler {
     public RespResult MethodArgumentNotValidHandler(MethodArgumentNotValidException e) {
         log.error("MethodArgumentNotValidException", e);
         FieldError error = e.getBindingResult().getFieldErrors().get(0);
-        return RespResult.builder().code(BusinessException.PARAMETER_EXCEPTION).message(error.getDefaultMessage()).build();
+        return RespResult.builder()
+                .code(BusinessException.PARAMETER_EXCEPTION).message(error.getDefaultMessage()).data("").build();
     }
 
     @ResponseBody
@@ -40,21 +41,24 @@ public class GlobalExceptionHandler {
     public RespResult bindExceptionHandler(BindException e) {
         log.error("BindException", e);
         FieldError error = e.getBindingResult().getFieldErrors().get(0);
-        return RespResult.builder().code(BusinessException.PARAMETER_EXCEPTION).message(error.getDefaultMessage()).build();
+        return RespResult.builder()
+                .code(BusinessException.PARAMETER_EXCEPTION).message(error.getDefaultMessage()).data("").build();
     }
 
     @ResponseBody
     @ExceptionHandler(value = UnexpectedTypeException.class)
     public RespResult unexpectedTypeExceptionHandler(UnexpectedTypeException e) {
         log.error("UnexpectedTypeException", e);
-        return RespResult.builder().code(BusinessException.PARAMETER_EXCEPTION).message(e.getMessage()).build();
+        return RespResult.builder()
+                .code(BusinessException.PARAMETER_EXCEPTION).message(e.getMessage()).data("").build();
     }
 
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
     public RespResult exceptionHandler(Exception e) {
         log.error("Exception", e);
-        return RespResult.builder().code(BusinessException.SYSTEM_EXCEPTION).message(e.getMessage()).build();
+        return RespResult.builder()
+                .code(BusinessException.SYSTEM_EXCEPTION).message(e.getMessage()).data("").build();
     }
 
 }

@@ -12,7 +12,7 @@ import com.xweb.auth.server.service.IClientService;
 import com.xweb.auth.server.service.ISystemLoggerService;
 import com.xweb.auth.server.service.IUserService;
 import com.xweb.common.exception.BusinessException;
-import com.xweb.common.standard.PageEntity;
+import com.xweb.common.web.standard.PageEntity;
 import com.xweb.common.utils.PageUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -13,11 +13,10 @@ import com.xweb.auth.server.service.IClientService;
 import com.xweb.auth.server.service.IClientUserRoleService;
 import com.xweb.auth.server.service.IRoleService;
 import com.xweb.auth.server.service.ITenantService;
-import com.xweb.common.standard.PageEntity;
-import com.xweb.common.standard.PageRequest;
+import com.xweb.common.web.standard.PageEntity;
+import com.xweb.common.web.standard.PageRequest;
 import com.xweb.common.utils.PageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

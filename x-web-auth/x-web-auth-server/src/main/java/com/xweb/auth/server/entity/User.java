@@ -6,8 +6,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.xweb.common.valid.Insert;
-import com.xweb.common.valid.Update;
+import com.xweb.common.web.parameter.valid.Insert;
+import com.xweb.common.web.parameter.valid.Update;
 import lombok.Getter;
 import lombok.Setter;
 

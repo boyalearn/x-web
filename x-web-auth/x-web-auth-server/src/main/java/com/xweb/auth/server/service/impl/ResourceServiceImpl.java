@@ -6,7 +6,7 @@ import com.xweb.auth.server.entity.Resource;
 import com.xweb.auth.server.mapper.ResourceMapper;
 import com.xweb.auth.server.request.ResourceRequest;
 import com.xweb.auth.server.service.IResourceService;
-import com.xweb.common.standard.PageEntity;
+import com.xweb.common.web.standard.PageEntity;
 import com.xweb.common.utils.PageUtil;
 import org.springframework.stereotype.Service;
 

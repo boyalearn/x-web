@@ -3,8 +3,8 @@ package com.xweb.auth.server.controller;
 
 import com.xweb.auth.server.bean.SystemLogPageRequest;
 import com.xweb.auth.server.service.ISystemLoggerService;
-import com.xweb.common.resolver.FormBody;
-import com.xweb.common.standard.RespPageResult;
+import com.xweb.common.web.parameter.resolver.FormBody;
+import com.xweb.common.web.response.RespPageResult;
 import com.xweb.logger.entity.LoggerBean;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

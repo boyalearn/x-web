@@ -1,6 +1,6 @@
 package com.xweb.auth.server.bean;
 
-import com.xweb.common.standard.PageRequest;
+import com.xweb.common.web.standard.PageRequest;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;

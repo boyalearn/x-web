@@ -1,6 +1,6 @@
 package com.xweb.auth.server.util;
 
-import com.xweb.common.standard.PageEntity;
+import com.xweb.common.web.standard.PageEntity;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;

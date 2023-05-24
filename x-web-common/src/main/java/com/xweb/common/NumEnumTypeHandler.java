@@ -1,7 +1,7 @@
 package com.xweb.common;
 
 
-import com.xweb.common.standard.IEnum;
+import com.xweb.common.web.standard.IEnum;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 

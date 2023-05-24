@@ -1,13 +1,13 @@
 package com.xweb.auth.server;
 
-import com.xweb.spring.config.exeception.process.EnableGlobalExceptionHandler;
+import com.xweb.config.exeception.EnableGlobalExceptionHandler;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication(scanBasePackages = {"com.xweb.auth.server"})
-@EnableGlobalExceptionHandler(value = true)
 @MapperScan(basePackages = {"com.xweb.auth.server.mapper"})
+@EnableGlobalExceptionHandler
 //@EnableRedisHttpSession
 public class Application {
 

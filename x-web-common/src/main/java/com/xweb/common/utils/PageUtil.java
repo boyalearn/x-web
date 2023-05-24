@@ -2,8 +2,8 @@ package com.xweb.common.utils;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.xweb.common.standard.PageEntity;
-import com.xweb.common.standard.PageRequest;
+import com.xweb.common.web.standard.PageEntity;
+import com.xweb.common.web.standard.PageRequest;
 
 import java.util.List;
 import java.util.Optional;

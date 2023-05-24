@@ -6,24 +6,51 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.xweb.common.NumEnumDeserializer;
-import com.xweb.common.NumEnumSerializer;
-import com.xweb.common.converter.NumberEnumConverterFactory;
-import com.xweb.common.resolver.FormParamHandlerMethodArgumentResolver;
-import com.xweb.common.standard.IEnum;
+import com.xweb.common.jackson.NumEnumDeserializer;
+import com.xweb.common.jackson.NumEnumSerializer;
+import com.xweb.common.jackson.XWebJacksonAnnotationInterceptor;
+import com.xweb.common.web.parameter.converter.NumberEnumConverterFactory;
+import com.xweb.common.web.parameter.resolver.FormParamHandlerMethodArgumentResolver;
+import com.xweb.common.web.response.converter.ResponseBodyPreReturnHandler;
+import com.xweb.common.web.standard.IEnum;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
+import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
 public class RestFullStandardConfiguration implements WebMvcConfigurer {
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    static {
+        objectMapper.setSerializationInclusion(JsonInclude.Include.ALWAYS);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false);
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+
+        SimpleModule simpleModule = new SimpleModule();
+        simpleModule.addSerializer(IEnum.class, new NumEnumSerializer());
+        simpleModule.addDeserializer(Enum.class, new NumEnumDeserializer(Enum.class));
+        objectMapper.registerModule(simpleModule);
+        objectMapper.setAnnotationIntrospector(new XWebJacksonAnnotationInterceptor());
+    }
+
+
+    @Resource
+    private RequestMappingHandlerAdapter requestMappingHandlerAdapter;
 
     /**
      * Get请求中的枚举转换处理配置
@@ -60,23 +87,19 @@ public class RestFullStandardConfiguration implements WebMvcConfigurer {
                 ((StringHttpMessageConverter) converter).setDefaultCharset(StandardCharsets.UTF_8);
             } else if (converter instanceof MappingJackson2HttpMessageConverter) {
                 MappingJackson2HttpMessageConverter messageConverter = (MappingJackson2HttpMessageConverter) converter;
-                messageConverter.setObjectMapper(objectMapper());
+                messageConverter.setObjectMapper(objectMapper);
             }
         }
     }
 
-    private ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(JsonInclude.Include.ALWAYS);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false);
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
 
-        SimpleModule simpleModule = new SimpleModule();
-        simpleModule.addSerializer(IEnum.class, new NumEnumSerializer());
-        simpleModule.addDeserializer(Enum.class, new NumEnumDeserializer(Enum.class));
-        objectMapper.registerModule(simpleModule);
-        return objectMapper;
+    @Bean
+    public ResponseBodyPreReturnHandler createResponseBodyReturnHandler() {
+        ResponseBodyPreReturnHandler responseBodyReturnHandler = new ResponseBodyPreReturnHandler(objectMapper);
+        ArrayList<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<>();
+        returnValueHandlers.add(responseBodyReturnHandler);
+        returnValueHandlers.addAll(requestMappingHandlerAdapter.getReturnValueHandlers());
+        requestMappingHandlerAdapter.setReturnValueHandlers(returnValueHandlers);
+        return responseBodyReturnHandler;
     }
 }

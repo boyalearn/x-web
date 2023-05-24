@@ -18,7 +18,6 @@
         <module>x-web-common</module>
         <module>x-web-auth</module>
         <module>x-web-extends</module>
-        <module>x-web-api</module>
         <module>x-web-demo</module>
         <module>x-web-spring-boot-starter</module>
     </modules>
