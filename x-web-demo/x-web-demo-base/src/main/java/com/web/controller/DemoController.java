@@ -18,7 +18,7 @@ public class DemoController {
     public RespResult<DataJson> demo() {
         DataJson dataJson = new DataJson();
         dataJson.setAge("23");
-        dataJson.setUserName("my name");
+        dataJson.setUserName("小明");
         return RespResult.builder().data(dataJson).build();
     }
 

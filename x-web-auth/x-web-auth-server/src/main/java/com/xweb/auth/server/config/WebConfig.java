@@ -7,15 +7,17 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.xweb.auth.server.service.ISystemLoggerService;
-import com.xweb.common.jackson.NumEnumDeserializer;
-import com.xweb.common.jackson.NumEnumSerializer;
 import com.xweb.common.auth.XWebTokenEnhancer;
 import com.xweb.common.auth.interceptor.XWebAuthInterceptor;
+import com.xweb.common.jackson.NumEnumDeserializer;
+import com.xweb.common.jackson.NumEnumSerializer;
 import com.xweb.common.web.parameter.converter.NumberEnumConverterFactory;
 import com.xweb.common.web.parameter.resolver.FormParamHandlerMethodArgumentResolver;
 import com.xweb.common.web.standard.IEnum;
 import com.xweb.logger.interceptor.XWebLoggerInterceptor;
+import com.xweb.mybatis.config.MybatisPluginInterceptor;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -63,6 +65,12 @@ public class WebConfig implements WebMvcConfigurer {
         return new XWebLoggerInterceptor(systemLoggerService, webTokenEnhancer);
     }
 
+    @Bean
+    public String initMybatis(SqlSessionFactory sqlSessionFactory) {
+        sqlSessionFactory.getConfiguration().addInterceptor(new MybatisPluginInterceptor());
+        return "--";
+    }
+
     @Autowired
     private XWebAuthInterceptor authInterceptor;
 
@@ -78,8 +86,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(authInterceptor);
-        registry.addInterceptor(loggerInterceptor);
+        //registry.addInterceptor(authInterceptor);
+        //registry.addInterceptor(loggerInterceptor);
     }
 
     @Override

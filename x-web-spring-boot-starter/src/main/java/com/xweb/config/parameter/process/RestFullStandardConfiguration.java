@@ -24,7 +24,6 @@ import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
-import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,9 +47,6 @@ public class RestFullStandardConfiguration implements WebMvcConfigurer {
         objectMapper.setAnnotationIntrospector(new XWebJacksonAnnotationInterceptor());
     }
 
-
-    @Resource
-    private RequestMappingHandlerAdapter requestMappingHandlerAdapter;
 
     /**
      * Get请求中的枚举转换处理配置
@@ -94,7 +90,7 @@ public class RestFullStandardConfiguration implements WebMvcConfigurer {
 
 
     @Bean
-    public ResponseBodyPreReturnHandler createResponseBodyReturnHandler() {
+    public ResponseBodyPreReturnHandler createResponseBodyReturnHandler(RequestMappingHandlerAdapter requestMappingHandlerAdapter) {
         ResponseBodyPreReturnHandler responseBodyReturnHandler = new ResponseBodyPreReturnHandler(objectMapper);
         ArrayList<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<>();
         returnValueHandlers.add(responseBodyReturnHandler);

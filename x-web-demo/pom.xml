@@ -6,6 +6,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>x-web-demo-base</module>
+        <module>x-web-demo-feign-hystrix-sharding-jdbc</module>
+        <module>x-web-demo-nacos</module>
     </modules>
     <parent>
         <artifactId>x-web</artifactId>

@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>x-web-api</artifactId>
+    <artifactId>x-web-demo-feign-hystrix-sharding-jdbc</artifactId>
 
 
     <dependencies>
@@ -28,10 +28,6 @@
                     <artifactId>spring-security-oauth2</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
@@ -87,6 +83,16 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <!-- mvn dependency:copy-dependencies -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <excludeTransitive>false</excludeTransitive>
+                    <stripVersion>false</stripVersion>
+                    <outputDirectory>./lib</outputDirectory>
+                </configuration>
             </plugin>
         </plugins>
     </build>

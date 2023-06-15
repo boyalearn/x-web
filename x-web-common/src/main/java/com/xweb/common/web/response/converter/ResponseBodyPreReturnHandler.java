@@ -18,8 +18,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class ResponseBodyPreReturnHandler implements HandlerMethodReturnValueHandler {
 
-    private static final String CONTENT_TYPE = "Content-Type";
-    private static final String APPLICATION_JSON = "application/json";
+    private static final String APPLICATION_JSON = "application/json;charset=UTF-8";
 
     private ObjectMapper objectMapper;
 
@@ -42,8 +41,10 @@ public class ResponseBodyPreReturnHandler implements HandlerMethodReturnValueHan
                 && Optional.ofNullable(resultBody.field().exclude()).isPresent()) {
             XWebJacksonAnnotationInterceptor.FIELDS.set(resultBody.field().exclude());
         }
+        response.setContentType(APPLICATION_JSON);
+        response.setCharacterEncoding("UTF-8");
         response.getWriter().write(objectMapper.writeValueAsString(data));
-        response.setHeader(CONTENT_TYPE, APPLICATION_JSON);
+
         modelAndViewContainer.setRequestHandled(true);
         XWebJacksonAnnotationInterceptor.FIELDS.remove();
     }
