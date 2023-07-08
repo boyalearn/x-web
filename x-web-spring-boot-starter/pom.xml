@@ -16,6 +16,8 @@
         <dependency>
             <groupId>com.xweb</groupId>
             <artifactId>x-web-common</artifactId>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../x-web-demo/x-web-demo-no-web-feign-hystrix-mybatis/lib/x-web-common-1.0-SNAPSHOT.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.springframework.security.oauth</groupId>

@@ -15,4 +15,8 @@ public class JsonUtil {
     public static String toJSON(Object obj) throws JsonProcessingException {
         return MAPPER.writeValueAsString(obj);
     }
+
+    public static Object toObject(String json, Class<?> clazz) throws JsonProcessingException {
+        return MAPPER.readValue(json, clazz);
+    }
 }
