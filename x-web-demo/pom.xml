@@ -9,6 +9,7 @@
         <module>x-web-demo-feign-hystrix-sharding-jdbc</module>
         <module>x-web-demo-nacos</module>
         <module>x-web-demo-no-web-feign-hystrix-mybatis</module>
+        <module>x-web-demo-test</module>
     </modules>
     <parent>
         <artifactId>x-web</artifactId>
