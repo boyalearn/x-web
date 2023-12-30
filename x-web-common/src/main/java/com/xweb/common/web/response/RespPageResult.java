@@ -4,10 +4,12 @@ import com.xweb.common.web.standard.PageEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @ApiModel(value = "分页数据返回对象")
 public class RespPageResult<T> {
     @ApiModelProperty(value = "消息描述")

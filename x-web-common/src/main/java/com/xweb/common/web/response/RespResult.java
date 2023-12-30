@@ -3,10 +3,12 @@ package com.xweb.common.web.response;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @ApiModel(value = "数据返回对象")
 public class RespResult<T> {
     @ApiModelProperty(value = "消息描述")
