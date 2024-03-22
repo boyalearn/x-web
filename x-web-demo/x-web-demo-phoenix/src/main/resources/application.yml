@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    dynamic:
+      primary: master
+      strict: false
+      datasource:
+        master:
+          url: jdbc:phoenix:hadoop-master:2181:/hbase
+          username:
+          password:
+          driver-class-name: org.apache.phoenix.jdbc.PhoenixDriver
+          type: com.zaxxer.hikari.HikariDataSource
+          hikari:
+            minimum-idle: 100
+            maximum-pool-size: 300
+            # 允许最长空闲时间
+            idle-timeout: 30000
+            # 数据库连接超时时间,默认 30 秒，即 30000
+            connection-timeout: 30000
+            # 连接测试 sql 这个地方需要根据数据库方言差异而配置 例如 oracle 就应该写成  select 1 from dual
+            connection-test-query: SELECT 1
+mybatis-plus:
+  configuration:
+    default-enum-type-handler: com.xweb.common.mybatis.NumEnumTypeHandler
+server:
+  port: 119
+
