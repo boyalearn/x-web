@@ -26,7 +26,10 @@ public class TransferService {
 
     @PostConstruct
     public void transfer() {
-        transferInSameTable("CATALOG", "CATALOG_COPY");
+        long startTime = System.currentTimeMillis();
+        System.out.println(String.format("start time is %d", startTime));
+        transferInSameTable("TEST_TABLE", "TEST_TABLE_COPY");
+        System.out.println(String.format("spend time is %d", System.currentTimeMillis() - startTime));
     }
 
     public boolean existTable(String tableName) {
@@ -47,7 +50,7 @@ public class TransferService {
         List<Map> tableFields = getTableFields(targetTable);
         String rowKeyName = "";
         for (Map tableField : tableFields) {
-            if (null != tableField.get("KEY_SEQ") && "1".equals(tableField.get("KEY_SEQ"))) {
+            if (null != tableField.get("KEY_SEQ") && "1".equals(tableField.get("KEY_SEQ").toString())) {
                 rowKeyName = String.valueOf(tableField.get("COLUMN_NAME"));
             }
         }
@@ -59,10 +62,13 @@ public class TransferService {
         boolean isContinue = true;
         while (isContinue) {
             List<Map> dataList = listTableData(sourceTable, "50");
+            if (dataList.isEmpty()) {
+                isContinue = false;
+            }
             for (Map data : dataList) {
                 String insertTableSql = buildInsertTableSql(targetTable, tableFields, data);
                 commonMapper.update(insertTableSql);
-                commonMapper.delete(String.format("delete from %s where %s=%s", sourceTable, rowKeyName, data.get(rowKeyName)));
+                commonMapper.delete(String.format("delete from %s where %s='%s'", sourceTable, rowKeyName, data.get(rowKeyName)));
             }
 
         }
@@ -89,7 +95,12 @@ public class TransferService {
         sqlBuffer.replace(sqlBuffer.length() - 1, sqlBuffer.length(), ")");
         sqlBuffer.append("values (");
         for (Map field : fields) {
-            sqlBuffer.append(data.get(field.get("COLUMN_NAME")) + ",");
+            String dataType = PhoenixUtil.indexOfDataType(Integer.valueOf(field.get("DATA_TYPE").toString()));
+            if ("VARCHAR".equals(dataType)) {
+                sqlBuffer.append("'" + data.get(field.get("COLUMN_NAME")) + "',");
+            } else {
+                sqlBuffer.append(data.get(field.get("COLUMN_NAME")) + ",");
+            }
         }
         sqlBuffer.replace(sqlBuffer.length() - 1, sqlBuffer.length(), ")");
         return sqlBuffer.toString();

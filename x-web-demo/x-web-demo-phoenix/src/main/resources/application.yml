@@ -23,5 +23,5 @@ mybatis-plus:
   configuration:
     default-enum-type-handler: com.xweb.common.mybatis.NumEnumTypeHandler
 server:
-  port: 119
+  port: 120
 
