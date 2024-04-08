@@ -16,7 +16,7 @@ public class PhoenixUtil {
     }
 
     static {
-        DATA_TYPE_NAME.put(1, "VARCHAR");
+        DATA_TYPE_NAME.put(12, "VARCHAR");
         DATA_TYPE_NAME.put(2, "CHAR");
         DATA_TYPE_NAME.put(3, "BOOLEAN");
         DATA_TYPE_NAME.put(4, "TINYINT");
@@ -27,7 +27,7 @@ public class PhoenixUtil {
         DATA_TYPE_NAME.put(9, "DOUBLE");
         DATA_TYPE_NAME.put(10, "DECIMAL");
         DATA_TYPE_NAME.put(11, "TIMESTAMP");
-        DATA_TYPE_NAME.put(12, "DATE");
+        DATA_TYPE_NAME.put(1, "DATE");
         DATA_TYPE_NAME.put(13, "BINARY");
         DATA_TYPE_NAME.put(14, "VARBINARY");
     }
