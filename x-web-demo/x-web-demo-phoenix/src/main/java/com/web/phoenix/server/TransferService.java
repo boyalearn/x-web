@@ -68,6 +68,7 @@ public class TransferService {
             for (Map data : dataList) {
                 String insertTableSql = buildInsertTableSql(targetTable, tableFields, data);
                 commonMapper.update(insertTableSql);
+                System.out.println(String.format("transfer data id is %s", data.get("ROWKEY")));
                 commonMapper.delete(String.format("delete from %s where %s='%s'", sourceTable, rowKeyName, data.get(rowKeyName)));
             }
 

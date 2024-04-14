@@ -28,6 +28,7 @@ public class DataCreateTest {
 
         for (int i = 0; i < 10000000; i++) {
             String uuid = UUID.randomUUID().toString();
+            System.out.println(String.format("insert uuid is %s", uuid));
             commonMapper.update(String.format(sql, uuid, "fileName_" + uuid + ".txt", uuid));
         }
 

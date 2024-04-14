@@ -5,7 +5,7 @@ spring:
       strict: false
       datasource:
         master:
-          url: jdbc:phoenix:hadoop-master:2181:/hbase
+          url: jdbc:phoenix:zookeeper-master:2181:/hbase
           username:
           password:
           driver-class-name: org.apache.phoenix.jdbc.PhoenixDriver
