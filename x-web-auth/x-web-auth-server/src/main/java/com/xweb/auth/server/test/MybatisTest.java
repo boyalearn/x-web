@@ -6,6 +6,9 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Map;
+
 @Component
 public class MybatisTest implements ApplicationRunner {
 
@@ -15,6 +18,7 @@ public class MybatisTest implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        clientMapper.findAllClient("111", "222");
+        List<Map> allClient = clientMapper.findAllClient("111", "222");
+        System.out.println(allClient);
     }
 }
