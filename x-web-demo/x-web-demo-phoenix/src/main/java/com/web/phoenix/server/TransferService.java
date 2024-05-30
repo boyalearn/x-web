@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author zouhuixing
@@ -26,10 +27,44 @@ public class TransferService {
 
     @PostConstruct
     public void transfer() {
-        long startTime = System.currentTimeMillis();
-        System.out.println(String.format("start time is %d", startTime));
-        transferInSameTable("TEST_TABLE", "TEST_TABLE_COPY");
-        System.out.println(String.format("spend time is %d", System.currentTimeMillis() - startTime));
+        new Thread(() -> {
+            transferInSameTable("TEST_TABLE", "TEST_TABLE_COPY");
+        }).start();
+
+    }
+
+    @PostConstruct
+    public void startCount() {
+        new Thread(() -> {
+            List<Map> list = commonMapper.list("select count(*) from test_table");
+            System.out.println("test_table count is " + list.get(0));
+        }).start();
+
+    }
+    @PostConstruct
+    public void test_ALARM_TROJAN() {
+        new Thread(() -> {
+            String sql = "UPSERT INTO ALARM_TROJAN(ROWKEY,ID,DEVICE_ID,PARENT_ID,RULE_ID,SPORT) VALUES ('%s','%s','%s','%s','%s','%s')";
+
+            for (int i = 0; i < 100000000; i++) {
+                String uuid = UUID.randomUUID().toString();
+                System.out.println(String.format("insert ALARM_TROJAN uuid is %s", uuid));
+                commonMapper.update(String.format(sql, uuid, uuid, uuid, uuid, uuid, uuid));
+            }
+        }).start();
+    }
+
+    @PostConstruct
+    public void test_FILE_LIST() {
+        new Thread(() -> {
+            String sql = "UPSERT INTO FILE_LIST(TEXT,CHECKSUM,DISPOSE_STATE,SIM_HASH,TYPE_NUM,DOC_TYPE) VALUES ('%s','%s','%s','%s','%s','%s')";
+
+            for (int i = 0; i < 100000000; i++) {
+                String uuid = UUID.randomUUID().toString();
+                System.out.println(String.format("insert FILE_LIST uuid is %s", uuid));
+                commonMapper.update(String.format(sql, uuid, uuid, uuid, uuid, uuid, uuid));
+            }
+        }).start();
     }
 
     public boolean existTable(String tableName) {
@@ -68,7 +103,6 @@ public class TransferService {
             for (Map data : dataList) {
                 String insertTableSql = buildInsertTableSql(targetTable, tableFields, data);
                 commonMapper.update(insertTableSql);
-                System.out.println(String.format("transfer data id is %s", data.get("ROWKEY")));
                 commonMapper.delete(String.format("delete from %s where %s='%s'", sourceTable, rowKeyName, data.get(rowKeyName)));
             }
 

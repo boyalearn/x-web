@@ -22,15 +22,29 @@ public class DataCreateTest {
         SpringApplication.run(DataCreateTest.class, args);
     }
 
-    @PostConstruct
+    /*@PostConstruct
     public void test() {
-        String sql = "UPSERT INTO TEST_TABLE(ROWKEY,FILENAME,DEVICE_ID) VALUES ('%s','%s','%s')";
+        new Thread(() -> {
+            String sql = "UPSERT INTO TEST_TABLE(ROWKEY,FILENAME,DEVICE_ID) VALUES ('%s','%s','%s')";
 
-        for (int i = 0; i < 10000000; i++) {
-            String uuid = UUID.randomUUID().toString();
-            System.out.println(String.format("insert uuid is %s", uuid));
-            commonMapper.update(String.format(sql, uuid, "fileName_" + uuid + ".txt", uuid));
-        }
+            for (int i = 0; i < 100000000; i++) {
+                String uuid = UUID.randomUUID().toString();
+                System.out.println(String.format("insert uuid is %s", uuid));
+                commonMapper.update(String.format(sql, uuid, "fileName_" + uuid + ".txt", uuid));
+            }
+        }).start();
+    }*/
 
+    @PostConstruct
+    public void test_ALARM_TROJAN() {
+        new Thread(() -> {
+            String sql = "UPSERT INTO ALARM_TROJAN(ROWKEY,ID,DEVICE_ID,PARENT_ID,RULE_ID,SPORT) VALUES ('%s','%s','%s','%s','%s','%s')";
+
+            for (int i = 0; i < 100000000; i++) {
+                String uuid = UUID.randomUUID().toString();
+                System.out.println(String.format("insert ALARM_TROJAN uuid is %s", uuid));
+                commonMapper.update(String.format(sql, uuid, uuid, uuid, uuid, uuid, uuid));
+            }
+        }).start();
     }
 }
