@@ -53,6 +53,10 @@ public class RespResult<T> {
             return this;
         }
 
+        public Builder voidData(Object data){
+            return this;
+        }
+
         public RespResult<T> build() {
             return new RespResult<T>(this);
         }
