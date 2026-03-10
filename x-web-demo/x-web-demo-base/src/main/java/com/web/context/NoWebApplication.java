@@ -14,7 +14,6 @@ public class NoWebApplication extends SpringApplication {
         Class<?> contextClass = null;
         try {
             contextClass = Class.forName("org.springframework.context.annotation.AnnotationConfigApplicationContext");
-            super.setApplicationContextClass((Class<? extends ConfigurableApplicationContext>) contextClass);
         } catch (Exception e) {
 
         }

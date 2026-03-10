@@ -13,6 +13,8 @@
     <modules>
         <module>x-web-extends-logger</module>
         <module>x-web-extends-mybatis</module>
+        <module>x-web-extends-sql</module>
+        <module>x-web-extends-bpmn</module>
     </modules>
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

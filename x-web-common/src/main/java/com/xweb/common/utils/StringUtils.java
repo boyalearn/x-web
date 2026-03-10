@@ -8,6 +8,9 @@ public final class StringUtils {
     private static Pattern NUMBER_PATTERN = Pattern.compile("[0-9]*");
 
 
+    public static String EMPTY = "";
+
+
     public static final boolean isNumber(String number) {
         if (null == number || number.isEmpty()) {
             return false;
