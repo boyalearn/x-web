@@ -9,9 +9,16 @@ import com.xweb.sql.core.base.OrderItem;
 import com.xweb.sql.core.base.TableItem;
 import com.xweb.sql.core.base.WhereItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RewriteVisitor extends AbstractSelectVisitor {
+
+    List<RewriteFilter> rewriteFilters = new ArrayList<>();
+
+    public void addFilter(RewriteFilter rewriteFilter) {
+        this.rewriteFilters.add(rewriteFilter);
+    }
 
     @Override
     public void visit(BaseSelect baseSelect) {
@@ -69,6 +76,11 @@ public class RewriteVisitor extends AbstractSelectVisitor {
     }
 
     protected Object visitItemAndReplace(Object selectItem) {
+        for (RewriteFilter rewriteFilter : this.rewriteFilters) {
+            if (rewriteFilter.support(selectItem)) {
+                return rewriteFilter.change(selectItem);
+            }
+        }
         return selectItem;
     }
 }
