@@ -94,4 +94,21 @@ public class QuerySqlBaseQueryTest {
         visitor.visit(parser.query());
         System.out.println(visitor.getBaseSelect());
     }
+
+    /**
+     * sub query
+     * select id, name  from aaa  where id = 222 and name='zhx'
+     */
+    @Test
+    public void test00000000006() {
+        String sql = "select name,(select id from a where id=2) as currentId  from aaa  where id = 222 and  age= 22 or name= 'xxx' group by name,id  order by name,id having id>20";
+        CodePointCharStream input = CharStreams.fromString(sql);
+        QuerySqlBaseLexer lexer = new QuerySqlBaseLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        QuerySqlBaseParser parser = new QuerySqlBaseParser(tokens);
+
+        DefaultQuerySqlBaseVisitor visitor = new DefaultQuerySqlBaseVisitor();
+        visitor.visit(parser.query());
+        System.out.println(visitor.getBaseSelect());
+    }
 }

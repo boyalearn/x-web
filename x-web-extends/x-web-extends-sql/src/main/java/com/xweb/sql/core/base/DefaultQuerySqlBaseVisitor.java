@@ -8,37 +8,59 @@ import com.xweb.sql.parser.QuerySqlBaseBaseVisitor;
 import com.xweb.sql.parser.QuerySqlBaseParser;
 import lombok.Getter;
 
+import java.util.Stack;
+
 @Getter
 public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
 
     private BaseSelect baseSelect;
 
+    private Stack<BaseSelect> selectStack = new Stack<>();
+
     public DefaultQuerySqlBaseVisitor() {
         this.baseSelect = new BaseSelect();
+        this.selectStack.push(baseSelect);
+    }
+
+    @Override
+    public Object visitSelect(QuerySqlBaseParser.SelectContext ctx) {
+
+        return super.visitSelect(ctx);
     }
 
     @Override
     public Object visitSelectSingle(QuerySqlBaseParser.SelectSingleContext ctx) {
-        Object result = super.visitSelectSingle(ctx);
-        if (result instanceof Identifier) {
-            Identifier identifier = (Identifier) result;
+        Object expression = super.visit(ctx.expression());
+        if (expression instanceof Identifier) {
+            Identifier identifier = (Identifier) expression;
             TableColumn tableItem = new TableColumn();
             tableItem.setColumnName(identifier.getName());
-            this.baseSelect.getSelectItems().add(tableItem);
+            expression = tableItem;
+        } else if (expression instanceof BaseSelect) {
+            // nothing to do
+            BaseSelect subSelect = (BaseSelect) expression;
+            System.out.println(subSelect);
         } else {
-            throw new RuntimeException("select Item BUG 未支持的解析异常: " + result.getClass().getSimpleName());
+            throw new RuntimeException("select Item BUG 未支持的解析异常: " + expression.getClass().getSimpleName());
         }
-        return result;
+        if (null != ctx.identifier()) {
+            ((Item) expression).setAliasName(ctx.identifier().getText());
+        }
+        if (null != ctx.AS()) {
+            ((Item) expression).setAs(ctx.AS().getText());
+        }
+        this.selectStack.peek().getSelectItems().add((Item) expression);
+        return expression;
     }
 
     @Override
     public Object visitSelectAll(QuerySqlBaseParser.SelectAllContext ctx) {
         final String text = ctx.getText();
         if (text.length() == 1) {
-            this.baseSelect.getSelectItems().add(new SelectAllItem(text));
+            this.selectStack.peek().getSelectItems().add(new SelectAllItem(text));
         } else {
             final String[] columnParts = text.split(".");
-            this.baseSelect.getSelectItems().add(new SelectAllItem(columnParts[0], columnParts[1]));
+            this.selectStack.peek().getSelectItems().add(new SelectAllItem(columnParts[0], columnParts[1]));
         }
         return super.visitSelectAll(ctx);
     }
@@ -47,7 +69,7 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
     public Object visitTableExpress(QuerySqlBaseParser.TableExpressContext ctx) {
         String text = ctx.getText();
         TableItem tableItem = new BaseTableItem(text);
-        this.baseSelect.getTableItems().add(tableItem);
+        this.selectStack.peek().getTableItems().add(tableItem);
         return tableItem;
 
     }
@@ -56,7 +78,7 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
     public Object visitWhereExpress(QuerySqlBaseParser.WhereExpressContext ctx) {
         Object result = super.visitWhereExpress(ctx);
         if (result instanceof SimpleExpression) {
-            this.baseSelect.getWhereItems().add((SimpleExpression) result);
+            this.selectStack.peek().getWhereItems().add((SimpleExpression) result);
         } else {
             throw new RuntimeException("where Item BUG 未支持的解析异常: " + result.getClass().getSimpleName());
         }
@@ -71,7 +93,7 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
             Identifier identifier = (Identifier) result;
             SimpleGroupItem groupItem = new SimpleGroupItem();
             groupItem.setColumnName(identifier.getName());
-            this.baseSelect.getGroupItems().add(groupItem);
+            this.selectStack.peek().getGroupItems().add(groupItem);
         } else {
             throw new RuntimeException("group by  Item BUG 未支持的解析异常: " + result.getClass().getSimpleName());
         }
@@ -85,7 +107,7 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
             Identifier identifier = (Identifier) result;
             SimpleOrderItem groupItem = new SimpleOrderItem();
             groupItem.setColumnName(identifier.getName());
-            this.baseSelect.getOrderItems().add(groupItem);
+            this.selectStack.peek().getOrderItems().add(groupItem);
         }
         return result;
     }
@@ -94,7 +116,7 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
     public Object visitHavingExpress(QuerySqlBaseParser.HavingExpressContext ctx) {
         Object result = super.visitHavingExpress(ctx);
         if (result instanceof SimpleExpression) {
-            this.baseSelect.getHavingItems().add((SimpleExpression) result);
+            this.selectStack.peek().getHavingItems().add((SimpleExpression) result);
         } else {
             throw new RuntimeException("where Item BUG 未支持的解析异常: " + result.getClass().getSimpleName());
         }
@@ -157,4 +179,22 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
         Object result = super.visit(ctx.expression());
         return new SuperSimpleExpression((SimpleExpression) result);
     }
+
+    @Override
+    public Object visitSubQueryExpression(QuerySqlBaseParser.SubQueryExpressionContext ctx) {
+        BaseSelect thisSelect = new BaseSelect();
+        this.selectStack.push(thisSelect);
+        super.visitSubQueryExpression(ctx);
+        //出栈
+        this.selectStack.pop();
+        return thisSelect;
+    }
+
+    @Override
+    public Object visitExpression(QuerySqlBaseParser.ExpressionContext ctx) {
+        Object result = super.visitExpression(ctx);
+        return result;
+    }
+
+
 }

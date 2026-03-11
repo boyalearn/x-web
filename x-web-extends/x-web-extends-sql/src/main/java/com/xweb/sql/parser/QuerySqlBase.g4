@@ -8,7 +8,7 @@ grammar QuerySqlBase;
 
 statement
     //查询部分
-    : query
+    : query                                              #select
     ;
 
 query
@@ -84,7 +84,7 @@ primaryExpression
     | identifier string                                                                   #typeConstructor
     | number                                                                              #numericLiteral
     | string                                                                              #stringLiteral
-    | '(' query ')'                                                                       #subqueryExpression
+    | '(' query ')'                                                                       #subQueryExpression
     | EXISTS '(' query ')'                                                                #exists
     | ARRAY '[' (expression (',' expression)*)? ']'                                       #arrayConstructor
     | value=primaryExpression '[' index=valueExpression ']'                               #subscript

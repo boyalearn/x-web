@@ -9,6 +9,8 @@ public class TableColumn implements Item {
 
     private String columnName;
 
+    private String as;
+
     private String aliasName;
 
 }

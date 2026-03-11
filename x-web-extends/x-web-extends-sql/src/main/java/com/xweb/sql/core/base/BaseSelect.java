@@ -20,5 +20,9 @@ public class BaseSelect implements Item {
 
     private List<HavingItem> havingItems = new ArrayList<>();
 
+    private String as;
+
+    private String aliasName;
+
 
 }
