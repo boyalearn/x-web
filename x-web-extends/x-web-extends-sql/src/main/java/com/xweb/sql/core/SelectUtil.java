@@ -22,8 +22,6 @@ public final class SelectUtil {
     }
 
     public static String toSql(BaseSelect baseSelect) {
-        StringBuffer sql = new StringBuffer();
-
-        return "";
+        return ItemStringUtil.toString(baseSelect);
     }
 }

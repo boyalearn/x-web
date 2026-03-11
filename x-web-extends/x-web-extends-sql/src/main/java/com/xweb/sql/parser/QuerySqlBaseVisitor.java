@@ -50,12 +50,70 @@ public interface QuerySqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSelectAll(QuerySqlBaseParser.SelectAllContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code tableExpress}
-	 * labeled alternative in {@link QuerySqlBaseParser#tableExpression}.
+	 * Visit a parse tree produced by {@link QuerySqlBaseParser#tableExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTableExpress(QuerySqlBaseParser.TableExpressContext ctx);
+	T visitTableExpression(QuerySqlBaseParser.TableExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code joinTableExpress}
+	 * labeled alternative in {@link QuerySqlBaseParser#tableExpressionExpress}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitJoinTableExpress(QuerySqlBaseParser.JoinTableExpressContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code simpleTableExpress}
+	 * labeled alternative in {@link QuerySqlBaseParser#tableExpressionExpress}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSimpleTableExpress(QuerySqlBaseParser.SimpleTableExpressContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link QuerySqlBaseParser#joinType}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitJoinType(QuerySqlBaseParser.JoinTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link QuerySqlBaseParser#joinCondition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitJoinCondition(QuerySqlBaseParser.JoinConditionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link QuerySqlBaseParser#simpleTableExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSimpleTableExpression(QuerySqlBaseParser.SimpleTableExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link QuerySqlBaseParser#aliasedTableExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAliasedTableExpression(QuerySqlBaseParser.AliasedTableExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code tableNameExpress}
+	 * labeled alternative in {@link QuerySqlBaseParser#tableExpressPrimary}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTableNameExpress(QuerySqlBaseParser.TableNameExpressContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code subQueryTableExpress}
+	 * labeled alternative in {@link QuerySqlBaseParser#tableExpressPrimary}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSubQueryTableExpress(QuerySqlBaseParser.SubQueryTableExpressContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code subTableExpressionExpress}
+	 * labeled alternative in {@link QuerySqlBaseParser#tableExpressPrimary}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSubTableExpressionExpress(QuerySqlBaseParser.SubTableExpressionExpressContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code groupByExpress}
 	 * labeled alternative in {@link QuerySqlBaseParser#groupByExpression}.

@@ -95,4 +95,34 @@ public class QuerySqlBaseQueryTest {
         String sql = "select nvl(name,'ss') as nvlName  from aaa  where id = 222 and  age= 22 or name= 'xxx' group by name,id  order by name,id having id>20";
         commonCheck(sql);
     }
+
+    /**
+     * sub query
+     * select id, name  from aaa  where id = 222 and name='zhx'
+     */
+    @Test
+    public void test00000000009() {
+        String sql = "select nvl(name,'ss') as nvlName  from aaa,bbb  where id = 222 and  age= 22 or name= 'xxx' group by name,id  order by name,id having id>20";
+        commonCheck(sql);
+    }
+
+    /**
+     * sub query
+     * select id, name  from aaa  where id = 222 and name='zhx'
+     */
+    @Test
+    public void test00000000010() {
+        String sql = "select nvl(name,'ss') as nvlName  from aaa a left join bbb b on a.id= b.id and a.cc=b.cc left join ccc c on a.id = c.id  where id = 222 and  age= 22 or name= 'xxx' group by name,id  order by name,id having id>20";
+        commonCheck(sql);
+    }
+
+    /**
+     * sub query
+     * select id, name  from aaa  where id = 222 and name='zhx'
+     */
+    @Test
+    public void test00000000011() {
+        String sql = "select nvl(name,'ss') as nvlName  from fff,aaa a left join bbb b on a.id= b.id and a.cc=b.cc left join ccc c on a.id = c.id  where id = 222 and  age= 22 or name= 'xxx' group by name,id  order by name,id having id>20";
+        commonCheck(sql);
+    }
 }

@@ -2,7 +2,8 @@ package com.xweb.sql.core;
 
 
 import com.xweb.sql.core.base.BaseSelect;
-import com.xweb.sql.core.base.BaseTableItem;
+import com.xweb.sql.core.base.table.AliasComplexTableItem;
+import com.xweb.sql.core.base.table.BaseTableItem;
 import com.xweb.sql.core.base.GroupItem;
 import com.xweb.sql.core.base.HavingItem;
 import com.xweb.sql.core.base.Identifier;
@@ -18,10 +19,17 @@ import com.xweb.sql.core.base.item.CaseWhenItem;
 import com.xweb.sql.core.base.item.FunctionItem;
 import com.xweb.sql.core.base.item.TableColumn;
 import com.xweb.sql.core.base.order.SimpleOrderItem;
+import com.xweb.sql.core.base.table.JoinTableItem;
 
 import java.util.List;
 
 public final class ItemStringUtil {
+
+    private final static String SPACE = " ";
+
+    private final static String DOT = ".";
+
+    private final static String COMMA = ",";
 
     public static String toString(Identifier identifier) {
         return identifier.getName();
@@ -43,8 +51,13 @@ public final class ItemStringUtil {
         final List<TableItem> tableItems = baseSelect.getTableItems();
         if (!tableItems.isEmpty()) {
             sql.append(" from ");
-            for (TableItem tableItem : tableItems) {
-                sql.append(toString(tableItem));
+            for (int i = 0; i < tableItems.size(); i++) {
+                TableItem tableItem = tableItems.get(i);
+                if (i != 0) {
+                    sql.append("," + toString(tableItem));
+                } else {
+                    sql.append(toString(tableItem));
+                }
             }
         }
 
@@ -118,8 +131,36 @@ public final class ItemStringUtil {
             return toString((ConditionAndResult) object);
         } else if (object instanceof FunctionItem) {
             return toString((FunctionItem) object);
+        } else if (object instanceof JoinTableItem) {
+            return toString((JoinTableItem) object);
+        } else if (object instanceof AliasComplexTableItem) {
+            return toString((AliasComplexTableItem) object);
         }
         throw new RuntimeException("unknown exception class is " + object.getClass().getName());
+    }
+
+    private static String toString(AliasComplexTableItem aliasComplexTableItem) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(toString(aliasComplexTableItem.getTable()));
+        if (!isEmpty(aliasComplexTableItem.getAs())) {
+            sql.append(" " + aliasComplexTableItem.getAs());
+        }
+
+        if (!isEmpty(aliasComplexTableItem.getAliasName())) {
+            sql.append(" " + aliasComplexTableItem.getAliasName());
+        }
+
+        return sql.toString();
+    }
+
+    private static String toString(JoinTableItem joinTableItem) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(toString(joinTableItem.getLeft()));
+        sql.append(" " + joinTableItem.getJoinType() + " join ");
+        sql.append(" " + toString(joinTableItem.getRight()));
+        sql.append(" on " + toString(joinTableItem.getOnConditions()));
+
+        return sql.toString();
     }
 
     private static String toString(FunctionItem functionItem) {

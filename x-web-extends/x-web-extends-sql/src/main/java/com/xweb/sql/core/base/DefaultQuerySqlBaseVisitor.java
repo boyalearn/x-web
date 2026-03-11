@@ -9,6 +9,9 @@ import com.xweb.sql.core.base.item.FunctionItem;
 import com.xweb.sql.core.base.item.SelectAllItem;
 import com.xweb.sql.core.base.item.TableColumn;
 import com.xweb.sql.core.base.order.SimpleOrderItem;
+import com.xweb.sql.core.base.table.AliasComplexTableItem;
+import com.xweb.sql.core.base.table.BaseTableItem;
+import com.xweb.sql.core.base.table.JoinTableItem;
 import com.xweb.sql.parser.QuerySqlBaseBaseVisitor;
 import com.xweb.sql.parser.QuerySqlBaseParser;
 import lombok.Getter;
@@ -74,12 +77,40 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitTableExpress(QuerySqlBaseParser.TableExpressContext ctx) {
-        String text = ctx.getText();
-        TableItem tableItem = new BaseTableItem(text);
-        this.selectStack.peek().getTableItems().add(tableItem);
-        return tableItem;
+    public Object visitTableExpression(QuerySqlBaseParser.TableExpressionContext ctx) {
+        Object result = super.visitTableExpression(ctx);
+        if (result instanceof BaseTableItem) {
+            this.selectStack.peek().getTableItems().add((BaseTableItem) result);
+        } else if (result instanceof JoinTableItem) {
+            this.selectStack.peek().getTableItems().add((JoinTableItem) result);
+        } else if (result instanceof AliasComplexTableItem) {
+            this.selectStack.peek().getTableItems().add((AliasComplexTableItem) result);
+        } else {
+            throw new RuntimeException("Table Item BUG 未支持的解析异常: " + result.getClass().getSimpleName());
+        }
+        return result;
+    }
 
+    @Override
+    public Object visitSimpleTableExpress(QuerySqlBaseParser.SimpleTableExpressContext ctx) {
+        Object result = super.visitSimpleTableExpress(ctx);
+        return result;
+    }
+
+    @Override
+    public Object visitJoinTableExpress(QuerySqlBaseParser.JoinTableExpressContext ctx) {
+        String text = ctx.getText();
+        System.out.println(text);
+        JoinTableItem joinTableItem = new JoinTableItem();
+        final Object leftObj = super.visit(ctx.left);
+        System.out.println(ctx.left.getText());
+        joinTableItem.setLeft(leftObj);
+        final Object rightObj = super.visit(ctx.right);
+        System.out.println(ctx.left.getText());
+        joinTableItem.setRight(rightObj);
+        joinTableItem.setJoinType(ctx.joinType().getText());
+        joinTableItem.setOnConditions(super.visit(ctx.joinCondition().booleanExpression()));
+        return joinTableItem;
     }
 
     @Override
@@ -129,6 +160,44 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
             throw new RuntimeException("where Item BUG 未支持的解析异常: " + result.getClass().getSimpleName());
         }
         return result;
+    }
+
+    @Override
+    public Object visitAliasedTableExpression(QuerySqlBaseParser.AliasedTableExpressionContext ctx) {
+        AliasComplexTableItem aliasComplexTableItem = new AliasComplexTableItem();
+        aliasComplexTableItem.setTable(super.visit(ctx.tableExpressPrimary()));
+        if (null != ctx.AS()) {
+            aliasComplexTableItem.setAs(ctx.AS().getText());
+        }
+        if (null != ctx.identifier()) {
+            aliasComplexTableItem.setAliasName(ctx.identifier().getText());
+        }
+        return aliasComplexTableItem;
+    }
+
+    @Override
+    public Object visitJoinCondition(QuerySqlBaseParser.JoinConditionContext ctx) {
+        Object result = super.visitJoinCondition(ctx);
+        return result;
+    }
+
+    @Override
+    public Object visitTableNameExpress(QuerySqlBaseParser.TableNameExpressContext ctx) {
+        return new BaseTableItem(ctx.getText());
+    }
+
+    @Override
+    public Object visitSubQueryTableExpress(QuerySqlBaseParser.SubQueryTableExpressContext ctx) {
+        String text = ctx.getText();
+        System.out.println(text);
+        return super.visitSubQueryTableExpress(ctx);
+    }
+
+    @Override
+    public Object visitSubTableExpressionExpress(QuerySqlBaseParser.SubTableExpressionExpressContext ctx) {
+        String text = ctx.getText();
+        System.out.println(text);
+        return super.visitSubTableExpressionExpress(ctx);
     }
 
     @Override
@@ -258,5 +327,10 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
             functionItem.getParams().add(super.visit(expression));
         }
         return functionItem;
+    }
+
+    @Override
+    public Object visitDereference(QuerySqlBaseParser.DereferenceContext ctx) {
+        return new Identifier(ctx.getText());
     }
 }

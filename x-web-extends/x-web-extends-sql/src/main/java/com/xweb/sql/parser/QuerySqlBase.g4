@@ -18,7 +18,7 @@ query
 
 queryNoWith
     : SELECT setQuantifier? selectItem (',' selectItem)*
-      (FROM tableExpression)?
+      (FROM tableExpression (',' tableExpression)*)?
       (WHERE where=whereExpression)?
       (GROUP BY groupByExpression (',' groupByExpression)*)?
       (ORDER BY orderByExpression (',' orderByExpression)*)?
@@ -37,7 +37,37 @@ selectItem
     ;
 
 tableExpression
-    : identifier                                            #tableExpress
+    : tableExpressionExpress
+    ;
+tableExpressionExpress
+    : left=tableExpressionExpress joinType JOIN
+      right=simpleTableExpression joinCondition             #joinTableExpress
+    | simpleTableExpression                                 #simpleTableExpress
+    ;
+
+joinType
+    : INNER?
+    | LEFT OUTER?
+    | RIGHT OUTER?
+    | FULL OUTER?
+    ;
+
+joinCondition
+    : ON booleanExpression
+    ;
+
+simpleTableExpression
+    : aliasedTableExpression
+    ;
+
+aliasedTableExpression
+    : tableExpressPrimary (AS? identifier)?
+    ;
+
+tableExpressPrimary
+    : qualifiedName                                                   #tableNameExpress
+    | '(' query ')'                                                   #subQueryTableExpress
+    | '(' tableExpression ')'                                         #subTableExpressionExpress
     ;
 
 groupByExpression
@@ -61,20 +91,20 @@ expression
     ;
 
 booleanExpression
-    : valueExpression predicate[$valueExpression.ctx]?             #predicated
-    | NOT booleanExpression                                        #logicalNot
-    | left=booleanExpression operator=AND right=booleanExpression  #logicalBinary
-    | left=booleanExpression operator=OR right=booleanExpression   #logicalBinary
+    : valueExpression predicate[$valueExpression.ctx]?                             #predicated
+    | NOT booleanExpression                                                        #logicalNot
+    | left=booleanExpression operator=AND right=booleanExpression                  #logicalBinary
+    | left=booleanExpression operator=OR right=booleanExpression                   #logicalBinary
     ;
 
 predicate[ParserRuleContext value]
-    : comparisonOperator right=valueExpression                            #comparison
-    | comparisonOperator '(' query ')'                                    #quantifiedComparison
-    | NOT? BETWEEN lower=valueExpression AND upper=valueExpression        #between
-    | NOT? IN '(' expression (',' expression)* ')'                        #inList
-    | NOT? IN '(' query ')'                                               #inSubquery
-    | NOT? LIKE pattern=valueExpression (ESCAPE escape=valueExpression)?  #like
-    | IS NOT? NULL                                                        #nullPredicate
+    : comparisonOperator right=valueExpression                                      #comparison
+    | comparisonOperator '(' query ')'                                              #quantifiedComparison
+    | NOT? BETWEEN lower=valueExpression AND upper=valueExpression                  #between
+    | NOT? IN '(' expression (',' expression)* ')'                                  #inList
+    | NOT? IN '(' query ')'                                                         #inSubquery
+    | NOT? LIKE pattern=valueExpression (ESCAPE escape=valueExpression)?            #like
+    | IS NOT? NULL                                                                  #nullPredicate
     ;
 
 valueExpression
@@ -188,6 +218,21 @@ IS  : [Ii][Ss];
 AS  : [Aa][Ss];
 BY  : [Bb][Yy];
 NULL: [Nn][Uu][Ll][Ll];
+
+JOIN: [Jj][Oo][Ii][Nn];
+INNER
+    : [Ii][Nn][Nn][Ee][Rr]
+    ;
+LEFT: [Ll][Ee][Ff][Tt];
+OUTER
+    : [Oo][Uu][Tt][Ee][Rr]
+    ;
+FULL: [Ff][Uu][Ll][Ll];
+ON  : [Oo][Nn];
+
+RIGHT
+    : [Rr][Ii][Gg][Hh][Tt]
+    ;
 
 EQ  : '=';
 NEQ : '<>' | '!=';
