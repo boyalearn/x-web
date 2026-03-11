@@ -34,7 +34,6 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
 
     @Override
     public Object visitSelect(QuerySqlBaseParser.SelectContext ctx) {
-
         return super.visitSelect(ctx);
     }
 
@@ -99,14 +98,10 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
 
     @Override
     public Object visitJoinTableExpress(QuerySqlBaseParser.JoinTableExpressContext ctx) {
-        String text = ctx.getText();
-        System.out.println(text);
         JoinTableItem joinTableItem = new JoinTableItem();
         final Object leftObj = super.visit(ctx.left);
-        System.out.println(ctx.left.getText());
         joinTableItem.setLeft(leftObj);
         final Object rightObj = super.visit(ctx.right);
-        System.out.println(ctx.left.getText());
         joinTableItem.setRight(rightObj);
         joinTableItem.setJoinType(ctx.joinType().getText());
         joinTableItem.setOnConditions(super.visit(ctx.joinCondition().booleanExpression()));
@@ -188,16 +183,18 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
 
     @Override
     public Object visitSubQueryTableExpress(QuerySqlBaseParser.SubQueryTableExpressContext ctx) {
-        String text = ctx.getText();
-        System.out.println(text);
-        return super.visitSubQueryTableExpress(ctx);
+        BaseSelect thisSelect = new BaseSelect();
+        this.selectStack.push(thisSelect);
+        super.visitSubQueryTableExpress(ctx);
+        //出栈
+        this.selectStack.pop();
+        return new SuperSimpleExpression(thisSelect);
     }
 
     @Override
     public Object visitSubTableExpressionExpress(QuerySqlBaseParser.SubTableExpressionExpressContext ctx) {
-        String text = ctx.getText();
-        System.out.println(text);
-        return super.visitSubTableExpressionExpress(ctx);
+        Object result = super.visitSubTableExpressionExpress(ctx);
+        return result;
     }
 
     @Override

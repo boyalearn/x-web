@@ -2,9 +2,9 @@ package com.xweb.sql.core.base;
 
 import java.util.List;
 
-abstract class AbstractSelectVisitor {
+public abstract class AbstractSelectVisitor {
 
-    public final void visit(BaseSelect baseSelect) {
+    public void visit(BaseSelect baseSelect) {
         final List<Item> selectItems = baseSelect.getSelectItems();
         for (Item selectItem : selectItems) {
             this.visitItem(selectItem);
@@ -36,7 +36,6 @@ abstract class AbstractSelectVisitor {
         }
     }
 
-    protected void visitItem(Object item) {
+    protected abstract void visitItem(Object selectItem);
 
-    }
 }

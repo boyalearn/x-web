@@ -2,6 +2,7 @@ package com.xweb.sql.core;
 
 
 import com.xweb.sql.core.base.BaseSelect;
+import com.xweb.sql.core.base.item.SelectAllItem;
 import com.xweb.sql.core.base.table.AliasComplexTableItem;
 import com.xweb.sql.core.base.table.BaseTableItem;
 import com.xweb.sql.core.base.GroupItem;
@@ -135,8 +136,27 @@ public final class ItemStringUtil {
             return toString((JoinTableItem) object);
         } else if (object instanceof AliasComplexTableItem) {
             return toString((AliasComplexTableItem) object);
+        } else if (object instanceof SelectAllItem) {
+            return toString((SelectAllItem) object);
         }
         throw new RuntimeException("unknown exception class is " + object.getClass().getName());
+    }
+
+    private static String toString(SelectAllItem selectAllItem) {
+        StringBuffer sql = new StringBuffer();
+        if (!isEmpty(selectAllItem.getTableName())) {
+            sql.append(selectAllItem.getTableName() + ".");
+        }
+        if (!isEmpty(selectAllItem.getColumnName())) {
+            sql.append(selectAllItem.getColumnName());
+        }
+        if (!isEmpty(selectAllItem.getAs())) {
+            sql.append(selectAllItem.getAs());
+        }
+        if (!isEmpty(selectAllItem.getAliasName())) {
+            sql.append(selectAllItem.getAliasName());
+        }
+        return sql.toString();
     }
 
     private static String toString(AliasComplexTableItem aliasComplexTableItem) {
