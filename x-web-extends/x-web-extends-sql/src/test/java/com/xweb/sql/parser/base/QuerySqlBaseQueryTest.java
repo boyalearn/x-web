@@ -1,14 +1,20 @@
 package com.xweb.sql.parser.base;
 
-import com.xweb.sql.core.base.DefaultQuerySqlBaseVisitor;
-import com.xweb.sql.parser.QuerySqlBaseLexer;
-import com.xweb.sql.parser.QuerySqlBaseParser;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CodePointCharStream;
-import org.antlr.v4.runtime.CommonTokenStream;
+import com.xweb.sql.core.ItemStringUtil;
+import com.xweb.sql.core.SelectUtil;
+import com.xweb.sql.core.base.BaseSelect;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.Assert;
 
 public class QuerySqlBaseQueryTest {
+
+
+    private void commonCheck(String sql) {
+        BaseSelect baseSelect = SelectUtil.readToAST(sql);
+        String recoverSql = ItemStringUtil.toString(baseSelect);
+        System.out.println(recoverSql);
+        Assert.isTrue(ItemStringUtil.replaceAllEmpty(sql).equals(ItemStringUtil.replaceAllEmpty(recoverSql)), "恢复后不一样了");
+    }
 
     /**
      * simple
@@ -16,15 +22,8 @@ public class QuerySqlBaseQueryTest {
      */
     @Test
     public void test00000000001() {
-        String sql = "select id,name from aaa where id = 222 and (age= 22 or name= 'xxx')";
-        CodePointCharStream input = CharStreams.fromString(sql);
-        QuerySqlBaseLexer lexer = new QuerySqlBaseLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        QuerySqlBaseParser parser = new QuerySqlBaseParser(tokens);
-
-        DefaultQuerySqlBaseVisitor visitor = new DefaultQuerySqlBaseVisitor();
-        visitor.visit(parser.query());
-        System.out.println(visitor.getBaseSelect());
+        String sql = "select id,name from aaa where id = 222 and (age= 22 or name= 'xxx') or xx = '33' and ss = 22";
+        commonCheck(sql);
     }
 
     /**
@@ -33,15 +32,8 @@ public class QuerySqlBaseQueryTest {
      */
     @Test
     public void test00000000002() {
-        String sql = "select id, name  from aaa  where (id = 222 and  age= 22 )or name= 'xxx' ";
-        CodePointCharStream input = CharStreams.fromString(sql);
-        QuerySqlBaseLexer lexer = new QuerySqlBaseLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        QuerySqlBaseParser parser = new QuerySqlBaseParser(tokens);
-
-        DefaultQuerySqlBaseVisitor visitor = new DefaultQuerySqlBaseVisitor();
-        visitor.visit(parser.query());
-        System.out.println(visitor.getBaseSelect());
+        String sql = "select id,name from aaa where (id = 222 and  age= 22 )or name= 'xxx' ";
+        commonCheck(sql);
     }
 
     /**
@@ -51,14 +43,7 @@ public class QuerySqlBaseQueryTest {
     @Test
     public void test00000000003() {
         String sql = "select id, name  from aaa  where id = 222 and  age= 22 or name= 'xxx' group by name,id ";
-        CodePointCharStream input = CharStreams.fromString(sql);
-        QuerySqlBaseLexer lexer = new QuerySqlBaseLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        QuerySqlBaseParser parser = new QuerySqlBaseParser(tokens);
-
-        DefaultQuerySqlBaseVisitor visitor = new DefaultQuerySqlBaseVisitor();
-        visitor.visit(parser.query());
-        System.out.println(visitor.getBaseSelect());
+        commonCheck(sql);
     }
 
     /**
@@ -68,14 +53,7 @@ public class QuerySqlBaseQueryTest {
     @Test
     public void test00000000004() {
         String sql = "select id, name  from aaa  where id = 222 and  age= 22 or name= 'xxx' group by name,id  order by name,id";
-        CodePointCharStream input = CharStreams.fromString(sql);
-        QuerySqlBaseLexer lexer = new QuerySqlBaseLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        QuerySqlBaseParser parser = new QuerySqlBaseParser(tokens);
-
-        DefaultQuerySqlBaseVisitor visitor = new DefaultQuerySqlBaseVisitor();
-        visitor.visit(parser.query());
-        System.out.println(visitor.getBaseSelect());
+        commonCheck(sql);
     }
 
     /**
@@ -85,14 +63,7 @@ public class QuerySqlBaseQueryTest {
     @Test
     public void test00000000005() {
         String sql = "select id, name  from aaa  where id = 222 and  age= 22 or name= 'xxx' group by name,id  order by name,id having id>20";
-        CodePointCharStream input = CharStreams.fromString(sql);
-        QuerySqlBaseLexer lexer = new QuerySqlBaseLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        QuerySqlBaseParser parser = new QuerySqlBaseParser(tokens);
-
-        DefaultQuerySqlBaseVisitor visitor = new DefaultQuerySqlBaseVisitor();
-        visitor.visit(parser.query());
-        System.out.println(visitor.getBaseSelect());
+        commonCheck(sql);
     }
 
     /**
@@ -102,14 +73,7 @@ public class QuerySqlBaseQueryTest {
     @Test
     public void test00000000006() {
         String sql = "select name,(select id from a where id=2) as currentId  from aaa  where id = 222 and  age= 22 or name= 'xxx' group by name,id  order by name,id having id>20";
-        CodePointCharStream input = CharStreams.fromString(sql);
-        QuerySqlBaseLexer lexer = new QuerySqlBaseLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        QuerySqlBaseParser parser = new QuerySqlBaseParser(tokens);
-
-        DefaultQuerySqlBaseVisitor visitor = new DefaultQuerySqlBaseVisitor();
-        visitor.visit(parser.query());
-        System.out.println(visitor.getBaseSelect());
+        commonCheck(sql);
     }
 
     /**
@@ -118,15 +82,8 @@ public class QuerySqlBaseQueryTest {
      */
     @Test
     public void test00000000007() {
-        String sql = "select case when name = 'fff' then 'a' else 'b' end as caseName  from aaa  where id = 222 and  age= 22 or name= 'xxx' group by name,id  order by name,id having id>20";
-        CodePointCharStream input = CharStreams.fromString(sql);
-        QuerySqlBaseLexer lexer = new QuerySqlBaseLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        QuerySqlBaseParser parser = new QuerySqlBaseParser(tokens);
-
-        DefaultQuerySqlBaseVisitor visitor = new DefaultQuerySqlBaseVisitor();
-        visitor.visit(parser.query());
-        System.out.println(visitor.getBaseSelect());
+        String sql = "select (case when name = 'fff' then 'a' else 'b' end) as caseName  from aaa  where id = 222 and  age= 22 or name= 'xxx' group by name,id  order by name,id having id>20";
+        commonCheck(sql);
     }
 
     /**
@@ -136,13 +93,6 @@ public class QuerySqlBaseQueryTest {
     @Test
     public void test00000000008() {
         String sql = "select nvl(name,'ss') as nvlName  from aaa  where id = 222 and  age= 22 or name= 'xxx' group by name,id  order by name,id having id>20";
-        CodePointCharStream input = CharStreams.fromString(sql);
-        QuerySqlBaseLexer lexer = new QuerySqlBaseLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        QuerySqlBaseParser parser = new QuerySqlBaseParser(tokens);
-
-        DefaultQuerySqlBaseVisitor visitor = new DefaultQuerySqlBaseVisitor();
-        visitor.visit(parser.query());
-        System.out.println(visitor.getBaseSelect());
+        commonCheck(sql);
     }
 }

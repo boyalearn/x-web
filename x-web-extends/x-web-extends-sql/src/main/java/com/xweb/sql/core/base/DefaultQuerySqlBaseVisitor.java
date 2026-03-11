@@ -12,7 +12,6 @@ import com.xweb.sql.core.base.order.SimpleOrderItem;
 import com.xweb.sql.parser.QuerySqlBaseBaseVisitor;
 import com.xweb.sql.parser.QuerySqlBaseParser;
 import lombok.Getter;
-import lombok.val;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +45,8 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
             expression = tableItem;
         } else if (expression instanceof CaseWhenItem
                 || expression instanceof BaseSelect
-                || expression instanceof FunctionItem) {
+                || expression instanceof FunctionItem
+                || expression instanceof SuperSimpleExpression) {
             // nothing to do
         } else {
             throw new RuntimeException("select Item BUG 未支持的解析异常: " + expression.getClass().getSimpleName());
@@ -173,7 +173,6 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
     @Override
     public Object visitLogicalBinary(QuerySqlBaseParser.LogicalBinaryContext ctx) {
         final Object left = super.visit(ctx.left);
-
         final Object right = super.visit(ctx.right);
         SimpleExpression simpleExpression = new SimpleExpression();
         simpleExpression.setLeft(left);
@@ -185,7 +184,17 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
     @Override
     public Object visitParenthesizedExpression(QuerySqlBaseParser.ParenthesizedExpressionContext ctx) {
         Object result = super.visit(ctx.expression());
-        return new SuperSimpleExpression((SimpleExpression) result);
+        return new SuperSimpleExpression(result);
+    }
+
+    @Override
+    public Object visitSubSupQueryExpression(QuerySqlBaseParser.SubSupQueryExpressionContext ctx) {
+        BaseSelect thisSelect = new BaseSelect();
+        this.selectStack.push(thisSelect);
+        super.visitSubSupQueryExpression(ctx);
+        //出栈
+        this.selectStack.pop();
+        return new SuperSimpleExpression(thisSelect);
     }
 
     @Override

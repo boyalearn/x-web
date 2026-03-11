@@ -86,7 +86,8 @@ primaryExpression
     | identifier string                                                                   #typeConstructor
     | number                                                                              #numericLiteral
     | string                                                                              #stringLiteral
-    | '(' query ')'                                                                       #subQueryExpression
+    | '(' query ')'                                                                       #subSupQueryExpression
+    | query                                                                               #subQueryExpression
     | EXISTS '(' query ')'                                                                #exists
     | CASE whenClause+ (ELSE elseExpression=expression)? END                              #simpleCase
     | value=primaryExpression '[' index=valueExpression ']'                               #subscript

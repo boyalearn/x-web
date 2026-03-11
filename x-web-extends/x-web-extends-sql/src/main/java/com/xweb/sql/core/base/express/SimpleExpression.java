@@ -4,6 +4,9 @@ import com.xweb.sql.core.base.HavingItem;
 import com.xweb.sql.core.base.WhereItem;
 import lombok.Data;
 
+/**
+ * 简单表达式
+ */
 @Data
 public class SimpleExpression implements WhereItem, HavingItem {
 

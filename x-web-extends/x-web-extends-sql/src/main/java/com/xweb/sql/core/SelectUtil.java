@@ -8,7 +8,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
-public final class SqlUtil {
+public final class SelectUtil {
     public static BaseSelect readToAST(String sql) {
 
         CodePointCharStream input = CharStreams.fromString(sql);
@@ -22,7 +22,8 @@ public final class SqlUtil {
     }
 
     public static String toSql(BaseSelect baseSelect) {
-        //TODO
+        StringBuffer sql = new StringBuffer();
+
         return "";
     }
 }
