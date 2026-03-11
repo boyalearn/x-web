@@ -1,6 +1,7 @@
-package com.xweb.sql.core.base;
+package com.xweb.sql.core.base.item;
 
 
+import com.xweb.sql.core.base.Item;
 import lombok.Data;
 
 @Data

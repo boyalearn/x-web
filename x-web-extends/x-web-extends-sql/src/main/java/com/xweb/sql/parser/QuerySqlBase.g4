@@ -55,6 +55,7 @@ orderByExpression
 havingExpression
     : booleanExpression                                     #havingExpress
     ;
+
 expression
     : booleanExpression
     ;
@@ -75,8 +76,9 @@ predicate[ParserRuleContext value]
     | NOT? LIKE pattern=valueExpression (ESCAPE escape=valueExpression)?  #like
     | IS NOT? NULL                                                        #nullPredicate
     ;
+
 valueExpression
-    : primaryExpression                                                                 #valueExpressionDefault
+    : primaryExpression                                                                   #valueExpressionDefault
     ;
 
 primaryExpression
@@ -86,11 +88,20 @@ primaryExpression
     | string                                                                              #stringLiteral
     | '(' query ')'                                                                       #subQueryExpression
     | EXISTS '(' query ')'                                                                #exists
-    | ARRAY '[' (expression (',' expression)*)? ']'                                       #arrayConstructor
+    | CASE whenClause+ (ELSE elseExpression=expression)? END                              #simpleCase
     | value=primaryExpression '[' index=valueExpression ']'                               #subscript
+    | qualifiedName '(' (setQuantifier? expression (',' expression)*)? ')'                #functionCall
     | identifier                                                                          #columnReference
     | base=primaryExpression '.' fieldName=identifier                                     #dereference
     | '(' expression ')'                                                                  #parenthesizedExpression
+    ;
+
+whenClause
+    : WHEN condition=expression THEN result=expression
+    ;
+
+qualifiedName
+    : identifier ('.' identifier)*
     ;
 
 comparisonOperator
@@ -138,6 +149,12 @@ ORDER
 HAVING
     : [Hh][Aa][Vv][Ii][Nn][Gg]
     ;
+
+CASE: [Cc][Aa][Ss][Ee];
+WHEN: [Ww][Hh][Ee][Nn];
+THEN: [Tt][Hh][Ee][Nn];
+ELSE: [Ee][Ll][Ss][Ee];
+END : [Ee][Nn][Dd];
 AND : [Aa][Nn][Dd];
 NOT : [Nn][Oo][Tt];
 OR  : [Oo][Rr];

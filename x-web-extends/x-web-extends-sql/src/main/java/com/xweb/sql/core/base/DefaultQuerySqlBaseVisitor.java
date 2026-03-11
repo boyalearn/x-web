@@ -1,13 +1,21 @@
 package com.xweb.sql.core.base;
 
+import com.xweb.sql.core.base.express.ConditionAndResult;
 import com.xweb.sql.core.base.express.SimpleExpression;
 import com.xweb.sql.core.base.express.SuperSimpleExpression;
 import com.xweb.sql.core.base.group.SimpleGroupItem;
+import com.xweb.sql.core.base.item.CaseWhenItem;
+import com.xweb.sql.core.base.item.FunctionItem;
+import com.xweb.sql.core.base.item.SelectAllItem;
+import com.xweb.sql.core.base.item.TableColumn;
 import com.xweb.sql.core.base.order.SimpleOrderItem;
 import com.xweb.sql.parser.QuerySqlBaseBaseVisitor;
 import com.xweb.sql.parser.QuerySqlBaseParser;
 import lombok.Getter;
+import lombok.val;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 @Getter
@@ -36,10 +44,10 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
             TableColumn tableItem = new TableColumn();
             tableItem.setColumnName(identifier.getName());
             expression = tableItem;
-        } else if (expression instanceof BaseSelect) {
+        } else if (expression instanceof CaseWhenItem
+                || expression instanceof BaseSelect
+                || expression instanceof FunctionItem) {
             // nothing to do
-            BaseSelect subSelect = (BaseSelect) expression;
-            System.out.println(subSelect);
         } else {
             throw new RuntimeException("select Item BUG 未支持的解析异常: " + expression.getClass().getSimpleName());
         }
@@ -197,4 +205,49 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
     }
 
 
+    @Override
+    public Object visitSimpleCase(QuerySqlBaseParser.SimpleCaseContext ctx) {
+        CaseWhenItem caseWhenItem = new CaseWhenItem();
+        caseWhenItem.setConditionResults(new ArrayList<>());
+        final List<QuerySqlBaseParser.WhenClauseContext> whenClauseContexts = ctx.whenClause();
+        for (QuerySqlBaseParser.WhenClauseContext whenClauseContext : whenClauseContexts) {
+            caseWhenItem.getConditionResults().add((ConditionAndResult) super.visit(whenClauseContext));
+        }
+        if (null != ctx.elseExpression) {
+            caseWhenItem.setElseResult(super.visit(ctx.elseExpression));
+        }
+        return caseWhenItem;
+    }
+
+    @Override
+    public Object visitWhenClause(QuerySqlBaseParser.WhenClauseContext ctx) {
+        Object condition = super.visit(ctx.condition);
+        Object result = super.visit(ctx.result);
+        ConditionAndResult conditionAndResult = new ConditionAndResult();
+        conditionAndResult.setCondition((SimpleExpression) condition);
+        conditionAndResult.setResult(result);
+        return conditionAndResult;
+    }
+
+    @Override
+    public Object visitBasicStringLiteral(QuerySqlBaseParser.BasicStringLiteralContext ctx) {
+        String result = ctx.getText();
+        return result;
+    }
+
+    @Override
+    public Object visitFunctionCall(QuerySqlBaseParser.FunctionCallContext ctx) {
+        FunctionItem functionItem = new FunctionItem();
+        if (null != ctx.setQuantifier()) {
+            functionItem.setQuantifier(ctx.setQuantifier().getText());
+        }
+        Object function = super.visit(ctx.qualifiedName());
+        functionItem.setName(ctx.qualifiedName().getText());
+        functionItem.setParams(new ArrayList<>());
+        final List<QuerySqlBaseParser.ExpressionContext> expressions = ctx.expression();
+        for (QuerySqlBaseParser.ExpressionContext expression : expressions) {
+            functionItem.getParams().add(super.visit(expression));
+        }
+        return functionItem;
+    }
 }

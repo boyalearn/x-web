@@ -16,7 +16,7 @@ public class QuerySqlBaseQueryTest {
      */
     @Test
     public void test00000000001() {
-        String sql = "select id, name  from aaa  where id = 222 and ( age= 22 or name= 'xxx')";
+        String sql = "select id,name from aaa where id = 222 and (age= 22 or name= 'xxx')";
         CodePointCharStream input = CharStreams.fromString(sql);
         QuerySqlBaseLexer lexer = new QuerySqlBaseLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -102,6 +102,40 @@ public class QuerySqlBaseQueryTest {
     @Test
     public void test00000000006() {
         String sql = "select name,(select id from a where id=2) as currentId  from aaa  where id = 222 and  age= 22 or name= 'xxx' group by name,id  order by name,id having id>20";
+        CodePointCharStream input = CharStreams.fromString(sql);
+        QuerySqlBaseLexer lexer = new QuerySqlBaseLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        QuerySqlBaseParser parser = new QuerySqlBaseParser(tokens);
+
+        DefaultQuerySqlBaseVisitor visitor = new DefaultQuerySqlBaseVisitor();
+        visitor.visit(parser.query());
+        System.out.println(visitor.getBaseSelect());
+    }
+
+    /**
+     * sub query
+     * select id, name  from aaa  where id = 222 and name='zhx'
+     */
+    @Test
+    public void test00000000007() {
+        String sql = "select case when name = 'fff' then 'a' else 'b' end as caseName  from aaa  where id = 222 and  age= 22 or name= 'xxx' group by name,id  order by name,id having id>20";
+        CodePointCharStream input = CharStreams.fromString(sql);
+        QuerySqlBaseLexer lexer = new QuerySqlBaseLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        QuerySqlBaseParser parser = new QuerySqlBaseParser(tokens);
+
+        DefaultQuerySqlBaseVisitor visitor = new DefaultQuerySqlBaseVisitor();
+        visitor.visit(parser.query());
+        System.out.println(visitor.getBaseSelect());
+    }
+
+    /**
+     * sub query
+     * select id, name  from aaa  where id = 222 and name='zhx'
+     */
+    @Test
+    public void test00000000008() {
+        String sql = "select nvl(name,'ss') as nvlName  from aaa  where id = 222 and  age= 22 or name= 'xxx' group by name,id  order by name,id having id>20";
         CodePointCharStream input = CharStreams.fromString(sql);
         QuerySqlBaseLexer lexer = new QuerySqlBaseLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
