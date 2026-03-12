@@ -448,18 +448,6 @@ public class QuerySqlBaseBaseListener implements QuerySqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterSubscript(QuerySqlBaseParser.SubscriptContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitSubscript(QuerySqlBaseParser.SubscriptContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterTypeConstructor(QuerySqlBaseParser.TypeConstructorContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -551,6 +539,18 @@ public class QuerySqlBaseBaseListener implements QuerySqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitSubQueryExpression(QuerySqlBaseParser.SubQueryExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSubScript(QuerySqlBaseParser.SubScriptContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSubScript(QuerySqlBaseParser.SubScriptContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

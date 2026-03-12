@@ -1,12 +1,15 @@
 package com.xweb.sql.core.base;
 
+import com.xweb.sql.core.base.express.BetweenAndExpression;
 import com.xweb.sql.core.base.express.ConditionAndResult;
 import com.xweb.sql.core.base.express.SimpleExpression;
 import com.xweb.sql.core.base.express.SuperSimpleExpression;
 import com.xweb.sql.core.base.group.SimpleGroupItem;
 import com.xweb.sql.core.base.item.CaseWhenItem;
+import com.xweb.sql.core.base.item.ConstantItem;
 import com.xweb.sql.core.base.item.FunctionItem;
 import com.xweb.sql.core.base.item.SelectAllItem;
+import com.xweb.sql.core.base.item.SubScriptItem;
 import com.xweb.sql.core.base.item.TableColumn;
 import com.xweb.sql.core.base.order.SimpleOrderItem;
 import com.xweb.sql.core.base.table.AliasComplexTableItem;
@@ -16,6 +19,7 @@ import com.xweb.sql.parser.QuerySqlBaseBaseVisitor;
 import com.xweb.sql.parser.QuerySqlBaseParser;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -48,7 +52,9 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
         } else if (expression instanceof CaseWhenItem
                 || expression instanceof BaseSelect
                 || expression instanceof FunctionItem
-                || expression instanceof SuperSimpleExpression) {
+                || expression instanceof SuperSimpleExpression
+                || expression instanceof SubScriptItem
+                || expression instanceof ConstantItem) {
             // nothing to do
         } else {
             throw new RuntimeException("select Item BUG 未支持的解析异常: " + expression.getClass().getSimpleName());
@@ -69,7 +75,7 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
         if (text.length() == 1) {
             this.selectStack.peek().getSelectItems().add(new SelectAllItem(text));
         } else {
-            final String[] columnParts = text.split(".");
+            final String[] columnParts = text.split("\\.");
             this.selectStack.peek().getSelectItems().add(new SelectAllItem(columnParts[0], columnParts[1]));
         }
         return super.visitSelectAll(ctx);
@@ -216,6 +222,10 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
             SimpleExpression simpleExpression = (SimpleExpression) predicate;
             simpleExpression.setLeft(value);
             return simpleExpression;
+        } else if (predicate instanceof BetweenAndExpression) {
+            BetweenAndExpression betweenAndExpression = (BetweenAndExpression) predicate;
+            betweenAndExpression.setLeft(value);
+            return betweenAndExpression;
         } else {
             throw new RuntimeException("express BUG 未支持的解析异常: " + predicate.getClass().getSimpleName());
         }
@@ -268,7 +278,6 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
         BaseSelect thisSelect = new BaseSelect();
         this.selectStack.push(thisSelect);
         super.visitSubQueryExpression(ctx);
-        //出栈
         this.selectStack.pop();
         return thisSelect;
     }
@@ -316,7 +325,6 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
         if (null != ctx.setQuantifier()) {
             functionItem.setQuantifier(ctx.setQuantifier().getText());
         }
-        Object function = super.visit(ctx.qualifiedName());
         functionItem.setName(ctx.qualifiedName().getText());
         functionItem.setParams(new ArrayList<>());
         final List<QuerySqlBaseParser.ExpressionContext> expressions = ctx.expression();
@@ -329,5 +337,53 @@ public class DefaultQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
     @Override
     public Object visitDereference(QuerySqlBaseParser.DereferenceContext ctx) {
         return new Identifier(ctx.getText());
+    }
+
+    @Override
+    public Object visitBetween(QuerySqlBaseParser.BetweenContext ctx) {
+        BetweenAndExpression betweenAndExpression = new BetweenAndExpression();
+        if (null != ctx.NOT()) {
+            betweenAndExpression.setNot(ctx.NOT().getText());
+        }
+        betweenAndExpression.setBetween(ctx.BETWEEN().getText());
+        betweenAndExpression.setLower(super.visit(ctx.lower));
+        betweenAndExpression.setAnd(ctx.AND().getText());
+        betweenAndExpression.setUpper(super.visit(ctx.upper));
+        return betweenAndExpression;
+    }
+
+    @Override
+    public Object visitSubScript(QuerySqlBaseParser.SubScriptContext ctx) {
+        SubScriptItem subScriptItem = new SubScriptItem();
+        subScriptItem.setValue(super.visit(ctx.primaryExpression()));
+        subScriptItem.setIndexes(new ArrayList<>());
+        final List<QuerySqlBaseParser.ValueExpressionContext> valueExpressionContexts = ctx.valueExpression();
+        for (QuerySqlBaseParser.ValueExpressionContext valueExpressionContext : valueExpressionContexts) {
+            subScriptItem.getIndexes().add(super.visit(valueExpressionContext));
+        }
+        return subScriptItem;
+    }
+
+    @Override
+    public Object visitNumericLiteral(QuerySqlBaseParser.NumericLiteralContext ctx) {
+        final Object o = super.visitNumericLiteral(ctx);
+        ConstantItem constantItem = new ConstantItem();
+        constantItem.setConstant(o.toString());
+        return constantItem;
+    }
+
+    @Override
+    public Object visitDecimalLiteral(QuerySqlBaseParser.DecimalLiteralContext ctx) {
+        return new BigDecimal(ctx.getText());
+    }
+
+    @Override
+    public Object visitDoubleLiteral(QuerySqlBaseParser.DoubleLiteralContext ctx) {
+        return new Double(ctx.getText());
+    }
+
+    @Override
+    public Object visitIntegerLiteral(QuerySqlBaseParser.IntegerLiteralContext ctx) {
+        return new Integer(ctx.getText());
     }
 }

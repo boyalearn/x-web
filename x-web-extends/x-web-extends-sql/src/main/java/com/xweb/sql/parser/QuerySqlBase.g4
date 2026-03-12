@@ -120,7 +120,7 @@ primaryExpression
     | query                                                                               #subQueryExpression
     | EXISTS '(' query ')'                                                                #exists
     | CASE whenClause+ (ELSE elseExpression=expression)? END                              #simpleCase
-    | value=primaryExpression '[' index=valueExpression ']'                               #subscript
+    | value=primaryExpression '[' index=valueExpression (',' valueExpression)? ']'        #subScript
     | qualifiedName '(' (setQuantifier? expression (',' expression)*)? ')'                #functionCall
     | identifier                                                                          #columnReference
     | base=primaryExpression '.' fieldName=identifier                                     #dereference

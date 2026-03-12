@@ -254,13 +254,6 @@ public interface QuerySqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitNullLiteral(QuerySqlBaseParser.NullLiteralContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code subscript}
-	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSubscript(QuerySqlBaseParser.SubscriptContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code typeConstructor}
 	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.
 	 * @param ctx the parse tree
@@ -316,6 +309,13 @@ public interface QuerySqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitSubQueryExpression(QuerySqlBaseParser.SubQueryExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code subScript}
+	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSubScript(QuerySqlBaseParser.SubScriptContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link QuerySqlBaseParser#whenClause}.
 	 * @param ctx the parse tree

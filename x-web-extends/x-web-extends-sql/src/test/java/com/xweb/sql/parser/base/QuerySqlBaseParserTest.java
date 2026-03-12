@@ -22,69 +22,22 @@ public class QuerySqlBaseParserTest {
      */
     @Test
     public void test00000000001() {
-        String sql = "select id,name from aaa where id = 222 and (age= 22 or name= 'xxx') or xx = '33' and ss = 22";
-        commonCheck(sql);
+        String[] sqls = {
+                "select id,name from aaa where id = 222",
+                "select * from aaa",
+                "select a.* from aaa a",
+                "select 1",
+                "select id,name from aaa where (id = 222 and  age= 22 )or name= 'xxx'",
+                "select id, name  from aaa group by name,id ",
+                "select id, name  from aaa having id > 20",
+                "select name,(select id from a where id=2) as currentId  from aaa",
+                "select (case when name = 'fff' then 'a' else 'b' end) as caseName  from aaa  where id = 222",
+        };
+        for (String sql : sqls) {
+            commonCheck(sql);
+        }
     }
 
-    /**
-     * simple
-     * select id, name  from aaa  where id = 222 and name='zhx'
-     */
-    @Test
-    public void test00000000002() {
-        String sql = "select id,name from aaa where (id = 222 and  age= 22 )or name= 'xxx' ";
-        commonCheck(sql);
-    }
-
-    /**
-     * simple
-     * select id, name  from aaa  where id = 222 and name='zhx'
-     */
-    @Test
-    public void test00000000003() {
-        String sql = "select id, name  from aaa  where id = 222 and  age= 22 or name= 'xxx' group by name,id ";
-        commonCheck(sql);
-    }
-
-    /**
-     * simple
-     * select id, name  from aaa  where id = 222 and name='zhx'
-     */
-    @Test
-    public void test00000000004() {
-        String sql = "select id, name  from aaa  where id = 222 and  age= 22 or name= 'xxx' group by name,id  order by name,id";
-        commonCheck(sql);
-    }
-
-    /**
-     * simple
-     * select id, name  from aaa  where id = 222 and name='zhx'
-     */
-    @Test
-    public void test00000000005() {
-        String sql = "select id, name  from aaa  where id = 222 and  age= 22 or name= 'xxx' group by name,id  order by name,id having id>20";
-        commonCheck(sql);
-    }
-
-    /**
-     * sub query
-     * select id, name  from aaa  where id = 222 and name='zhx'
-     */
-    @Test
-    public void test00000000006() {
-        String sql = "select name,(select id from a where id=2) as currentId  from aaa  where id = 222 and  age= 22 or name= 'xxx' group by name,id  order by name,id having id>20";
-        commonCheck(sql);
-    }
-
-    /**
-     * sub query
-     * select id, name  from aaa  where id = 222 and name='zhx'
-     */
-    @Test
-    public void test00000000007() {
-        String sql = "select (case when name = 'fff' then 'a' else 'b' end) as caseName  from aaa  where id = 222 and  age= 22 or name= 'xxx' group by name,id  order by name,id having id>20";
-        commonCheck(sql);
-    }
 
     /**
      * sub query
@@ -133,6 +86,36 @@ public class QuerySqlBaseParserTest {
     @Test
     public void test00000000012() {
         String sql = "select nvl(name,'ss') as nvlName  from aaa a ,(select * from bbb where cc=33) b where a.id=b.id";
+        commonCheck(sql);
+    }
+
+    /**
+     * sub query
+     * select id, name  from aaa  where id = 222 and name='zhx'
+     */
+    @Test
+    public void test00000000013() {
+        String sql = "select nvl(name,'ss') as nvlName  from aaa a ,(select * from bbb where cc=33) b where a.id=b.id and b.id between 1 and 2";
+        commonCheck(sql);
+    }
+
+    /**
+     * sub query
+     * select id, name  from aaa  where id = 222 and name='zhx'
+     */
+    @Test
+    public void test00000000014() {
+        String sql = "select nvl(a.name,'ss') as nvlName  from aaa a ,(select * from bbb where cc=33) b where a.id=b.id and b.id between 1 and 2";
+        commonCheck(sql);
+    }
+
+    /**
+     * sub query
+     * select id, name  from aaa  where id = 222 and name='zhx'
+     */
+    @Test
+    public void test00000000015() {
+        String sql = "select nvl(a.name[1],'ss') as nvlName  from aaa a ,(select cc[2,3] as subcc from bbb where cc[2,3]=33) b where a.id=b.id and b.id between 1 and 2";
         commonCheck(sql);
     }
 }

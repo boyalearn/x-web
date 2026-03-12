@@ -2,7 +2,10 @@ package com.xweb.sql.core;
 
 
 import com.xweb.sql.core.base.BaseSelect;
+import com.xweb.sql.core.base.express.BetweenAndExpression;
+import com.xweb.sql.core.base.item.ConstantItem;
 import com.xweb.sql.core.base.item.SelectAllItem;
+import com.xweb.sql.core.base.item.SubScriptItem;
 import com.xweb.sql.core.base.table.AliasComplexTableItem;
 import com.xweb.sql.core.base.table.BaseTableItem;
 import com.xweb.sql.core.base.GroupItem;
@@ -138,8 +141,61 @@ public final class ItemStringUtil {
             return toString((AliasComplexTableItem) object);
         } else if (object instanceof SelectAllItem) {
             return toString((SelectAllItem) object);
+        } else if (object instanceof BetweenAndExpression) {
+            return toString((BetweenAndExpression) object);
+        } else if (object instanceof SubScriptItem) {
+            return toString((SubScriptItem) object);
+        } else if (object instanceof ConstantItem) {
+            return toString((ConstantItem) object);
         }
         throw new RuntimeException("unknown exception class is " + object.getClass().getName());
+    }
+
+    private static String toString(ConstantItem constantItem) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(constantItem.getConstant());
+
+        if (!isEmpty(constantItem.getAs())) {
+            sql.append(" " + constantItem.getAs());
+        }
+        if (!isEmpty(constantItem.getAliasName())) {
+            sql.append(" " + constantItem.getAliasName());
+        }
+        return sql.toString();
+    }
+
+    private static String toString(SubScriptItem subScriptItem) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(toString(subScriptItem.getValue()));
+        sql.append("[");
+        final List<Object> indexes = subScriptItem.getIndexes();
+        for (int i = 0; i < indexes.size(); i++) {
+            if (i != 0) {
+                sql.append(",");
+            }
+            sql.append(toString(indexes.get(i)));
+        }
+        sql.append("]");
+        if (!isEmpty(subScriptItem.getAs())) {
+            sql.append(" " + subScriptItem.getAs());
+        }
+        if (!isEmpty(subScriptItem.getAliasName())) {
+            sql.append(" " + subScriptItem.getAliasName());
+        }
+        return sql.toString();
+    }
+
+    private static String toString(BetweenAndExpression betweenAndExpression) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(toString(betweenAndExpression.getLeft()));
+        if (!isEmpty(betweenAndExpression.getNot())) {
+            sql.append(" " + betweenAndExpression.getNot());
+        }
+        sql.append(" " + betweenAndExpression.getBetween());
+        sql.append(" " + toString(betweenAndExpression.getLower()));
+        sql.append(" " + betweenAndExpression.getAnd());
+        sql.append(" " + toString(betweenAndExpression.getUpper()));
+        return sql.toString();
     }
 
     private static String toString(SelectAllItem selectAllItem) {

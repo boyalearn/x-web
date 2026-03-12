@@ -422,18 +422,6 @@ public interface QuerySqlBaseListener extends ParseTreeListener {
 	 */
 	void exitNullLiteral(QuerySqlBaseParser.NullLiteralContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code subscript}
-	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterSubscript(QuerySqlBaseParser.SubscriptContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code subscript}
-	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitSubscript(QuerySqlBaseParser.SubscriptContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code typeConstructor}
 	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.
 	 * @param ctx the parse tree
@@ -529,6 +517,18 @@ public interface QuerySqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSubQueryExpression(QuerySqlBaseParser.SubQueryExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code subScript}
+	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterSubScript(QuerySqlBaseParser.SubScriptContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code subScript}
+	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitSubScript(QuerySqlBaseParser.SubScriptContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link QuerySqlBaseParser#whenClause}.
 	 * @param ctx the parse tree
