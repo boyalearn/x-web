@@ -15,4 +15,7 @@ import java.util.List;
  */
 public interface IMetaService extends IService<Meta> {
     List<Meta> listMetaByCodes(String[] codes);
+
+
+    List<Object> selectHasFunctionNvl();
 }

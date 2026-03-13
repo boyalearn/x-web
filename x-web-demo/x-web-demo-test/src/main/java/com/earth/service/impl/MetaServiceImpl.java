@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.earth.entity.Meta;
 import com.earth.mapper.MetaMapper;
 import com.earth.service.IMetaService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,11 +21,20 @@ import java.util.List;
 @Service
 public class MetaServiceImpl extends ServiceImpl<MetaMapper, Meta> implements IMetaService {
 
+    @Autowired
+    private MetaMapper metaMapper;
+
     @Override
     public List<Meta> listMetaByCodes(String[] codes) {
         QueryWrapper<Meta> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().in(Meta::getCode, codes);
         return list(queryWrapper);
     }
+
+    @Override
+    public List<Object> selectHasFunctionNvl() {
+        return metaMapper.selectHasFunctionNvl();
+    }
+
 
 }

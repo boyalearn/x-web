@@ -24,11 +24,42 @@ public interface QuerySqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitQuery(QuerySqlBaseParser.QueryContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link QuerySqlBaseParser#queryNoWith}.
+	 * Visit a parse tree produced by {@link QuerySqlBaseParser#queryItem}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitQueryNoWith(QuerySqlBaseParser.QueryNoWithContext ctx);
+	T visitQueryItem(QuerySqlBaseParser.QueryItemContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code singleSelect}
+	 * labeled alternative in {@link QuerySqlBaseParser#queryNoWith}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSingleSelect(QuerySqlBaseParser.SingleSelectContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link QuerySqlBaseParser#queryPrimary}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitQueryPrimary(QuerySqlBaseParser.QueryPrimaryContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link QuerySqlBaseParser#orderByPart}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOrderByPart(QuerySqlBaseParser.OrderByPartContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link QuerySqlBaseParser#limitRowCount}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLimitRowCount(QuerySqlBaseParser.LimitRowCountContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link QuerySqlBaseParser#rowCount}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRowCount(QuerySqlBaseParser.RowCountContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link QuerySqlBaseParser#setQuantifier}.
 	 * @param ctx the parse tree
@@ -101,6 +132,13 @@ public interface QuerySqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTableNameExpress(QuerySqlBaseParser.TableNameExpressContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code unionSelectTableExpress}
+	 * labeled alternative in {@link QuerySqlBaseParser#tableExpressPrimary}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnionSelectTableExpress(QuerySqlBaseParser.UnionSelectTableExpressContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code subQueryTableExpress}
 	 * labeled alternative in {@link QuerySqlBaseParser#tableExpressPrimary}.
 	 * @param ctx the parse tree
@@ -114,6 +152,12 @@ public interface QuerySqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitSubTableExpressionExpress(QuerySqlBaseParser.SubTableExpressionExpressContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link QuerySqlBaseParser#unionTableExpress}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnionTableExpress(QuerySqlBaseParser.UnionTableExpressContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link QuerySqlBaseParser#groupByExpression}.
 	 * @param ctx the parse tree
@@ -221,6 +265,13 @@ public interface QuerySqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitValueExpression(QuerySqlBaseParser.ValueExpressionContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code dynamicParameter}
+	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDynamicParameter(QuerySqlBaseParser.DynamicParameterContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code dereference}
 	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.
 	 * @param ctx the parse tree
@@ -262,6 +313,13 @@ public interface QuerySqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitTypeConstructor(QuerySqlBaseParser.TypeConstructorContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code specialVariable}
+	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSpecialVariable(QuerySqlBaseParser.SpecialVariableContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code parenthesizedExpression}
 	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.

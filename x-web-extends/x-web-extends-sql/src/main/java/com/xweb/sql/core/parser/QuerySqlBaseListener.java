@@ -30,15 +30,67 @@ public interface QuerySqlBaseListener extends ParseTreeListener {
 	 */
 	void exitQuery(QuerySqlBaseParser.QueryContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link QuerySqlBaseParser#queryNoWith}.
+	 * Enter a parse tree produced by {@link QuerySqlBaseParser#queryItem}.
 	 * @param ctx the parse tree
 	 */
-	void enterQueryNoWith(QuerySqlBaseParser.QueryNoWithContext ctx);
+	void enterQueryItem(QuerySqlBaseParser.QueryItemContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link QuerySqlBaseParser#queryNoWith}.
+	 * Exit a parse tree produced by {@link QuerySqlBaseParser#queryItem}.
 	 * @param ctx the parse tree
 	 */
-	void exitQueryNoWith(QuerySqlBaseParser.QueryNoWithContext ctx);
+	void exitQueryItem(QuerySqlBaseParser.QueryItemContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code singleSelect}
+	 * labeled alternative in {@link QuerySqlBaseParser#queryNoWith}.
+	 * @param ctx the parse tree
+	 */
+	void enterSingleSelect(QuerySqlBaseParser.SingleSelectContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code singleSelect}
+	 * labeled alternative in {@link QuerySqlBaseParser#queryNoWith}.
+	 * @param ctx the parse tree
+	 */
+	void exitSingleSelect(QuerySqlBaseParser.SingleSelectContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link QuerySqlBaseParser#queryPrimary}.
+	 * @param ctx the parse tree
+	 */
+	void enterQueryPrimary(QuerySqlBaseParser.QueryPrimaryContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QuerySqlBaseParser#queryPrimary}.
+	 * @param ctx the parse tree
+	 */
+	void exitQueryPrimary(QuerySqlBaseParser.QueryPrimaryContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link QuerySqlBaseParser#orderByPart}.
+	 * @param ctx the parse tree
+	 */
+	void enterOrderByPart(QuerySqlBaseParser.OrderByPartContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QuerySqlBaseParser#orderByPart}.
+	 * @param ctx the parse tree
+	 */
+	void exitOrderByPart(QuerySqlBaseParser.OrderByPartContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link QuerySqlBaseParser#limitRowCount}.
+	 * @param ctx the parse tree
+	 */
+	void enterLimitRowCount(QuerySqlBaseParser.LimitRowCountContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QuerySqlBaseParser#limitRowCount}.
+	 * @param ctx the parse tree
+	 */
+	void exitLimitRowCount(QuerySqlBaseParser.LimitRowCountContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link QuerySqlBaseParser#rowCount}.
+	 * @param ctx the parse tree
+	 */
+	void enterRowCount(QuerySqlBaseParser.RowCountContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QuerySqlBaseParser#rowCount}.
+	 * @param ctx the parse tree
+	 */
+	void exitRowCount(QuerySqlBaseParser.RowCountContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link QuerySqlBaseParser#setQuantifier}.
 	 * @param ctx the parse tree
@@ -160,6 +212,18 @@ public interface QuerySqlBaseListener extends ParseTreeListener {
 	 */
 	void exitTableNameExpress(QuerySqlBaseParser.TableNameExpressContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code unionSelectTableExpress}
+	 * labeled alternative in {@link QuerySqlBaseParser#tableExpressPrimary}.
+	 * @param ctx the parse tree
+	 */
+	void enterUnionSelectTableExpress(QuerySqlBaseParser.UnionSelectTableExpressContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code unionSelectTableExpress}
+	 * labeled alternative in {@link QuerySqlBaseParser#tableExpressPrimary}.
+	 * @param ctx the parse tree
+	 */
+	void exitUnionSelectTableExpress(QuerySqlBaseParser.UnionSelectTableExpressContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code subQueryTableExpress}
 	 * labeled alternative in {@link QuerySqlBaseParser#tableExpressPrimary}.
 	 * @param ctx the parse tree
@@ -183,6 +247,16 @@ public interface QuerySqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSubTableExpressionExpress(QuerySqlBaseParser.SubTableExpressionExpressContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link QuerySqlBaseParser#unionTableExpress}.
+	 * @param ctx the parse tree
+	 */
+	void enterUnionTableExpress(QuerySqlBaseParser.UnionTableExpressContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QuerySqlBaseParser#unionTableExpress}.
+	 * @param ctx the parse tree
+	 */
+	void exitUnionTableExpress(QuerySqlBaseParser.UnionTableExpressContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link QuerySqlBaseParser#groupByExpression}.
 	 * @param ctx the parse tree
@@ -364,6 +438,18 @@ public interface QuerySqlBaseListener extends ParseTreeListener {
 	 */
 	void exitValueExpression(QuerySqlBaseParser.ValueExpressionContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code dynamicParameter}
+	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterDynamicParameter(QuerySqlBaseParser.DynamicParameterContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code dynamicParameter}
+	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitDynamicParameter(QuerySqlBaseParser.DynamicParameterContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code dereference}
 	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.
 	 * @param ctx the parse tree
@@ -435,6 +521,18 @@ public interface QuerySqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTypeConstructor(QuerySqlBaseParser.TypeConstructorContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code specialVariable}
+	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterSpecialVariable(QuerySqlBaseParser.SpecialVariableContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code specialVariable}
+	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitSpecialVariable(QuerySqlBaseParser.SpecialVariableContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code parenthesizedExpression}
 	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.

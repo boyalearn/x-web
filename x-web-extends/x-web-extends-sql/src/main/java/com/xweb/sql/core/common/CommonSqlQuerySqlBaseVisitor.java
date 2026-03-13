@@ -4,6 +4,7 @@ import com.xweb.sql.core.common.expression.BetweenAndExpression;
 import com.xweb.sql.core.common.expression.CommonConditionExpression;
 import com.xweb.sql.core.common.expression.ExistExpression;
 import com.xweb.sql.core.common.expression.InExpression;
+import com.xweb.sql.core.common.expression.IsNullExpression;
 import com.xweb.sql.core.common.expression.LikeExpression;
 import com.xweb.sql.core.common.expression.NotBooleanExpression;
 import com.xweb.sql.core.common.expression.PriorityExpression;
@@ -14,8 +15,10 @@ import com.xweb.sql.core.common.item.SelectAllItem;
 import com.xweb.sql.core.common.item.SubIndexItem;
 import com.xweb.sql.core.common.item.TableColumnItem;
 import com.xweb.sql.core.common.item.WhenThenItem;
+import com.xweb.sql.core.common.order.DefaultOrderItem;
 import com.xweb.sql.core.common.order.OrderItem;
 import com.xweb.sql.core.common.table.SimpleTable;
+import com.xweb.sql.core.common.table.UnionTableTable;
 import com.xweb.sql.core.parser.QuerySqlBaseBaseVisitor;
 import com.xweb.sql.core.parser.QuerySqlBaseParser;
 
@@ -32,9 +35,13 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
 
 
     @Override
-    public Object visitQuery(QuerySqlBaseParser.QueryContext ctx) {
+    public Object visitSelect(QuerySqlBaseParser.SelectContext ctx) {
+        return super.visitSelect(ctx);
+    }
 
-        return super.visit(ctx.queryNoWith());
+    @Override
+    public Object visitQuery(QuerySqlBaseParser.QueryContext ctx) {
+        return super.visitQuery(ctx);
     }
 
 
@@ -57,7 +64,54 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitQueryNoWith(QuerySqlBaseParser.QueryNoWithContext ctx) {
+    public Object visitSubTableExpressionExpress(QuerySqlBaseParser.SubTableExpressionExpressContext ctx) {
+        Object result = super.visit(ctx.tableExpression());
+        return new PriorityExpression(result);
+    }
+
+    @Override
+    public Object visitUnionSelectTableExpress(QuerySqlBaseParser.UnionSelectTableExpressContext ctx) {
+        UnionTableTable unionTableTable = new UnionTableTable();
+        Object left = super.visit(ctx.tableExpression());
+        unionTableTable.setLeft((Item) left);
+        final List<QuerySqlBaseParser.UnionTableExpressContext> unionTableExpressContexts = ctx.unionTableExpress();
+        unionTableTable.setUnionTableItems(new ArrayList<>());
+        for (QuerySqlBaseParser.UnionTableExpressContext unionTableExpressContext : unionTableExpressContexts) {
+            unionTableTable.getUnionTableItems().add((UnionTableTable.UnionTableItem) super.visit(unionTableExpressContext));
+        }
+        return new PriorityExpression(unionTableTable);
+    }
+
+    @Override
+    public Object visitUnionTableExpress(QuerySqlBaseParser.UnionTableExpressContext ctx) {
+        UnionTableTable.UnionTableItem unionTableItem = new UnionTableTable.UnionTableItem();
+        unionTableItem.setUnion(ctx.UNION().getText());
+        if (Optional.ofNullable(ctx.setQuantifier()).isPresent()) {
+            unionTableItem.setAll(ctx.setQuantifier().getText());
+        }
+        unionTableItem.setRight((Item) super.visit(ctx.tableExpressPrimary()));
+        return unionTableItem;
+    }
+
+    @Override
+    public Object visitQueryItem(QuerySqlBaseParser.QueryItemContext ctx) {
+        Object result = super.visitQueryItem(ctx);
+        return result;
+    }
+
+    @Override
+    public Object visitOrderByExpression(QuerySqlBaseParser.OrderByExpressionContext ctx) {
+        Object result = super.visit(ctx.expression());
+        if (result instanceof ConstantItem) {
+            DefaultOrderItem defaultOrderItem = new DefaultOrderItem();
+            defaultOrderItem.setItem((Item) result);
+            return defaultOrderItem;
+        }
+        return result;
+    }
+
+    @Override
+    public Object visitQueryPrimary(QuerySqlBaseParser.QueryPrimaryContext ctx) {
         Select select = new Select();
         select.setSelect(ctx.SELECT().getText());
         final List<QuerySqlBaseParser.SelectItemContext> selectItemContexts = ctx.selectItem();
@@ -80,16 +134,17 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
 
 
         if (Optional.ofNullable(ctx.GROUP()).isPresent()) {
-            select.setGroup(ctx.GROUP().getText() + " " + ctx.GBY().getText());
+            select.setGroup(ctx.GROUP().getText() + " " + ctx.BY().getText());
             final List<QuerySqlBaseParser.GroupByExpressionContext> groupByExpressionContexts = ctx.groupByExpression();
             for (QuerySqlBaseParser.GroupByExpressionContext groupByExpressionContext : groupByExpressionContexts) {
                 select.getGroupItems().add((Item) super.visit(groupByExpressionContext));
             }
         }
 
-        if (Optional.ofNullable(ctx.ORDER()).isPresent()) {
-            select.setOrder(ctx.ORDER().getText() + " " + ctx.OBY().getText());
-            final List<QuerySqlBaseParser.OrderByExpressionContext> orderByExpressionContexts = ctx.orderByExpression();
+        if (Optional.ofNullable(ctx.orderByPart()).isPresent()) {
+            final QuerySqlBaseParser.OrderByPartContext orderByPartContext = ctx.orderByPart();
+            select.setOrder(orderByPartContext.ORDER().getText() + " " + orderByPartContext.BY().getText());
+            final List<QuerySqlBaseParser.OrderByExpressionContext> orderByExpressionContexts = orderByPartContext.orderByExpression();
             for (QuerySqlBaseParser.OrderByExpressionContext orderByExpressionContext : orderByExpressionContexts) {
                 select.getOrderItems().add((OrderItem) super.visit(orderByExpressionContext));
             }
@@ -100,6 +155,10 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
             select.setHavingExpression((BooleanExpression) super.visit(ctx.havingExpression()));
         }
 
+        if (Optional.ofNullable(ctx.LIMIT()).isPresent()) {
+            select.setLimit(ctx.LIMIT().getText());
+            select.setLimitItems((List) super.visit(ctx.limitRowCount()));
+        }
         return select;
     }
 
@@ -166,6 +225,15 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
                 priorityExpression.setAlias(ctx.identifier().getText());
             }
             return priorityExpression;
+        } else if (result instanceof UnionTableTable) {
+            UnionTableTable unionTableTable = (UnionTableTable) result;
+            if (Optional.ofNullable(ctx.AS()).isPresent()) {
+                unionTableTable.setAs(ctx.AS().getText());
+            }
+            if (Optional.ofNullable(ctx.identifier()).isPresent()) {
+                unionTableTable.setAlias(ctx.identifier().getText());
+            }
+            return unionTableTable;
         } else {
             System.out.println(ctx.getText());
             throw new RuntimeException("Table Item BUG 未支持的解析异常: " + result.getClass().getSimpleName());
@@ -187,6 +255,15 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
         return simpleTable;
     }
 
+    @Override
+    public Object visitLimitRowCount(QuerySqlBaseParser.LimitRowCountContext ctx) {
+        List<Item> items = new ArrayList<>();
+        final List<QuerySqlBaseParser.RowCountContext> rowCountContexts = ctx.rowCount();
+        for (QuerySqlBaseParser.RowCountContext rowCountContext : rowCountContexts) {
+            items.add((Item) super.visit(rowCountContext));
+        }
+        return items;
+    }
 
     @Override
     public Object visitPredicated(QuerySqlBaseParser.PredicatedContext ctx) {
@@ -204,6 +281,14 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
             BetweenAndExpression betweenAndExpression = (BetweenAndExpression) predicate;
             betweenAndExpression.setLeft(value);
             return betweenAndExpression;
+        } else if (predicate instanceof InExpression) {
+            InExpression inExpression = (InExpression) predicate;
+            inExpression.setLeft(value);
+            return inExpression;
+        } else if (predicate instanceof IsNullExpression) {
+            IsNullExpression isNullExpression = (IsNullExpression) predicate;
+            isNullExpression.setLeft(value);
+            return isNullExpression;
         } else {
             throw new RuntimeException("express BUG 未支持的解析异常: " + predicate.getClass().getSimpleName());
         }
@@ -341,6 +426,38 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
         likeExpression.setLike(ctx.LIKE().getText());
         likeExpression.setPattern(super.visit(ctx.pattern));
         return super.visitLike(ctx);
+    }
+
+    @Override
+    public Object visitNullPredicate(QuerySqlBaseParser.NullPredicateContext ctx) {
+        IsNullExpression isNullExpression = new IsNullExpression();
+        isNullExpression.setIs(ctx.IS().getText());
+        if (Optional.ofNullable(ctx.NOT()).isPresent()) {
+            isNullExpression.setNot(ctx.NOT().getText());
+        }
+        isNullExpression.setNullName(ctx.NULL().getText());
+        return isNullExpression;
+    }
+
+    @Override
+    public Object visitDynamicParameter(QuerySqlBaseParser.DynamicParameterContext ctx) {
+        ConstantItem constantItem = new ConstantItem();
+        constantItem.setConstant(ctx.getText());
+        return constantItem;
+    }
+
+    @Override
+    public Object visitSpecialVariable(QuerySqlBaseParser.SpecialVariableContext ctx) {
+        ConstantItem constantItem = new ConstantItem();
+        constantItem.setConstant(ctx.getText());
+        return constantItem;
+    }
+
+    @Override
+    public Object visitNullLiteral(QuerySqlBaseParser.NullLiteralContext ctx) {
+        ConstantItem constantItem = new ConstantItem();
+        constantItem.setConstant(ctx.getText());
+        return constantItem;
     }
 
     @Override

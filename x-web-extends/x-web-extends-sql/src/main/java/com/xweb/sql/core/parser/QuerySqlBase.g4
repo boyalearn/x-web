@@ -13,21 +13,42 @@ statement
 
 query
     //查询分有with和 no with
+    : queryItem
+    ;
+
+queryItem
     : queryNoWith
     ;
 
 queryNoWith
+    : queryPrimary                                                                         #singleSelect
+    ;
+
+queryPrimary
     : SELECT setQuantifier? selectItem (',' selectItem)*
       (FROM tableExpression (',' tableExpression)*)?
       (WHERE where=whereExpression)?
-      (GROUP GBY groupByExpression (',' groupByExpression)*)?
-      (ORDER OBY orderByExpression (',' orderByExpression)*)?
+      (GROUP BY groupByExpression (',' groupByExpression)*)?
+      orderByPart?
       (HAVING having=havingExpression)?
+      ((LIMIT limit=limitRowCount) | (FETCH (FIRST | NEXT) (fetchFirst=rowCount)? (ROW | ROWS) (ONLY | WITH TIES)))?
     ;
 
+orderByPart
+    : ORDER BY orderByExpression (',' orderByExpression)*
+    ;
+
+limitRowCount
+    : rowCount (',' rowCount)?
+    ;
+
+rowCount
+    : valueExpression
+    ;
 
 setQuantifier
     : DISTINCT
+    | ALL
     ;
 
 selectItem
@@ -66,8 +87,13 @@ aliasedTableExpression
 
 tableExpressPrimary
     : qualifiedName                                                                        #tableNameExpress
+    | '(' tableExpression  unionTableExpress+ ')'                                          #unionSelectTableExpress
     | '(' query ')'                                                                        #subQueryTableExpress
     | '(' tableExpression ')'                                                              #subTableExpressionExpress
+    ;
+
+unionTableExpress
+    : UNION setQuantifier? tableExpressPrimary
     ;
 
 groupByExpression
@@ -112,7 +138,11 @@ valueExpression
     ;
 
 primaryExpression
-    : NULL                                                                                 #nullLiteral
+    //新增在应用中解析的时候sql值可能是个参数
+    : QUESTION_MARK                                                                        #dynamicParameter
+    //MYSQL中特殊解析
+    | D_ANT identifier                                                                     #specialVariable
+    | NULL                                                                                 #nullLiteral
     | identifier string                                                                    #typeConstructor
     | number                                                                               #numericLiteral
     | string                                                                               #stringLiteral
@@ -122,6 +152,8 @@ primaryExpression
     | CASE whenClause+ (ELSE elseExpression=expression)? END                               #simpleCase
     | value=primaryExpression '[' index=valueExpression (',' valueExpression)? ']'         #subScript
     | qualifiedName '(' (setQuantifier? expression (',' expression)*)? ')'                 #functionCall
+    | qualifiedName '(' ')'                                                                #functionCall
+    //MYSQL中特殊解析
     | identifier                                                                           #columnReference
     | base=primaryExpression '.' fieldName=identifier                                      #dereference
     | '(' expression ')'                                                                   #parenthesizedExpression
@@ -140,7 +172,8 @@ comparisonOperator
     ;
 
 identifier
-    : IDENTIFIER                                                                           #unquotedIdentifier
+    : '`' IDENTIFIER '`'                                                                   #unquotedIdentifier
+    | IDENTIFIER                                                                           #unquotedIdentifier
     ;
 
 string
@@ -214,10 +247,7 @@ ARRAY
     ;
 
 IS  : [Ii][Ss];
-
 AS  : [Aa][Ss];
-GBY : [Bb][Yy];
-OBY : [Bb][Yy];
 BY  : [Bb][Yy];
 NULL: [Nn][Uu][Ll][Ll];
 
@@ -243,8 +273,55 @@ LTE : '<=';
 GT  : '>';
 GTE : '>=';
 
+LIMIT
+    : [Ll][Ii][Mm][Ii][Tt]
+    ;
+
+FETCH
+    : [Ff][Ee][Tt][Cc][Hh]
+    ;
+
+FIRST
+    : [Ff][Ii][Rr][Ss][Tt]
+    ;
+
+NEXT
+    : [Nn][Ee][Xx][Tt]
+    ;
+
+ROW : [Rr][Oo][Ww]
+    ;
+
+ROWS
+    : [Rr][Oo][Ww][Ss]
+    ;
+
+ONLY
+    : [Oo][Nn][Ll][Yy]
+    ;
+
+WITH
+    : [Ww][Ii][Tt][Hh]
+    ;
+
+TIES: [Tt][Ii][Ee][Ss];
+
+UNION
+    : [Uu][Nn][Ii][Oo][Nn]
+    ;
+
+ALL : [Aa][Ll][Ll];
+
 ASTERISK
     : '*'
+    ;
+
+QUESTION_MARK
+    : '?'
+    ;
+
+D_ANT
+    : '@@'
     ;
 
 STRING

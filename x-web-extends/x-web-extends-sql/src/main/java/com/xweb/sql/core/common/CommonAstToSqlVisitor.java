@@ -3,6 +3,8 @@ package com.xweb.sql.core.common;
 
 import com.xweb.sql.core.common.expression.BetweenAndExpression;
 import com.xweb.sql.core.common.expression.CommonConditionExpression;
+import com.xweb.sql.core.common.expression.InExpression;
+import com.xweb.sql.core.common.expression.IsNullExpression;
 import com.xweb.sql.core.common.expression.PriorityExpression;
 import com.xweb.sql.core.common.item.CaseItem;
 import com.xweb.sql.core.common.item.ConstantItem;
@@ -11,10 +13,13 @@ import com.xweb.sql.core.common.item.SelectAllItem;
 import com.xweb.sql.core.common.item.SubIndexItem;
 import com.xweb.sql.core.common.item.TableColumnItem;
 import com.xweb.sql.core.common.item.WhenThenItem;
+import com.xweb.sql.core.common.order.DefaultOrderItem;
 import com.xweb.sql.core.common.order.OrderItem;
 import com.xweb.sql.core.common.table.SimpleTable;
+import com.xweb.sql.core.common.table.UnionTableTable;
 
 import java.util.List;
+import java.util.Optional;
 
 public class CommonAstToSqlVisitor {
 
@@ -54,7 +59,7 @@ public class CommonAstToSqlVisitor {
                 Table tableItem = tableItems.get(i);
                 if (i != 0) {
                     sql.append(COMMA);
-                }else{
+                } else {
                     sql.append(SPACE);
                 }
                 sql.append(visit(tableItem));
@@ -101,6 +106,19 @@ public class CommonAstToSqlVisitor {
             sql.append(SPACE);
             sql.append(visit(havingExpression));
         }
+
+        if (isNotEmpty(select.getLimit())) {
+            sql.append(SPACE);
+            sql.append(select.getLimit());
+            sql.append(SPACE);
+            final List<Item> limitItems = select.getLimitItems();
+            for (int i = 0; i < limitItems.size(); i++) {
+                if (i != 0) {
+                    sql.append(COMMA);
+                }
+                sql.append(visit(limitItems.get(i)));
+            }
+        }
         return sql.toString();
     }
 
@@ -127,10 +145,94 @@ public class CommonAstToSqlVisitor {
             return visit((BetweenAndExpression) object);
         } else if (object instanceof SubIndexItem) {
             return visit((SubIndexItem) object);
+        } else if (object instanceof InExpression) {
+            return visit((InExpression) object);
+        } else if (object instanceof IsNullExpression) {
+            return visit((IsNullExpression) object);
+        } else if (object instanceof UnionTableTable) {
+            return visit((UnionTableTable) object);
+        } else if (object instanceof UnionTableTable.UnionTableItem) {
+            return visit((UnionTableTable.UnionTableItem) object);
+        }
+        else if (object instanceof DefaultOrderItem) {
+            return visit((DefaultOrderItem) object);
         }
         throw new RuntimeException("unknown exception class is " + object.getClass().getName());
     }
 
+    public String visit(DefaultOrderItem defaultOrderItem) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(visit(defaultOrderItem.getItem()));
+        if (isNotEmpty(defaultOrderItem.getOrder())) {
+            sql.append(SPACE);
+            sql.append(defaultOrderItem.getOrder());
+        }
+        return sql.toString();
+    }
+
+    public String visit(UnionTableTable.UnionTableItem unionTableItem) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(unionTableItem.getUnion());
+        if (isNotEmpty(unionTableItem.getAll())) {
+            sql.append(SPACE);
+            sql.append(unionTableItem.getAll());
+        }
+        sql.append(SPACE);
+        sql.append(visit(unionTableItem.getRight()));
+        sql.append(toStringCommon(unionTableItem));
+        return sql.toString();
+    }
+
+    public String visit(UnionTableTable unionTableTable) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(visit(unionTableTable.getLeft()));
+        sql.append(SPACE);
+        final List<UnionTableTable.UnionTableItem> unionTableItems = unionTableTable.getUnionTableItems();
+        for (UnionTableTable.UnionTableItem unionTableItem : unionTableItems) {
+            sql.append(SPACE);
+            sql.append(visit(unionTableItem));
+        }
+        sql.append(SPACE);
+        sql.append(toStringCommon((Item) unionTableTable));
+        return sql.toString();
+    }
+
+    public String visit(IsNullExpression isNullExpression) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(visit(isNullExpression.getLeft()));
+        sql.append(SPACE);
+        sql.append(isNullExpression.getIs());
+        if (isNotEmpty(isNullExpression.getNot())) {
+            sql.append(SPACE);
+            sql.append(isNullExpression.getNot());
+        }
+        sql.append(SPACE);
+        sql.append(isNullExpression.getNullName());
+        sql.append(toStringCommon(isNullExpression));
+        return sql.toString();
+    }
+
+    public String visit(InExpression inExpression) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(visit(inExpression.getLeft()));
+        if (isNotEmpty(inExpression.getNot())) {
+            sql.append(SPACE);
+            sql.append(inExpression.getNot());
+        }
+        sql.append(SPACE);
+        sql.append(inExpression.getIn());
+        sql.append(LEFT_BRACKET);
+        final List<Item> items = inExpression.getItems();
+        for (int i = 0; i < items.size(); i++) {
+            if (i != 0) {
+                sql.append(COMMA);
+            }
+            sql.append(visit(items.get(i)));
+        }
+        sql.append(RIGHT_BRACKET);
+        sql.append(toStringCommon(inExpression));
+        return sql.toString();
+    }
 
     public String visit(SubIndexItem subIndexItem) {
         StringBuffer sql = new StringBuffer();

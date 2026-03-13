@@ -11,11 +11,11 @@ public class CommonSqlParserTest {
 
 
     private void commonCheck(String sql) {
-        System.out.println(sql);
+        System.out.println("S:"+sql);
         Select select = SqlUtil.readSqlToAST(sql);
         CommonAstToSqlVisitor commonAstToSqlVisitor = new CommonAstToSqlVisitor();
         String recoverSql = commonAstToSqlVisitor.visit(select);
-        System.out.println(recoverSql);
+        System.out.println("D:"+recoverSql);
         Assert.isTrue(StringUtil.replaceAllEmpty(sql).equals(StringUtil.replaceAllEmpty(recoverSql)), "恢复后不一样了");
     }
 
@@ -37,6 +37,16 @@ public class CommonSqlParserTest {
                 "select (case when name = 'fff' then 'a' else 'b' end) as caseName  from aaa  where id = 222",
                 "select nvl(name,'ss') as nvlName  from aaa a ,(select * from bbb where cc=33) b where a.id=b.id",
                 "select * from aaa where b.id between 1 and 2",
+                "SELECT  id,x,y,z,rx,ry,rz,rw,scale_x,scale_y,scale_z,mode,code,mode_id  FROM meta     WHERE (code IN (?,?))",
+                "SELECT version()",
+                "SELECT SUM(found) FROM ((SELECT 1 as found FROM information_schema.tables WHERE table_schema=?) " +
+                        "UNION ALL (SELECT 1 as found FROM information_schema.views WHERE table_schema=? LIMIT 1) " +
+                        "UNION ALL (SELECT 1 as found FROM information_schema.table_constraints WHERE table_schema=? LIMIT 1) " +
+                        "UNION ALL (SELECT 1 as found FROM information_schema.triggers WHERE trigger_schema=? LIMIT 1) " +
+                        "UNION ALL (SELECT 1 as found FROM information_schema.routines WHERE routine_schema=? LIMIT 1) " +
+                        "UNION ALL (SELECT 1 as found FROM information_schema.events WHERE event_schema=? LIMIT 1)) " +
+                        "as all_found",
+                "SELECT `installed_rank`,`version`,`description`,`type`,`script`,`checksum`,`installed_on`,`installed_by`,`execution_time`,`success` FROM `earth`.`flyway_schema_history` WHERE `installed_rank` > ? ORDER BY `installed_rank`",
                 "select a.* from aaa a where ff[2,3] > 0 ",
         };
         for (String sql : sqls) {
@@ -51,7 +61,17 @@ public class CommonSqlParserTest {
      */
     @Test
     public void test00000000002() {
-        String sql = "select nvl(name,'ss') as nvlName  from aaa a ,(select * from bbb where cc=33) b where a.id=b.id";
+        String sql ="SELECT `installed_rank`,`version`,`description`,`type`,`script`,`checksum`,`installed_on`,`installed_by`,`execution_time`,`success` FROM `earth`.`flyway_schema_history` WHERE `installed_rank` > ? ORDER BY installed_rank";
+        commonCheck(sql);
+    }
+
+    /**
+     * sub query
+     * select id, name  from aaa  where id = 222 and name='zhx'
+     */
+    @Test
+    public void test00000000003() {
+        String sql ="SELECT `installed_rank`,`installed_by`,`execution_time`,`success` FROM `earth`.`flyway_schema_history` ORDER BY installed_rank";
         commonCheck(sql);
     }
 }

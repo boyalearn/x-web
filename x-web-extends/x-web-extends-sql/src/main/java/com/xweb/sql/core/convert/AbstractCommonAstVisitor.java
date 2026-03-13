@@ -6,6 +6,7 @@ import com.xweb.sql.core.common.Select;
 import com.xweb.sql.core.common.Table;
 import com.xweb.sql.core.common.expression.BetweenAndExpression;
 import com.xweb.sql.core.common.expression.CommonConditionExpression;
+import com.xweb.sql.core.common.expression.IsNullExpression;
 import com.xweb.sql.core.common.expression.PriorityExpression;
 import com.xweb.sql.core.common.item.CaseItem;
 import com.xweb.sql.core.common.item.ConstantItem;
@@ -14,6 +15,7 @@ import com.xweb.sql.core.common.item.SelectAllItem;
 import com.xweb.sql.core.common.item.SubIndexItem;
 import com.xweb.sql.core.common.item.TableColumnItem;
 import com.xweb.sql.core.common.item.WhenThenItem;
+import com.xweb.sql.core.common.order.DefaultOrderItem;
 import com.xweb.sql.core.common.order.OrderItem;
 import com.xweb.sql.core.common.table.SimpleTable;
 
@@ -88,11 +90,23 @@ public abstract class AbstractCommonAstVisitor {
             return visit((BetweenAndExpression) object);
         } else if (object instanceof SubIndexItem) {
             return visit((SubIndexItem) object);
+        } else if (object instanceof IsNullExpression) {
+            return visit((IsNullExpression) object);
+
+        } else if (object instanceof DefaultOrderItem) {
+            return visit((DefaultOrderItem) object);
         } else {
             throw new RuntimeException("unknown exception class is " + object.getClass().getName());
         }
     }
 
+    protected Object visit(DefaultOrderItem subIndexItem) {
+        return doVisit(subIndexItem);
+    }
+
+    protected Object visit(IsNullExpression subIndexItem) {
+        return doVisit(subIndexItem);
+    }
 
     protected Object visit(SubIndexItem subIndexItem) {
         return doVisit(subIndexItem);

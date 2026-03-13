@@ -40,13 +40,73 @@ public class QuerySqlBaseBaseListener implements QuerySqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterQueryNoWith(QuerySqlBaseParser.QueryNoWithContext ctx) { }
+	@Override public void enterQueryItem(QuerySqlBaseParser.QueryItemContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitQueryNoWith(QuerySqlBaseParser.QueryNoWithContext ctx) { }
+	@Override public void exitQueryItem(QuerySqlBaseParser.QueryItemContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSingleSelect(QuerySqlBaseParser.SingleSelectContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSingleSelect(QuerySqlBaseParser.SingleSelectContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterQueryPrimary(QuerySqlBaseParser.QueryPrimaryContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitQueryPrimary(QuerySqlBaseParser.QueryPrimaryContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOrderByPart(QuerySqlBaseParser.OrderByPartContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOrderByPart(QuerySqlBaseParser.OrderByPartContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLimitRowCount(QuerySqlBaseParser.LimitRowCountContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLimitRowCount(QuerySqlBaseParser.LimitRowCountContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterRowCount(QuerySqlBaseParser.RowCountContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRowCount(QuerySqlBaseParser.RowCountContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -184,6 +244,18 @@ public class QuerySqlBaseBaseListener implements QuerySqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterUnionSelectTableExpress(QuerySqlBaseParser.UnionSelectTableExpressContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitUnionSelectTableExpress(QuerySqlBaseParser.UnionSelectTableExpressContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterSubQueryTableExpress(QuerySqlBaseParser.SubQueryTableExpressContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -203,6 +275,18 @@ public class QuerySqlBaseBaseListener implements QuerySqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitSubTableExpressionExpress(QuerySqlBaseParser.SubTableExpressionExpressContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterUnionTableExpress(QuerySqlBaseParser.UnionTableExpressContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitUnionTableExpress(QuerySqlBaseParser.UnionTableExpressContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -400,6 +484,18 @@ public class QuerySqlBaseBaseListener implements QuerySqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterDynamicParameter(QuerySqlBaseParser.DynamicParameterContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDynamicParameter(QuerySqlBaseParser.DynamicParameterContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterDereference(QuerySqlBaseParser.DereferenceContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -467,6 +563,18 @@ public class QuerySqlBaseBaseListener implements QuerySqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitTypeConstructor(QuerySqlBaseParser.TypeConstructorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSpecialVariable(QuerySqlBaseParser.SpecialVariableContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSpecialVariable(QuerySqlBaseParser.SpecialVariableContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -39,4 +39,8 @@ public class Select extends AbstractItem implements Table {
 
     private BooleanExpression havingExpression;
 
+    private String limit;
+
+    private List<Item> limitItems = new ArrayList<>();
+
 }
