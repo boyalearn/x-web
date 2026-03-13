@@ -1,18 +1,18 @@
 package com.xweb.sql.mysql;
 
-import com.xweb.sql.core.SelectUtil;
-import com.xweb.sql.core.base.BaseSelect;
+import com.xweb.sql.core.common.Select;
+import com.xweb.sql.core.common.util.SqlUtil;
 
 public class SqlToMysqlUtil {
-    private static MysqlRewriter mysqlRewriter = new MysqlRewriter();
+    private static MysqlRewriterVisitor mysqlRewriter = new MysqlRewriterVisitor();
 
     static {
         mysqlRewriter.addFilter(new NvlToIfNullFilter());
     }
 
     public static String convert(String sql) {
-        final BaseSelect baseSelect = SelectUtil.readToAST(sql);
+        final Select baseSelect = SqlUtil.readSqlToAST(sql);
         mysqlRewriter.visit(baseSelect);
-        return SelectUtil.toSql(baseSelect);
+        return SqlUtil.astToSql(baseSelect);
     }
 }

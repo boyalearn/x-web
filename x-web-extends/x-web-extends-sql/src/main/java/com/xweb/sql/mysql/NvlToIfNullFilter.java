@@ -1,19 +1,19 @@
 package com.xweb.sql.mysql;
 
-import com.xweb.sql.core.base.item.FunctionItem;
+import com.xweb.sql.core.common.item.FunctionCallItem;
 import com.xweb.sql.core.convert.RewriteFilter;
 
 public class NvlToIfNullFilter implements RewriteFilter {
 
     private final static String NVL = "NVL";
 
-    private final static String IF_NULL = "ifnull";
+    private final static String IF_NULL = "IFNULL";
 
     @Override
     public boolean support(Object object) {
-        if (object instanceof FunctionItem) {
-            FunctionItem functionItem = (FunctionItem) object;
-            if (NVL.equalsIgnoreCase(functionItem.getName())) {
+        if (object instanceof FunctionCallItem) {
+            FunctionCallItem FunctionCallItem = (FunctionCallItem) object;
+            if (NVL.equalsIgnoreCase(FunctionCallItem.getName())) {
                 return true;
             }
         }
@@ -22,8 +22,8 @@ public class NvlToIfNullFilter implements RewriteFilter {
 
     @Override
     public Object change(Object object) {
-        FunctionItem functionItem = (FunctionItem) object;
-        functionItem.setName(IF_NULL);
-        return functionItem;
+        FunctionCallItem FunctionCallItem = (FunctionCallItem) object;
+        FunctionCallItem.setName(IF_NULL);
+        return FunctionCallItem;
     }
 }

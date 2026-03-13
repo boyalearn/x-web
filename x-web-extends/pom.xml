@@ -15,6 +15,7 @@
         <module>x-web-extends-mybatis</module>
         <module>x-web-extends-sql</module>
         <module>x-web-extends-bpmn</module>
+        <module>x-web-extends-driver</module>
     </modules>
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
