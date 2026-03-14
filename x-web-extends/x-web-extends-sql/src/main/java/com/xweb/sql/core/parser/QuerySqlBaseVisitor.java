@@ -265,11 +265,66 @@ public interface QuerySqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitNullPredicate(QuerySqlBaseParser.NullPredicateContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link QuerySqlBaseParser#valueExpression}.
+	 * Visit a parse tree produced by the {@code valueExpressionDefault}
+	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitValueExpression(QuerySqlBaseParser.ValueExpressionContext ctx);
+	T visitValueExpressionDefault(QuerySqlBaseParser.ValueExpressionDefaultContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code concatenation}
+	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConcatenation(QuerySqlBaseParser.ConcatenationContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code arithmeticBinary}
+	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArithmeticBinary(QuerySqlBaseParser.ArithmeticBinaryContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code arithmeticUnary}
+	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArithmeticUnary(QuerySqlBaseParser.ArithmeticUnaryContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code atTimeZone}
+	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAtTimeZone(QuerySqlBaseParser.AtTimeZoneContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code timeZoneInterval}
+	 * labeled alternative in {@link QuerySqlBaseParser#timeZoneSpecifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTimeZoneInterval(QuerySqlBaseParser.TimeZoneIntervalContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code timeZoneString}
+	 * labeled alternative in {@link QuerySqlBaseParser#timeZoneSpecifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTimeZoneString(QuerySqlBaseParser.TimeZoneStringContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link QuerySqlBaseParser#interval}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInterval(QuerySqlBaseParser.IntervalContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link QuerySqlBaseParser#intervalField}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIntervalField(QuerySqlBaseParser.IntervalFieldContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code dynamicParameter}
 	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.

@@ -8,6 +8,7 @@ import com.xweb.sql.core.common.expression.IsNullExpression;
 import com.xweb.sql.core.common.expression.LikeExpression;
 import com.xweb.sql.core.common.expression.NotBooleanExpression;
 import com.xweb.sql.core.common.expression.PriorityExpression;
+import com.xweb.sql.core.common.expression.ArithmeticExpression;
 import com.xweb.sql.core.common.item.CaseItem;
 import com.xweb.sql.core.common.item.ConstantItem;
 import com.xweb.sql.core.common.item.FunctionCallItem;
@@ -203,7 +204,8 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
             tableItem.setColumnName(((ConstantItem) expression).getConstant());
             expression = tableItem;
         } else if (expression instanceof PriorityExpression
-                || expression instanceof FunctionCallItem) {
+                || expression instanceof FunctionCallItem
+                || expression instanceof ArithmeticExpression) {
             //nothing to do
         } else {
             throw new RuntimeException("select Item BUG 未支持的解析异常: " + expression.getClass().getSimpleName());
@@ -320,6 +322,17 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
             throw new RuntimeException("express BUG 未支持的解析异常: " + predicate.getClass().getSimpleName());
         }
 
+    }
+
+    @Override
+    public Object visitArithmeticBinary(QuerySqlBaseParser.ArithmeticBinaryContext ctx) {
+        Object left = super.visit(ctx.left);
+        Object right = super.visit(ctx.right);
+        ArithmeticExpression arithmeticExpressionItem = new ArithmeticExpression();
+        arithmeticExpressionItem.setLeft((Item) left);
+        arithmeticExpressionItem.setOperator(ctx.operator.getText());
+        arithmeticExpressionItem.setRight((Item) right);
+        return arithmeticExpressionItem;
     }
 
     @Override

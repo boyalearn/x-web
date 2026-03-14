@@ -138,7 +138,25 @@ predicate[ParserRuleContext value]
     ;
 
 valueExpression
-    : primaryExpression
+    : primaryExpression                                                                    #valueExpressionDefault
+    | valueExpression AT timeZoneSpecifier                                                 #atTimeZone
+    | operator=(MINUS | PLUS) valueExpression                                              #arithmeticUnary
+    | left=valueExpression operator=(ASTERISK | SLASH | PERCENT) right=valueExpression     #arithmeticBinary
+    | left=valueExpression operator=(PLUS | MINUS) right=valueExpression                   #arithmeticBinary
+    | left=valueExpression CONCAT right=valueExpression                                    #concatenation
+    ;
+
+timeZoneSpecifier
+    : TIME ZONE interval                                                                   #timeZoneInterval
+    | TIME ZONE string                                                                     #timeZoneString
+    ;
+
+interval
+    : INTERVAL sign=(PLUS | MINUS)? string from=intervalField (TO to=intervalField)?
+    ;
+
+intervalField
+    : YEAR | MONTH | DAY | HOUR | MINUTE | SECOND
     ;
 
 primaryExpression
@@ -242,10 +260,6 @@ EXISTS
     : [Ee][Xx][Ii][Ss][Tt][Ss]
     ;
 
-MINUS
-    : [Mm][Ii][Nn][Uu][Ss]
-    ;
-
 ARRAY
     : [Aa][Rr][Rr][Aa][Yy]
     ;
@@ -256,14 +270,19 @@ BY  : [Bb][Yy];
 NULL: [Nn][Uu][Ll][Ll];
 
 JOIN: [Jj][Oo][Ii][Nn];
+
 INNER
     : [Ii][Nn][Nn][Ee][Rr]
     ;
+
 LEFT: [Ll][Ee][Ff][Tt];
+
 OUTER
     : [Oo][Uu][Tt][Ee][Rr]
     ;
+
 FULL: [Ff][Uu][Ll][Ll];
+
 ON  : [Oo][Nn];
 
 RIGHT
@@ -316,9 +335,47 @@ UNION
 
 ALL : [Aa][Ll][Ll];
 
-ASTERISK
-    : '*'
+
+INTERVAL
+    : [Ii][Nn][Tt][Ee][Rr][Vv][Aa][Ll]
     ;
+
+AT  : [Aa][Tt];
+
+TIME: [Tt][Ii][Mm][Ee];
+
+ZONE: [Zz][Oo][Nn][Ee];
+
+TO  : [Tt][Oo];
+
+YEAR: [Yy][Ee][Aa][Rr];
+
+MONTH
+    : [Mm][Oo][Nn][Tt][Hh]
+    ;
+
+DAY : [Dd][Aa][Yy];
+
+HOUR: [Hh][Oo][Uu][Rr];
+
+MINUTE
+    : [Mm][Ii][Nn][Uu][Tt][Ee]
+    ;
+
+SECOND
+    : [Ss][Ee][Cc][Oo][Nn][Dd]
+    ;
+
+PLUS: '+';
+MINUS: '-';
+ASTERISK
+    : '*';
+SLASH
+    : '/';
+PERCENT
+    : '%';
+CONCAT
+    : '||';
 
 QUESTION_MARK
     : '?'

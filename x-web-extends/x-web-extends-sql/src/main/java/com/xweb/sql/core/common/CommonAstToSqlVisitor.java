@@ -1,6 +1,7 @@
 package com.xweb.sql.core.common;
 
 
+import com.xweb.sql.core.common.expression.ArithmeticExpression;
 import com.xweb.sql.core.common.expression.BetweenAndExpression;
 import com.xweb.sql.core.common.expression.CommonConditionExpression;
 import com.xweb.sql.core.common.expression.InExpression;
@@ -162,8 +163,21 @@ public class CommonAstToSqlVisitor {
             return visit((UnionSelectItem) object);
         } else if (object instanceof UnionSelect) {
             return visit((UnionSelect) object);
+        } else if (object instanceof ArithmeticExpression) {
+            return visit((ArithmeticExpression) object);
         }
         throw new RuntimeException("unknown exception class is " + object.getClass().getName());
+    }
+
+    public String visit(ArithmeticExpression arithmeticExpression) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(visit(arithmeticExpression.getLeft()));
+        sql.append(SPACE);
+        sql.append(arithmeticExpression.getOperator());
+        sql.append(SPACE);
+        sql.append(visit(arithmeticExpression.getRight()));
+        sql.append(toStringCommon(arithmeticExpression));
+        return sql.toString();
     }
 
     public String visit(UnionSelect unionSelect) {

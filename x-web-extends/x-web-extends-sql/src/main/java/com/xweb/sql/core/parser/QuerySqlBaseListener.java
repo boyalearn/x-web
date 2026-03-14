@@ -438,15 +438,109 @@ public interface QuerySqlBaseListener extends ParseTreeListener {
 	 */
 	void exitNullPredicate(QuerySqlBaseParser.NullPredicateContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link QuerySqlBaseParser#valueExpression}.
+	 * Enter a parse tree produced by the {@code valueExpressionDefault}
+	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
 	 * @param ctx the parse tree
 	 */
-	void enterValueExpression(QuerySqlBaseParser.ValueExpressionContext ctx);
+	void enterValueExpressionDefault(QuerySqlBaseParser.ValueExpressionDefaultContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link QuerySqlBaseParser#valueExpression}.
+	 * Exit a parse tree produced by the {@code valueExpressionDefault}
+	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
 	 * @param ctx the parse tree
 	 */
-	void exitValueExpression(QuerySqlBaseParser.ValueExpressionContext ctx);
+	void exitValueExpressionDefault(QuerySqlBaseParser.ValueExpressionDefaultContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code concatenation}
+	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterConcatenation(QuerySqlBaseParser.ConcatenationContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code concatenation}
+	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitConcatenation(QuerySqlBaseParser.ConcatenationContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code arithmeticBinary}
+	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterArithmeticBinary(QuerySqlBaseParser.ArithmeticBinaryContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code arithmeticBinary}
+	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitArithmeticBinary(QuerySqlBaseParser.ArithmeticBinaryContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code arithmeticUnary}
+	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterArithmeticUnary(QuerySqlBaseParser.ArithmeticUnaryContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code arithmeticUnary}
+	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitArithmeticUnary(QuerySqlBaseParser.ArithmeticUnaryContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code atTimeZone}
+	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterAtTimeZone(QuerySqlBaseParser.AtTimeZoneContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code atTimeZone}
+	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitAtTimeZone(QuerySqlBaseParser.AtTimeZoneContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code timeZoneInterval}
+	 * labeled alternative in {@link QuerySqlBaseParser#timeZoneSpecifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterTimeZoneInterval(QuerySqlBaseParser.TimeZoneIntervalContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code timeZoneInterval}
+	 * labeled alternative in {@link QuerySqlBaseParser#timeZoneSpecifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitTimeZoneInterval(QuerySqlBaseParser.TimeZoneIntervalContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code timeZoneString}
+	 * labeled alternative in {@link QuerySqlBaseParser#timeZoneSpecifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterTimeZoneString(QuerySqlBaseParser.TimeZoneStringContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code timeZoneString}
+	 * labeled alternative in {@link QuerySqlBaseParser#timeZoneSpecifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitTimeZoneString(QuerySqlBaseParser.TimeZoneStringContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link QuerySqlBaseParser#interval}.
+	 * @param ctx the parse tree
+	 */
+	void enterInterval(QuerySqlBaseParser.IntervalContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QuerySqlBaseParser#interval}.
+	 * @param ctx the parse tree
+	 */
+	void exitInterval(QuerySqlBaseParser.IntervalContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link QuerySqlBaseParser#intervalField}.
+	 * @param ctx the parse tree
+	 */
+	void enterIntervalField(QuerySqlBaseParser.IntervalFieldContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QuerySqlBaseParser#intervalField}.
+	 * @param ctx the parse tree
+	 */
+	void exitIntervalField(QuerySqlBaseParser.IntervalFieldContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code dynamicParameter}
 	 * labeled alternative in {@link QuerySqlBaseParser#primaryExpression}.

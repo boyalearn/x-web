@@ -48,6 +48,8 @@ public class CommonSqlParserTest {
                         "as all_found",
                 "SELECT `installed_rank`,`version`,`description`,`type`,`script`,`checksum`,`installed_on`,`installed_by`,`execution_time`,`success` FROM `earth`.`flyway_schema_history` WHERE `installed_rank` > ? ORDER BY `installed_rank`",
                 "select a.* from aaa a where ff[2,3] > 0 ",
+                "SELECT 1 AS found  FROM information_schema.TABLES WHERE table_schema = 'xxx' UNION ALL " +
+                        " SELECT 1 AS found FROM information_schema.views WHERE table_schema ='fff' LIMIT 1 ",
         };
         for (String sql : sqls) {
             commonCheck(sql);
@@ -71,8 +73,7 @@ public class CommonSqlParserTest {
      */
     @Test
     public void test00000000003() {
-        String sql ="SELECT 1 AS found  FROM information_schema.TABLES WHERE table_schema = 'xxx' UNION ALL " +
-                " SELECT 1 AS found FROM information_schema.views WHERE table_schema ='fff' LIMIT 1 ";
+        String sql ="select num+ 100 from aaaaaaa where a.id = 11";
         commonCheck(sql);
     }
 }
