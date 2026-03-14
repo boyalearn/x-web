@@ -71,7 +71,8 @@ public class CommonSqlParserTest {
      */
     @Test
     public void test00000000003() {
-        String sql ="SELECT `installed_rank`,`installed_by`,`execution_time`,`success` FROM `earth`.`flyway_schema_history` ORDER BY installed_rank";
+        String sql ="SELECT 1 AS found  FROM information_schema.TABLES WHERE table_schema = 'xxx' UNION ALL " +
+                " SELECT 1 AS found FROM information_schema.views WHERE table_schema ='fff' LIMIT 1 ";
         commonCheck(sql);
     }
 }

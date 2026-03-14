@@ -12,14 +12,16 @@ import com.xweb.sql.core.common.item.FunctionCallItem;
 import com.xweb.sql.core.common.item.SelectAllItem;
 import com.xweb.sql.core.common.item.SubIndexItem;
 import com.xweb.sql.core.common.item.TableColumnItem;
+import com.xweb.sql.core.common.item.UnionSelectItem;
 import com.xweb.sql.core.common.item.WhenThenItem;
 import com.xweb.sql.core.common.order.DefaultOrderItem;
 import com.xweb.sql.core.common.order.OrderItem;
+import com.xweb.sql.core.common.select.BaseSelect;
+import com.xweb.sql.core.common.select.UnionSelect;
 import com.xweb.sql.core.common.table.SimpleTable;
 import com.xweb.sql.core.common.table.UnionTableTable;
 
 import java.util.List;
-import java.util.Optional;
 
 public class CommonAstToSqlVisitor {
 
@@ -38,7 +40,7 @@ public class CommonAstToSqlVisitor {
 
     private final static String COMMA = ",";
 
-    public String visit(Select select) {
+    public String visit(BaseSelect select) {
         StringBuffer sql = new StringBuffer();
         sql.append(select.getSelect());
         final List<Item> selectItems = select.getSelectItems();
@@ -119,6 +121,7 @@ public class CommonAstToSqlVisitor {
                 sql.append(visit(limitItems.get(i)));
             }
         }
+
         return sql.toString();
     }
 
@@ -135,8 +138,8 @@ public class CommonAstToSqlVisitor {
             return visit((SelectAllItem) object);
         } else if (object instanceof PriorityExpression) {
             return visit((PriorityExpression) object);
-        } else if (object instanceof Select) {
-            return visit((Select) object);
+        } else if (object instanceof BaseSelect) {
+            return visit((BaseSelect) object);
         } else if (object instanceof CaseItem) {
             return visit((CaseItem) object);
         } else if (object instanceof FunctionCallItem) {
@@ -153,11 +156,37 @@ public class CommonAstToSqlVisitor {
             return visit((UnionTableTable) object);
         } else if (object instanceof UnionTableTable.UnionTableItem) {
             return visit((UnionTableTable.UnionTableItem) object);
-        }
-        else if (object instanceof DefaultOrderItem) {
+        } else if (object instanceof DefaultOrderItem) {
             return visit((DefaultOrderItem) object);
+        } else if (object instanceof UnionSelectItem) {
+            return visit((UnionSelectItem) object);
+        } else if (object instanceof UnionSelect) {
+            return visit((UnionSelect) object);
         }
         throw new RuntimeException("unknown exception class is " + object.getClass().getName());
+    }
+
+    public String visit(UnionSelect unionSelect) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(visit(unionSelect.getSelect()));
+        final List<UnionSelectItem> unionSelectItems = unionSelect.getUnionSelectItems();
+        for (UnionSelectItem unionSelectItem : unionSelectItems) {
+            sql.append(SPACE);
+            sql.append(visit(unionSelectItem));
+        }
+        return sql.toString();
+    }
+
+    public String visit(UnionSelectItem unionSelectItem) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(unionSelectItem.getUnion());
+        if (isNotEmpty(unionSelectItem.getAll())) {
+            sql.append(SPACE);
+            sql.append(unionSelectItem.getAll());
+        }
+        sql.append(SPACE);
+        sql.append(visit(unionSelectItem.getSelect()));
+        return sql.toString();
     }
 
     public String visit(DefaultOrderItem defaultOrderItem) {

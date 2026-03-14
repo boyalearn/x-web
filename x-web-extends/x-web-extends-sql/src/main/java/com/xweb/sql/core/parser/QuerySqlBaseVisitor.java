@@ -24,6 +24,12 @@ public interface QuerySqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitQuery(QuerySqlBaseParser.QueryContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link QuerySqlBaseParser#unionExpress}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnionExpress(QuerySqlBaseParser.UnionExpressContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link QuerySqlBaseParser#queryItem}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

@@ -2,8 +2,11 @@ package com.xweb.sql.core.convert;
 
 import com.xweb.sql.core.common.BooleanExpression;
 import com.xweb.sql.core.common.Item;
+import com.xweb.sql.core.common.item.UnionSelectItem;
+import com.xweb.sql.core.common.select.BaseSelect;
 import com.xweb.sql.core.common.Select;
 import com.xweb.sql.core.common.Table;
+import com.xweb.sql.core.common.select.UnionSelect;
 import com.xweb.sql.core.common.expression.BetweenAndExpression;
 import com.xweb.sql.core.common.expression.CommonConditionExpression;
 import com.xweb.sql.core.common.expression.IsNullExpression;
@@ -20,10 +23,19 @@ import com.xweb.sql.core.common.order.OrderItem;
 import com.xweb.sql.core.common.table.SimpleTable;
 
 import java.util.List;
+import java.util.Optional;
 
 public abstract class AbstractCommonAstVisitor {
 
     public Object visit(Select select) {
+        if (select instanceof BaseSelect) {
+            return visit((BaseSelect) select);
+        } else {
+            return visit((UnionSelect) select);
+        }
+    }
+
+    public Object visit(BaseSelect select) {
         final List<Item> selectItems = select.getSelectItems();
         for (int i = 0; i < selectItems.size(); i++) {
             Item selectItem = selectItems.get(i);
@@ -69,7 +81,8 @@ public abstract class AbstractCommonAstVisitor {
     protected Object visit(Object object) {
         if (object instanceof SimpleTable) {
             return visit((SimpleTable) object);
-
+        } else if (object instanceof BaseSelect) {
+            return visit((BaseSelect) object);
         } else if (object instanceof ConstantItem) {
             return visit((ConstantItem) object);
         } else if (object instanceof TableColumnItem) {
@@ -80,8 +93,6 @@ public abstract class AbstractCommonAstVisitor {
             return visit((SelectAllItem) object);
         } else if (object instanceof PriorityExpression) {
             return visit((PriorityExpression) object);
-        } else if (object instanceof Select) {
-            return visit((Select) object);
         } else if (object instanceof CaseItem) {
             return visit((CaseItem) object);
         } else if (object instanceof FunctionCallItem) {
@@ -92,12 +103,26 @@ public abstract class AbstractCommonAstVisitor {
             return visit((SubIndexItem) object);
         } else if (object instanceof IsNullExpression) {
             return visit((IsNullExpression) object);
-
         } else if (object instanceof DefaultOrderItem) {
             return visit((DefaultOrderItem) object);
+        } else if (object instanceof UnionSelect) {
+            return visit((UnionSelect) object);
         } else {
             throw new RuntimeException("unknown exception class is " + object.getClass().getName());
         }
+
+    }
+
+    protected Object visit(UnionSelect unionSelect) {
+        Object result = doVisit(unionSelect);
+        visit(unionSelect.getSelect());
+        if(Optional.ofNullable(unionSelect.getUnionSelectItems()).isPresent() && !unionSelect.getUnionSelectItems().isEmpty()){
+            final List<UnionSelectItem> unionSelectItems = unionSelect.getUnionSelectItems();
+            for (UnionSelectItem unionSelectItem : unionSelectItems) {
+                visit(unionSelectItem);
+            }
+        }
+        return result;
     }
 
     protected Object visit(DefaultOrderItem subIndexItem) {

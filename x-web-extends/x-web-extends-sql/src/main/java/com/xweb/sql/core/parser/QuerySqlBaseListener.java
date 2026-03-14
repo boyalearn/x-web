@@ -30,6 +30,16 @@ public interface QuerySqlBaseListener extends ParseTreeListener {
 	 */
 	void exitQuery(QuerySqlBaseParser.QueryContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link QuerySqlBaseParser#unionExpress}.
+	 * @param ctx the parse tree
+	 */
+	void enterUnionExpress(QuerySqlBaseParser.UnionExpressContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QuerySqlBaseParser#unionExpress}.
+	 * @param ctx the parse tree
+	 */
+	void exitUnionExpress(QuerySqlBaseParser.UnionExpressContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link QuerySqlBaseParser#queryItem}.
 	 * @param ctx the parse tree
 	 */

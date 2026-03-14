@@ -40,6 +40,18 @@ public class QuerySqlBaseBaseListener implements QuerySqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterUnionExpress(QuerySqlBaseParser.UnionExpressContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitUnionExpress(QuerySqlBaseParser.UnionExpressContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterQueryItem(QuerySqlBaseParser.QueryItemContext ctx) { }
 	/**
 	 * {@inheritDoc}

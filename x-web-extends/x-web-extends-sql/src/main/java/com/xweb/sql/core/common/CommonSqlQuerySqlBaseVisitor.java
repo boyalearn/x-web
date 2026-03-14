@@ -14,9 +14,12 @@ import com.xweb.sql.core.common.item.FunctionCallItem;
 import com.xweb.sql.core.common.item.SelectAllItem;
 import com.xweb.sql.core.common.item.SubIndexItem;
 import com.xweb.sql.core.common.item.TableColumnItem;
+import com.xweb.sql.core.common.item.UnionSelectItem;
 import com.xweb.sql.core.common.item.WhenThenItem;
 import com.xweb.sql.core.common.order.DefaultOrderItem;
 import com.xweb.sql.core.common.order.OrderItem;
+import com.xweb.sql.core.common.select.BaseSelect;
+import com.xweb.sql.core.common.select.UnionSelect;
 import com.xweb.sql.core.common.table.SimpleTable;
 import com.xweb.sql.core.common.table.UnionTableTable;
 import com.xweb.sql.core.parser.QuerySqlBaseBaseVisitor;
@@ -41,9 +44,33 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
 
     @Override
     public Object visitQuery(QuerySqlBaseParser.QueryContext ctx) {
-        return super.visitQuery(ctx);
+        Object result = super.visit(ctx.queryItem());
+        if (result instanceof BaseSelect) {
+            if (!ctx.unionExpress().isEmpty()) {
+                BaseSelect select = (BaseSelect) result;
+                UnionSelect unionSelect = new UnionSelect();
+                unionSelect.setSelect(select);
+                unionSelect.setUnionSelectItems(new ArrayList<>());
+                final List<QuerySqlBaseParser.UnionExpressContext> unionExpressContexts = ctx.unionExpress();
+                for (QuerySqlBaseParser.UnionExpressContext unionExpressContext : unionExpressContexts) {
+                    unionSelect.getUnionSelectItems().add((UnionSelectItem) super.visit(unionExpressContext));
+                }
+                return unionSelect;
+            }
+        }
+        return result;
     }
 
+    @Override
+    public Object visitUnionExpress(QuerySqlBaseParser.UnionExpressContext ctx) {
+        UnionSelectItem unionSelectItem = new UnionSelectItem();
+        unionSelectItem.setUnion(ctx.UNION().getText());
+        if (Optional.ofNullable(ctx.setQuantifier()).isPresent()) {
+            unionSelectItem.setAll(ctx.setQuantifier().getText());
+        }
+        unionSelectItem.setSelect((Item) super.visit(ctx.queryItem()));
+        return unionSelectItem;
+    }
 
     @Override
     public Object visitSubPriorityQueryExpression(QuerySqlBaseParser.SubPriorityQueryExpressionContext ctx) {
@@ -112,7 +139,7 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
 
     @Override
     public Object visitQueryPrimary(QuerySqlBaseParser.QueryPrimaryContext ctx) {
-        Select select = new Select();
+        BaseSelect select = new BaseSelect();
         select.setSelect(ctx.SELECT().getText());
         final List<QuerySqlBaseParser.SelectItemContext> selectItemContexts = ctx.selectItem();
         for (QuerySqlBaseParser.SelectItemContext selectItemContext : selectItemContexts) {

@@ -13,7 +13,11 @@ statement
 
 query
     //查询分有with和 no with
-    : queryItem
+    : queryItem unionExpress*
+    ;
+
+unionExpress
+    : UNION setQuantifier? queryItem
     ;
 
 queryItem

@@ -2,9 +2,10 @@ package com.xweb.sql.mysql;
 
 import com.xweb.sql.core.common.BooleanExpression;
 import com.xweb.sql.core.common.Item;
-import com.xweb.sql.core.common.Select;
+import com.xweb.sql.core.common.select.BaseSelect;
 import com.xweb.sql.core.common.Table;
 import com.xweb.sql.core.common.order.OrderItem;
+import com.xweb.sql.core.common.select.UnionSelect;
 import com.xweb.sql.core.convert.AbstractCommonAstVisitor;
 import com.xweb.sql.core.convert.RewriteFilter;
 
@@ -24,9 +25,13 @@ public class MysqlRewriterVisitor extends AbstractCommonAstVisitor {
         this.rewriteFilters.add(rewriteFilter);
     }
 
+    @Override
+    protected Object visit(UnionSelect unionSelect) {
+        return super.visit(unionSelect);
+    }
 
     @Override
-    public Object visit(Select select) {
+    public Object visit(BaseSelect select) {
         final List<Item> selectItems = select.getSelectItems();
         for (int i = 0; i < selectItems.size(); i++) {
             Item selectItem = selectItems.get(i);
