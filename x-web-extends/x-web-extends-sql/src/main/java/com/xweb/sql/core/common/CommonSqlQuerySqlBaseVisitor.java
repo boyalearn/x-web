@@ -10,6 +10,7 @@ import com.xweb.sql.core.common.expression.LikeExpression;
 import com.xweb.sql.core.common.expression.NotBooleanExpression;
 import com.xweb.sql.core.common.expression.PriorityExpression;
 import com.xweb.sql.core.common.expression.ArithmeticExpression;
+import com.xweb.sql.core.common.insert.AsQueryInsert;
 import com.xweb.sql.core.common.insert.OnDuplicateInsert;
 import com.xweb.sql.core.common.insert.SimpleInsert;
 import com.xweb.sql.core.common.item.CaseItem;
@@ -73,7 +74,6 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
             }
             return onDuplicateInsert;
         }
-
         return simpleInsert;
     }
 
@@ -99,7 +99,17 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
 
     @Override
     public Object visitInsertIntoAsQuery(QuerySqlBaseParser.InsertIntoAsQueryContext ctx) {
-        return super.visitInsertIntoAsQuery(ctx);
+        AsQueryInsert asQueryInsert = new AsQueryInsert();
+        asQueryInsert.setInsert(ctx.INSERT().getText());
+        asQueryInsert.setInto(ctx.INTO().getText());
+        asQueryInsert.setTable(ctx.qualifiedName().getText());
+        if (Optional.ofNullable(ctx.columnAliases()).isPresent()) {
+            asQueryInsert.setColumns((List) super.visit(ctx.columnAliases()));
+        }
+        asQueryInsert.setQuery((Select) super.visit(ctx.query()));
+
+        return asQueryInsert;
+
     }
 
     @Override

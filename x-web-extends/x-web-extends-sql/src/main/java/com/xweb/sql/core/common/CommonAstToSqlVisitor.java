@@ -8,6 +8,8 @@ import com.xweb.sql.core.common.expression.ConcatenationExpression;
 import com.xweb.sql.core.common.expression.InExpression;
 import com.xweb.sql.core.common.expression.IsNullExpression;
 import com.xweb.sql.core.common.expression.PriorityExpression;
+import com.xweb.sql.core.common.insert.AbstractInsert;
+import com.xweb.sql.core.common.insert.AsQueryInsert;
 import com.xweb.sql.core.common.insert.OnDuplicateInsert;
 import com.xweb.sql.core.common.insert.SimpleInsert;
 import com.xweb.sql.core.common.item.CaseItem;
@@ -175,8 +177,42 @@ public class CommonAstToSqlVisitor {
             return visit((SimpleInsert) object);
         } else if (object instanceof OnDuplicateInsert) {
             return visit((OnDuplicateInsert) object);
+        } else if (object instanceof AsQueryInsert) {
+            return visit((AsQueryInsert) object);
+        } else {
+            throw new RuntimeException("unknown exception class is " + object.getClass().getName());
         }
-        throw new RuntimeException("unknown exception class is " + object.getClass().getName());
+    }
+
+    public String visit(AsQueryInsert asQueryInsert) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(visit((AbstractInsert) asQueryInsert));
+        sql.append(SPACE);
+        sql.append(visit(asQueryInsert.getQuery()));
+        return sql.toString();
+    }
+
+    private String visit(AbstractInsert abstractInsert) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(abstractInsert.getInsert());
+        sql.append(SPACE);
+        sql.append(abstractInsert.getInto());
+        sql.append(SPACE);
+        sql.append(abstractInsert.getTable());
+        if (Optional.ofNullable(abstractInsert.getColumns()).isPresent()) {
+            sql.append(SPACE);
+            sql.append(LEFT_BRACKET);
+            final List<Item> columns = abstractInsert.getColumns();
+            for (int i = 0; i < columns.size(); i++) {
+                if (i != 0) {
+                    sql.append(COMMA);
+                }
+                sql.append(visit(columns.get(i)));
+            }
+
+            sql.append(RIGHT_BRACKET);
+        }
+        return sql.toString();
     }
 
     public String visit(OnDuplicateInsert onDuplicateInsert) {
@@ -203,24 +239,7 @@ public class CommonAstToSqlVisitor {
 
     public String visit(SimpleInsert simpleInsert) {
         StringBuffer sql = new StringBuffer();
-        sql.append(simpleInsert.getInsert());
-        sql.append(SPACE);
-        sql.append(simpleInsert.getInto());
-        sql.append(SPACE);
-        sql.append(simpleInsert.getTable());
-        if (Optional.ofNullable(simpleInsert.getColumns()).isPresent()) {
-            sql.append(SPACE);
-            sql.append(LEFT_BRACKET);
-            final List<Item> columns = simpleInsert.getColumns();
-            for (int i = 0; i < columns.size(); i++) {
-                if (i != 0) {
-                    sql.append(COMMA);
-                }
-                sql.append(visit(columns.get(i)));
-            }
-
-            sql.append(RIGHT_BRACKET);
-        }
+        sql.append(visit((AbstractInsert) simpleInsert));
         sql.append(SPACE);
         sql.append(simpleInsert.getValues());
         sql.append(SPACE);

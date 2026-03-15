@@ -73,9 +73,7 @@ public class CommonSqlParserTest {
 
     @Test
     public void test00000000004() {
-        String sql = "INSERT INTO table_name (column1, column2) " +
-                "VALUES (value1, value2) " +
-                "ON DUPLICATE KEY UPDATE column1 = value1, column2 = value2";
+        String sql = "insert into user select * from user";
         commonCheck(sql);
     }
 }
