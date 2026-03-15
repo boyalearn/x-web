@@ -1,4 +1,4 @@
 package com.xweb.sql.core.common;
 
-public interface Select extends Item{
+public interface Select extends Statement {
 }

@@ -2,6 +2,7 @@ package com.xweb.sql.core.common;
 
 import com.xweb.sql.core.common.expression.BetweenAndExpression;
 import com.xweb.sql.core.common.expression.CommonConditionExpression;
+import com.xweb.sql.core.common.expression.ConcatenationExpression;
 import com.xweb.sql.core.common.expression.ExistExpression;
 import com.xweb.sql.core.common.expression.InExpression;
 import com.xweb.sql.core.common.expression.IsNullExpression;
@@ -9,6 +10,8 @@ import com.xweb.sql.core.common.expression.LikeExpression;
 import com.xweb.sql.core.common.expression.NotBooleanExpression;
 import com.xweb.sql.core.common.expression.PriorityExpression;
 import com.xweb.sql.core.common.expression.ArithmeticExpression;
+import com.xweb.sql.core.common.insert.OnDuplicateInsert;
+import com.xweb.sql.core.common.insert.SimpleInsert;
 import com.xweb.sql.core.common.item.CaseItem;
 import com.xweb.sql.core.common.item.ConstantItem;
 import com.xweb.sql.core.common.item.FunctionCallItem;
@@ -37,10 +40,66 @@ import lombok.Getter;
 @Getter
 public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
 
+    @Override
+    public Object visitStatementDefault(QuerySqlBaseParser.StatementDefaultContext ctx) {
+        return super.visitStatementDefault(ctx);
+    }
 
     @Override
-    public Object visitSelect(QuerySqlBaseParser.SelectContext ctx) {
-        return super.visitSelect(ctx);
+    public Object visitInsertIntoDefault(QuerySqlBaseParser.InsertIntoDefaultContext ctx) {
+        SimpleInsert simpleInsert = new SimpleInsert();
+        simpleInsert.setInsert(ctx.INSERT().getText());
+        simpleInsert.setInto(ctx.INTO().getText());
+        simpleInsert.setTable(ctx.qualifiedName().getText());
+        if (Optional.ofNullable(ctx.columnAliases()).isPresent()) {
+            simpleInsert.setColumns((List) super.visit(ctx.columnAliases()));
+        }
+        if (Optional.ofNullable(ctx.valueAliases()).isPresent()) {
+            simpleInsert.setValueItems((List) super.visit(ctx.valueAliases()));
+        }
+        simpleInsert.setValues(ctx.VALUES().getText());
+        if (Optional.ofNullable(ctx.onDuplicateCondition()).isPresent()) {
+            OnDuplicateInsert onDuplicateInsert = new OnDuplicateInsert();
+            onDuplicateInsert.setInsert(simpleInsert);
+            final QuerySqlBaseParser.OnDuplicateConditionContext onDuplicateConditionContext = ctx.onDuplicateCondition();
+            onDuplicateInsert.setOn(onDuplicateConditionContext.ON().getText());
+            onDuplicateInsert.setDuplicate(onDuplicateConditionContext.DUPLICATE().getText());
+            onDuplicateInsert.setKey(onDuplicateConditionContext.KEY().getText());
+            onDuplicateInsert.setUpdate(onDuplicateConditionContext.UPDATE().getText());
+            onDuplicateInsert.setUpdateColumns(new ArrayList<>());
+            final List<QuerySqlBaseParser.ExpressionContext> expressions = onDuplicateConditionContext.expression();
+            for (QuerySqlBaseParser.ExpressionContext expression : expressions) {
+                onDuplicateInsert.getUpdateColumns().add((Item) super.visit(expression));
+            }
+            return onDuplicateInsert;
+        }
+
+        return simpleInsert;
+    }
+
+    @Override
+    public Object visitColumnAliases(QuerySqlBaseParser.ColumnAliasesContext ctx) {
+        List<Item> items = new ArrayList<>();
+        final List<QuerySqlBaseParser.IdentifierContext> identifiers = ctx.identifier();
+        for (QuerySqlBaseParser.IdentifierContext identifier : identifiers) {
+            items.add((Item) super.visit(identifier));
+        }
+        return items;
+    }
+
+    @Override
+    public Object visitValueAliases(QuerySqlBaseParser.ValueAliasesContext ctx) {
+        List<Item> items = new ArrayList<>();
+        final List<QuerySqlBaseParser.ExpressionContext> expressions = ctx.expression();
+        for (QuerySqlBaseParser.ExpressionContext expression : expressions) {
+            items.add((Item) super.visit(expression));
+        }
+        return items;
+    }
+
+    @Override
+    public Object visitInsertIntoAsQuery(QuerySqlBaseParser.InsertIntoAsQueryContext ctx) {
+        return super.visitInsertIntoAsQuery(ctx);
     }
 
     @Override
@@ -205,7 +264,8 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
             expression = tableItem;
         } else if (expression instanceof PriorityExpression
                 || expression instanceof FunctionCallItem
-                || expression instanceof ArithmeticExpression) {
+                || expression instanceof ArithmeticExpression
+                || expression instanceof ConcatenationExpression) {
             //nothing to do
         } else {
             throw new RuntimeException("select Item BUG 未支持的解析异常: " + expression.getClass().getSimpleName());
@@ -333,6 +393,17 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
         arithmeticExpressionItem.setOperator(ctx.operator.getText());
         arithmeticExpressionItem.setRight((Item) right);
         return arithmeticExpressionItem;
+    }
+
+    @Override
+    public Object visitConcatenationExpression(QuerySqlBaseParser.ConcatenationExpressionContext ctx) {
+        Object left = super.visit(ctx.left);
+        Object right = super.visit(ctx.right);
+        ConcatenationExpression concatenationExpression = new ConcatenationExpression();
+        concatenationExpression.setLeft((Item) left);
+        concatenationExpression.setConcatenationOperator(ctx.CONCAT().getText());
+        concatenationExpression.setRight((Item) right);
+        return concatenationExpression;
     }
 
     @Override
@@ -543,5 +614,12 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
     @Override
     public Object visitIntegerLiteral(QuerySqlBaseParser.IntegerLiteralContext ctx) {
         return new Integer(ctx.getText());
+    }
+
+    @Override
+    public Object visitUnquotedIdentifier(QuerySqlBaseParser.UnquotedIdentifierContext ctx) {
+        ConstantItem constantItem = new ConstantItem();
+        constantItem.setConstant(ctx.getText());
+        return constantItem;
     }
 }

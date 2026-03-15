@@ -4,9 +4,12 @@ package com.xweb.sql.core.common;
 import com.xweb.sql.core.common.expression.ArithmeticExpression;
 import com.xweb.sql.core.common.expression.BetweenAndExpression;
 import com.xweb.sql.core.common.expression.CommonConditionExpression;
+import com.xweb.sql.core.common.expression.ConcatenationExpression;
 import com.xweb.sql.core.common.expression.InExpression;
 import com.xweb.sql.core.common.expression.IsNullExpression;
 import com.xweb.sql.core.common.expression.PriorityExpression;
+import com.xweb.sql.core.common.insert.OnDuplicateInsert;
+import com.xweb.sql.core.common.insert.SimpleInsert;
 import com.xweb.sql.core.common.item.CaseItem;
 import com.xweb.sql.core.common.item.ConstantItem;
 import com.xweb.sql.core.common.item.FunctionCallItem;
@@ -23,6 +26,7 @@ import com.xweb.sql.core.common.table.SimpleTable;
 import com.xweb.sql.core.common.table.UnionTableTable;
 
 import java.util.List;
+import java.util.Optional;
 
 public class CommonAstToSqlVisitor {
 
@@ -165,8 +169,84 @@ public class CommonAstToSqlVisitor {
             return visit((UnionSelect) object);
         } else if (object instanceof ArithmeticExpression) {
             return visit((ArithmeticExpression) object);
+        } else if (object instanceof ConcatenationExpression) {
+            return visit((ConcatenationExpression) object);
+        } else if (object instanceof SimpleInsert) {
+            return visit((SimpleInsert) object);
+        } else if (object instanceof OnDuplicateInsert) {
+            return visit((OnDuplicateInsert) object);
         }
         throw new RuntimeException("unknown exception class is " + object.getClass().getName());
+    }
+
+    public String visit(OnDuplicateInsert onDuplicateInsert) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(visit(onDuplicateInsert.getInsert()));
+        sql.append(SPACE);
+        sql.append(onDuplicateInsert.getOn());
+        sql.append(SPACE);
+        sql.append(onDuplicateInsert.getDuplicate());
+        sql.append(SPACE);
+        sql.append(onDuplicateInsert.getKey());
+        sql.append(SPACE);
+        sql.append(onDuplicateInsert.getUpdate());
+        sql.append(SPACE);
+        final List<Item> updateColumns = onDuplicateInsert.getUpdateColumns();
+        for (int i = 0; i < updateColumns.size(); i++) {
+            if (i != 0) {
+                sql.append(COMMA);
+            }
+            sql.append(visit(updateColumns.get(i)));
+        }
+        return sql.toString();
+    }
+
+    public String visit(SimpleInsert simpleInsert) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(simpleInsert.getInsert());
+        sql.append(SPACE);
+        sql.append(simpleInsert.getInto());
+        sql.append(SPACE);
+        sql.append(simpleInsert.getTable());
+        if (Optional.ofNullable(simpleInsert.getColumns()).isPresent()) {
+            sql.append(SPACE);
+            sql.append(LEFT_BRACKET);
+            final List<Item> columns = simpleInsert.getColumns();
+            for (int i = 0; i < columns.size(); i++) {
+                if (i != 0) {
+                    sql.append(COMMA);
+                }
+                sql.append(visit(columns.get(i)));
+            }
+
+            sql.append(RIGHT_BRACKET);
+        }
+        sql.append(SPACE);
+        sql.append(simpleInsert.getValues());
+        sql.append(SPACE);
+        final List<Item> values = simpleInsert.getValueItems();
+        if (Optional.ofNullable(values).isPresent()) {
+            sql.append(LEFT_BRACKET);
+            for (int i = 0; i < values.size(); i++) {
+                if (i != 0) {
+                    sql.append(COMMA);
+                }
+                sql.append(visit(values.get(i)));
+            }
+            sql.append(RIGHT_BRACKET);
+        }
+        return sql.toString();
+    }
+
+    public String visit(ConcatenationExpression concatenationExpression) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(visit(concatenationExpression.getLeft()));
+        sql.append(SPACE);
+        sql.append(concatenationExpression.getConcatenationOperator());
+        sql.append(SPACE);
+        sql.append(visit(concatenationExpression.getRight()));
+        sql.append(toStringCommon(concatenationExpression));
+        return sql.toString();
     }
 
     public String visit(ArithmeticExpression arithmeticExpression) {

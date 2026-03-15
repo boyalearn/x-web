@@ -8,13 +8,16 @@ grammar QuerySqlBase;
 
 statement
     //查询部分
-    : query                                                                                #select
+    : query                                                                                #statementDefault
+    | INSERT INTO qualifiedName columnAliases? VALUES valueAliases onDuplicateCondition?   #insertIntoDefault
+    | INSERT INTO qualifiedName columnAliases? query                                       #insertIntoAsQuery
     ;
 
 query
     //查询分有with和 no with
     : queryItem unionExpress*
     ;
+
 
 unionExpress
     : UNION setQuantifier? queryItem
@@ -64,6 +67,7 @@ selectItem
 tableExpression
     : tableExpressionExpress
     ;
+
 tableExpressionExpress
     : left=tableExpressionExpress joinType JOIN
       right=simpleTableExpression joinCondition                                            #joinTableExpress
@@ -143,7 +147,7 @@ valueExpression
     | operator=(MINUS | PLUS) valueExpression                                              #arithmeticUnary
     | left=valueExpression operator=(ASTERISK | SLASH | PERCENT) right=valueExpression     #arithmeticBinary
     | left=valueExpression operator=(PLUS | MINUS) right=valueExpression                   #arithmeticBinary
-    | left=valueExpression CONCAT right=valueExpression                                    #concatenation
+    | left=valueExpression CONCAT right=valueExpression                                    #concatenationExpression
     ;
 
 timeZoneSpecifier
@@ -161,7 +165,7 @@ intervalField
 
 primaryExpression
     //新增在应用中解析的时候sql值可能是个参数
-    : QUESTION_MARK                                                                        #dynamicParameter
+    : PARAMETER                                                                            #dynamicParameter
     //MYSQL中特殊解析
     | D_ANT identifier                                                                     #specialVariable
     | NULL                                                                                 #nullLiteral
@@ -179,6 +183,18 @@ primaryExpression
     | identifier                                                                           #columnReference
     | base=primaryExpression '.' fieldName=identifier                                      #dereference
     | '(' expression ')'                                                                   #parenthesizedExpression
+    ;
+
+onDuplicateCondition
+    : ON DUPLICATE KEY UPDATE expression ( ',' expression )?
+    ;
+
+columnAliases
+    : '(' identifier (',' identifier)* ')'
+    ;
+
+valueAliases
+    : '(' expression (',' expression)* ')'
     ;
 
 whenClause
@@ -244,25 +260,23 @@ END : [Ee][Nn][Dd];
 AND : [Aa][Nn][Dd];
 NOT : [Nn][Oo][Tt];
 OR  : [Oo][Rr];
+
 BETWEEN
-    : [Bb][Ee][Tt][Ww][Ee][Ee][Nn]
-    ;
+    : [Bb][Ee][Tt][Ww][Ee][Ee][Nn];
+
 IN  : [Ii][Nn];
+
 LIKE
-    : [Ll][Ii][Kk][Ee]
-    ;
+    : [Ll][Ii][Kk][Ee];
 
 ESCAPE
-    : [Ee][Ss][Cc][Aa][Pp][Ee]
-    ;
+    : [Ee][Ss][Cc][Aa][Pp][Ee];
 
 EXISTS
-    : [Ee][Xx][Ii][Ss][Tt][Ss]
-    ;
+    : [Ee][Xx][Ii][Ss][Tt][Ss];
 
 ARRAY
-    : [Aa][Rr][Rr][Aa][Yy]
-    ;
+    : [Aa][Rr][Rr][Aa][Yy];
 
 IS  : [Ii][Ss];
 AS  : [Aa][Ss];
@@ -272,22 +286,35 @@ NULL: [Nn][Uu][Ll][Ll];
 JOIN: [Jj][Oo][Ii][Nn];
 
 INNER
-    : [Ii][Nn][Nn][Ee][Rr]
-    ;
+    : [Ii][Nn][Nn][Ee][Rr];
 
 LEFT: [Ll][Ee][Ff][Tt];
 
 OUTER
-    : [Oo][Uu][Tt][Ee][Rr]
-    ;
+    : [Oo][Uu][Tt][Ee][Rr];
 
 FULL: [Ff][Uu][Ll][Ll];
 
 ON  : [Oo][Nn];
 
 RIGHT
-    : [Rr][Ii][Gg][Hh][Tt]
-    ;
+    : [Rr][Ii][Gg][Hh][Tt];
+
+DUPLICATE
+    : [Dd][Uu][Pp][Ll][Ii][Cc][Aa][Tt][Ee];
+
+KEY : [Kk][Ee][Yy];
+
+UPDATE
+    : [Uu][Pp][Dd][Aa][Tt][Ee];
+
+INSERT
+    : [Ii][Nn][Ss][Ee][Rr][Tt];
+
+INTO: [Ii][Nn][Tt][Oo];
+
+VALUES
+    : [Vv][Aa][Ll][Uu][Ee][Ss];
 
 EQ  : '=';
 NEQ : '<>' | '!=';
@@ -367,7 +394,10 @@ SECOND
     ;
 
 PLUS: '+';
-MINUS: '-';
+
+MINUS
+    : '-';
+
 ASTERISK
     : '*';
 SLASH
@@ -377,9 +407,8 @@ PERCENT
 CONCAT
     : '||';
 
-QUESTION_MARK
-    : '?'
-    ;
+PARAMETER
+    : '?';
 
 D_ANT
     : '@@'

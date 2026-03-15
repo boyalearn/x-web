@@ -16,13 +16,37 @@ public class QuerySqlBaseBaseListener implements QuerySqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterSelect(QuerySqlBaseParser.SelectContext ctx) { }
+	@Override public void enterStatementDefault(QuerySqlBaseParser.StatementDefaultContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitSelect(QuerySqlBaseParser.SelectContext ctx) { }
+	@Override public void exitStatementDefault(QuerySqlBaseParser.StatementDefaultContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterInsertIntoDefault(QuerySqlBaseParser.InsertIntoDefaultContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitInsertIntoDefault(QuerySqlBaseParser.InsertIntoDefaultContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterInsertIntoAsQuery(QuerySqlBaseParser.InsertIntoAsQueryContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitInsertIntoAsQuery(QuerySqlBaseParser.InsertIntoAsQueryContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -496,18 +520,6 @@ public class QuerySqlBaseBaseListener implements QuerySqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterConcatenation(QuerySqlBaseParser.ConcatenationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitConcatenation(QuerySqlBaseParser.ConcatenationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterArithmeticBinary(QuerySqlBaseParser.ArithmeticBinaryContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -539,6 +551,18 @@ public class QuerySqlBaseBaseListener implements QuerySqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAtTimeZone(QuerySqlBaseParser.AtTimeZoneContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterConcatenationExpression(QuerySqlBaseParser.ConcatenationExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitConcatenationExpression(QuerySqlBaseParser.ConcatenationExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -767,6 +791,42 @@ public class QuerySqlBaseBaseListener implements QuerySqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitSubScript(QuerySqlBaseParser.SubScriptContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOnDuplicateCondition(QuerySqlBaseParser.OnDuplicateConditionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOnDuplicateCondition(QuerySqlBaseParser.OnDuplicateConditionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterColumnAliases(QuerySqlBaseParser.ColumnAliasesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitColumnAliases(QuerySqlBaseParser.ColumnAliasesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterValueAliases(QuerySqlBaseParser.ValueAliasesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitValueAliases(QuerySqlBaseParser.ValueAliasesContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

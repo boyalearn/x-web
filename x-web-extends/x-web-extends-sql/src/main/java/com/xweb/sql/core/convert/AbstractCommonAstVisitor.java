@@ -1,7 +1,9 @@
 package com.xweb.sql.core.convert;
 
 import com.xweb.sql.core.common.BooleanExpression;
+import com.xweb.sql.core.common.Insert;
 import com.xweb.sql.core.common.Item;
+import com.xweb.sql.core.common.Statement;
 import com.xweb.sql.core.common.item.UnionSelectItem;
 import com.xweb.sql.core.common.select.BaseSelect;
 import com.xweb.sql.core.common.Select;
@@ -78,6 +80,15 @@ public abstract class AbstractCommonAstVisitor {
         return select;
     }
 
+    public Object visit(Statement statement) {
+        if (statement instanceof Select) {
+            return visit((Select) statement);
+        } else if (statement instanceof Insert) {
+            return visit((Insert) statement);
+        }
+        throw new RuntimeException("unknown exception class is " + statement.getClass().getName());
+    }
+
     protected Object visit(Object object) {
         if (object instanceof SimpleTable) {
             return visit((SimpleTable) object);
@@ -116,7 +127,7 @@ public abstract class AbstractCommonAstVisitor {
     protected Object visit(UnionSelect unionSelect) {
         Object result = doVisit(unionSelect);
         visit(unionSelect.getSelect());
-        if(Optional.ofNullable(unionSelect.getUnionSelectItems()).isPresent() && !unionSelect.getUnionSelectItems().isEmpty()){
+        if (Optional.ofNullable(unionSelect.getUnionSelectItems()).isPresent() && !unionSelect.getUnionSelectItems().isEmpty()) {
             final List<UnionSelectItem> unionSelectItems = unionSelect.getUnionSelectItems();
             for (UnionSelectItem unionSelectItem : unionSelectItems) {
                 visit(unionSelectItem);

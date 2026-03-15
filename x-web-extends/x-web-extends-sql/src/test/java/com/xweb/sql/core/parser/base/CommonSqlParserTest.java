@@ -3,6 +3,7 @@ package com.xweb.sql.core.parser.base;
 import com.xweb.sql.core.StringUtil;
 import com.xweb.sql.core.common.CommonAstToSqlVisitor;
 import com.xweb.sql.core.common.Select;
+import com.xweb.sql.core.common.Statement;
 import com.xweb.sql.core.common.util.SqlUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.Assert;
@@ -11,11 +12,11 @@ public class CommonSqlParserTest {
 
 
     private void commonCheck(String sql) {
-        System.out.println("S:"+sql);
-        Select select = SqlUtil.readSqlToAST(sql);
+        System.out.println("S:" + sql);
+        Statement select = SqlUtil.readSqlToAST(sql);
         CommonAstToSqlVisitor commonAstToSqlVisitor = new CommonAstToSqlVisitor();
         String recoverSql = commonAstToSqlVisitor.visit(select);
-        System.out.println("D:"+recoverSql);
+        System.out.println("D:" + recoverSql);
         Assert.isTrue(StringUtil.replaceAllEmpty(sql).equals(StringUtil.replaceAllEmpty(recoverSql)), "恢复后不一样了");
     }
 
@@ -50,6 +51,8 @@ public class CommonSqlParserTest {
                 "select a.* from aaa a where ff[2,3] > 0 ",
                 "SELECT 1 AS found  FROM information_schema.TABLES WHERE table_schema = 'xxx' UNION ALL " +
                         " SELECT 1 AS found FROM information_schema.views WHERE table_schema ='fff' LIMIT 1 ",
+                "select num+ 100 from aaaaaaa bb where a.id + 2000= 11",
+                "select num || bb || cc || '22' from aaaaaaa bb where a.id + 2000= 11"
         };
         for (String sql : sqls) {
             commonCheck(sql);
@@ -58,22 +61,21 @@ public class CommonSqlParserTest {
 
 
     /**
-     * sub query
-     * select id, name  from aaa  where id = 222 and name='zhx'
+     * insert
      */
     @Test
     public void test00000000002() {
-        String sql ="SELECT `installed_rank`,`version`,`description`,`type`,`script`,`checksum`,`installed_on`,`installed_by`,`execution_time`,`success` FROM `earth`.`flyway_schema_history` WHERE `installed_rank` > ? ORDER BY installed_rank";
+        String sql = "INSERT INTO table_name (column1, column2) " +
+                "VALUES (value1, value2) " +
+                "ON DUPLICATE KEY UPDATE column1 = value1, column2 = value2";
         commonCheck(sql);
     }
 
-    /**
-     * sub query
-     * select id, name  from aaa  where id = 222 and name='zhx'
-     */
     @Test
-    public void test00000000003() {
-        String sql ="select num+ 100 from aaaaaaa where a.id = 11";
+    public void test00000000004() {
+        String sql = "INSERT INTO table_name (column1, column2) " +
+                "VALUES (value1, value2) " +
+                "ON DUPLICATE KEY UPDATE column1 = value1, column2 = value2";
         commonCheck(sql);
     }
 }

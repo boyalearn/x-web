@@ -8,17 +8,41 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface QuerySqlBaseListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by the {@code select}
+	 * Enter a parse tree produced by the {@code statementDefault}
 	 * labeled alternative in {@link QuerySqlBaseParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelect(QuerySqlBaseParser.SelectContext ctx);
+	void enterStatementDefault(QuerySqlBaseParser.StatementDefaultContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code select}
+	 * Exit a parse tree produced by the {@code statementDefault}
 	 * labeled alternative in {@link QuerySqlBaseParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelect(QuerySqlBaseParser.SelectContext ctx);
+	void exitStatementDefault(QuerySqlBaseParser.StatementDefaultContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code insertIntoDefault}
+	 * labeled alternative in {@link QuerySqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterInsertIntoDefault(QuerySqlBaseParser.InsertIntoDefaultContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code insertIntoDefault}
+	 * labeled alternative in {@link QuerySqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitInsertIntoDefault(QuerySqlBaseParser.InsertIntoDefaultContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code insertIntoAsQuery}
+	 * labeled alternative in {@link QuerySqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterInsertIntoAsQuery(QuerySqlBaseParser.InsertIntoAsQueryContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code insertIntoAsQuery}
+	 * labeled alternative in {@link QuerySqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitInsertIntoAsQuery(QuerySqlBaseParser.InsertIntoAsQueryContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link QuerySqlBaseParser#query}.
 	 * @param ctx the parse tree
@@ -450,18 +474,6 @@ public interface QuerySqlBaseListener extends ParseTreeListener {
 	 */
 	void exitValueExpressionDefault(QuerySqlBaseParser.ValueExpressionDefaultContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code concatenation}
-	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterConcatenation(QuerySqlBaseParser.ConcatenationContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code concatenation}
-	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitConcatenation(QuerySqlBaseParser.ConcatenationContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code arithmeticBinary}
 	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
 	 * @param ctx the parse tree
@@ -497,6 +509,18 @@ public interface QuerySqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAtTimeZone(QuerySqlBaseParser.AtTimeZoneContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code concatenationExpression}
+	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterConcatenationExpression(QuerySqlBaseParser.ConcatenationExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code concatenationExpression}
+	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitConcatenationExpression(QuerySqlBaseParser.ConcatenationExpressionContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code timeZoneInterval}
 	 * labeled alternative in {@link QuerySqlBaseParser#timeZoneSpecifier}.
@@ -721,6 +745,36 @@ public interface QuerySqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSubScript(QuerySqlBaseParser.SubScriptContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link QuerySqlBaseParser#onDuplicateCondition}.
+	 * @param ctx the parse tree
+	 */
+	void enterOnDuplicateCondition(QuerySqlBaseParser.OnDuplicateConditionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QuerySqlBaseParser#onDuplicateCondition}.
+	 * @param ctx the parse tree
+	 */
+	void exitOnDuplicateCondition(QuerySqlBaseParser.OnDuplicateConditionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link QuerySqlBaseParser#columnAliases}.
+	 * @param ctx the parse tree
+	 */
+	void enterColumnAliases(QuerySqlBaseParser.ColumnAliasesContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QuerySqlBaseParser#columnAliases}.
+	 * @param ctx the parse tree
+	 */
+	void exitColumnAliases(QuerySqlBaseParser.ColumnAliasesContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link QuerySqlBaseParser#valueAliases}.
+	 * @param ctx the parse tree
+	 */
+	void enterValueAliases(QuerySqlBaseParser.ValueAliasesContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QuerySqlBaseParser#valueAliases}.
+	 * @param ctx the parse tree
+	 */
+	void exitValueAliases(QuerySqlBaseParser.ValueAliasesContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link QuerySqlBaseParser#whenClause}.
 	 * @param ctx the parse tree

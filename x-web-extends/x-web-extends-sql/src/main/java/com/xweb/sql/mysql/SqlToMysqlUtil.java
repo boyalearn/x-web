@@ -1,6 +1,7 @@
 package com.xweb.sql.mysql;
 
 import com.xweb.sql.core.common.Select;
+import com.xweb.sql.core.common.Statement;
 import com.xweb.sql.core.common.util.SqlUtil;
 
 public class SqlToMysqlUtil {
@@ -11,7 +12,7 @@ public class SqlToMysqlUtil {
     }
 
     public static String convert(String sql) {
-        final Select baseSelect = SqlUtil.readSqlToAST(sql);
+        final Statement baseSelect = SqlUtil.readSqlToAST(sql);
         mysqlRewriter.visit(baseSelect);
         return SqlUtil.astToSql(baseSelect);
     }

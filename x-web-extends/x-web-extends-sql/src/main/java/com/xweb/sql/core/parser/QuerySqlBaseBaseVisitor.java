@@ -17,7 +17,21 @@ public class QuerySqlBaseBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitSelect(QuerySqlBaseParser.SelectContext ctx) { return visitChildren(ctx); }
+	@Override public T visitStatementDefault(QuerySqlBaseParser.StatementDefaultContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitInsertIntoDefault(QuerySqlBaseParser.InsertIntoDefaultContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitInsertIntoAsQuery(QuerySqlBaseParser.InsertIntoAsQueryContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -297,13 +311,6 @@ public class QuerySqlBaseBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitConcatenation(QuerySqlBaseParser.ConcatenationContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitArithmeticBinary(QuerySqlBaseParser.ArithmeticBinaryContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -319,6 +326,13 @@ public class QuerySqlBaseBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitAtTimeZone(QuerySqlBaseParser.AtTimeZoneContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitConcatenationExpression(QuerySqlBaseParser.ConcatenationExpressionContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -452,6 +466,27 @@ public class QuerySqlBaseBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitSubScript(QuerySqlBaseParser.SubScriptContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitOnDuplicateCondition(QuerySqlBaseParser.OnDuplicateConditionContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitColumnAliases(QuerySqlBaseParser.ColumnAliasesContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitValueAliases(QuerySqlBaseParser.ValueAliasesContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

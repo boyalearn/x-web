@@ -11,12 +11,26 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface QuerySqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	/**
-	 * Visit a parse tree produced by the {@code select}
+	 * Visit a parse tree produced by the {@code statementDefault}
 	 * labeled alternative in {@link QuerySqlBaseParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSelect(QuerySqlBaseParser.SelectContext ctx);
+	T visitStatementDefault(QuerySqlBaseParser.StatementDefaultContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code insertIntoDefault}
+	 * labeled alternative in {@link QuerySqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInsertIntoDefault(QuerySqlBaseParser.InsertIntoDefaultContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code insertIntoAsQuery}
+	 * labeled alternative in {@link QuerySqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInsertIntoAsQuery(QuerySqlBaseParser.InsertIntoAsQueryContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link QuerySqlBaseParser#query}.
 	 * @param ctx the parse tree
@@ -272,13 +286,6 @@ public interface QuerySqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitValueExpressionDefault(QuerySqlBaseParser.ValueExpressionDefaultContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code concatenation}
-	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitConcatenation(QuerySqlBaseParser.ConcatenationContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code arithmeticBinary}
 	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
 	 * @param ctx the parse tree
@@ -299,6 +306,13 @@ public interface QuerySqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAtTimeZone(QuerySqlBaseParser.AtTimeZoneContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code concatenationExpression}
+	 * labeled alternative in {@link QuerySqlBaseParser#valueExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConcatenationExpression(QuerySqlBaseParser.ConcatenationExpressionContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code timeZoneInterval}
 	 * labeled alternative in {@link QuerySqlBaseParser#timeZoneSpecifier}.
@@ -430,6 +444,24 @@ public interface QuerySqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitSubScript(QuerySqlBaseParser.SubScriptContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link QuerySqlBaseParser#onDuplicateCondition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOnDuplicateCondition(QuerySqlBaseParser.OnDuplicateConditionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link QuerySqlBaseParser#columnAliases}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitColumnAliases(QuerySqlBaseParser.ColumnAliasesContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link QuerySqlBaseParser#valueAliases}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitValueAliases(QuerySqlBaseParser.ValueAliasesContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link QuerySqlBaseParser#whenClause}.
 	 * @param ctx the parse tree
