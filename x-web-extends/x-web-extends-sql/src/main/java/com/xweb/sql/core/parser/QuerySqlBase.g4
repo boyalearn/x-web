@@ -11,6 +11,8 @@ statement
     : query                                                                                #statementDefault
     | INSERT INTO qualifiedName columnAliases? VALUES valueAliases onDuplicateCondition?   #insertIntoDefault
     | INSERT INTO qualifiedName columnAliases? query                                       #insertIntoAsQuery
+    | DELETE FROM qualifiedName (WHERE booleanExpression)?                                 #deleteDefault
+    | UPDATE qualifiedName SET expression ( ',' expression )?  (WHERE booleanExpression)?  #updateDefault
     ;
 
 query
@@ -233,32 +235,34 @@ SELECT
     ;
 
 FROM
-    : [Ff][Rr][Oo][Mm]
-    ;
+    : [Ff][Rr][Oo][Mm];
 
 WHERE
-    : [Ww][Hh][Ee][Rr][Ee]
-    ;
+    : [Ww][Hh][Ee][Rr][Ee];
 
 GROUP
-    : [Gg][Rr][Oo][Uu][Pp]
-    ;
+    : [Gg][Rr][Oo][Uu][Pp];
 
 ORDER
-    : [Oo][Rr][Dd][Ee][Rr]
-    ;
+    : [Oo][Rr][Dd][Ee][Rr];
 
 HAVING
-    : [Hh][Aa][Vv][Ii][Nn][Gg]
-    ;
+    : [Hh][Aa][Vv][Ii][Nn][Gg];
 
 CASE: [Cc][Aa][Ss][Ee];
+
 WHEN: [Ww][Hh][Ee][Nn];
+
 THEN: [Tt][Hh][Ee][Nn];
+
 ELSE: [Ee][Ll][Ss][Ee];
+
 END : [Ee][Nn][Dd];
+
 AND : [Aa][Nn][Dd];
+
 NOT : [Nn][Oo][Tt];
+
 OR  : [Oo][Rr];
 
 BETWEEN
@@ -279,8 +283,11 @@ ARRAY
     : [Aa][Rr][Rr][Aa][Yy];
 
 IS  : [Ii][Ss];
+
 AS  : [Aa][Ss];
+
 BY  : [Bb][Yy];
+
 NULL: [Nn][Uu][Ll][Ll];
 
 JOIN: [Jj][Oo][Ii][Nn];
@@ -316,56 +323,49 @@ INTO: [Ii][Nn][Tt][Oo];
 VALUES
     : [Vv][Aa][Ll][Uu][Ee][Ss];
 
+DELETE
+    : [Dd][Ee][Ll][Ee][Tt][Ee];
+
 EQ  : '=';
+
 NEQ : '<>' | '!=';
+
 LT  : '<';
+
 LTE : '<=';
+
 GT  : '>';
+
 GTE : '>=';
 
 LIMIT
-    : [Ll][Ii][Mm][Ii][Tt]
-    ;
+    : [Ll][Ii][Mm][Ii][Tt];
 
 FETCH
-    : [Ff][Ee][Tt][Cc][Hh]
-    ;
+    : [Ff][Ee][Tt][Cc][Hh];
 
 FIRST
-    : [Ff][Ii][Rr][Ss][Tt]
-    ;
+    : [Ff][Ii][Rr][Ss][Tt];
 
-NEXT
-    : [Nn][Ee][Xx][Tt]
-    ;
+NEXT: [Nn][Ee][Xx][Tt];
 
-ROW : [Rr][Oo][Ww]
-    ;
+ROW : [Rr][Oo][Ww];
 
-ROWS
-    : [Rr][Oo][Ww][Ss]
-    ;
+ROWS: [Rr][Oo][Ww][Ss];
 
-ONLY
-    : [Oo][Nn][Ll][Yy]
-    ;
+ONLY: [Oo][Nn][Ll][Yy];
 
-WITH
-    : [Ww][Ii][Tt][Hh]
-    ;
+WITH: [Ww][Ii][Tt][Hh];
 
 TIES: [Tt][Ii][Ee][Ss];
 
 UNION
-    : [Uu][Nn][Ii][Oo][Nn]
-    ;
+    : [Uu][Nn][Ii][Oo][Nn];
 
 ALL : [Aa][Ll][Ll];
 
-
 INTERVAL
-    : [Ii][Nn][Tt][Ee][Rr][Vv][Aa][Ll]
-    ;
+    : [Ii][Nn][Tt][Ee][Rr][Vv][Aa][Ll];
 
 AT  : [Aa][Tt];
 
@@ -378,20 +378,17 @@ TO  : [Tt][Oo];
 YEAR: [Yy][Ee][Aa][Rr];
 
 MONTH
-    : [Mm][Oo][Nn][Tt][Hh]
-    ;
+    : [Mm][Oo][Nn][Tt][Hh];
 
 DAY : [Dd][Aa][Yy];
 
 HOUR: [Hh][Oo][Uu][Rr];
 
 MINUTE
-    : [Mm][Ii][Nn][Uu][Tt][Ee]
-    ;
+    : [Mm][Ii][Nn][Uu][Tt][Ee];
 
 SECOND
-    : [Ss][Ee][Cc][Oo][Nn][Dd]
-    ;
+    : [Ss][Ee][Cc][Oo][Nn][Dd];
 
 PLUS: '+';
 
@@ -400,10 +397,13 @@ MINUS
 
 ASTERISK
     : '*';
+
 SLASH
     : '/';
+
 PERCENT
     : '%';
+
 CONCAT
     : '||';
 
@@ -411,16 +411,13 @@ PARAMETER
     : '?';
 
 D_ANT
-    : '@@'
-    ;
+    : '@@';
 
 STRING
-    : '\'' ( ~'\'' | '\'\'' )* '\''
-    ;
+    : '\'' ( ~'\'' | '\'\'' )* '\'';
 
 INTEGER_VALUE
-    : DIGIT+
-    ;
+    : DIGIT+;
 
 DECIMAL_VALUE
     : DIGIT+ '.' DIGIT*

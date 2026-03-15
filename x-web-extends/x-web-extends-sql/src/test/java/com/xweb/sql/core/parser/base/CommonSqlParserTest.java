@@ -21,8 +21,7 @@ public class CommonSqlParserTest {
     }
 
     /**
-     * simple
-     * select id, name  from aaa  where id = 222 and name='zhx'
+     * select
      */
     @Test
     public void test00000000001() {
@@ -65,15 +64,33 @@ public class CommonSqlParserTest {
      */
     @Test
     public void test00000000002() {
-        String sql = "INSERT INTO table_name (column1, column2) " +
+        String[] sqls = {"INSERT INTO table_name (column1, column2) " +
                 "VALUES (value1, value2) " +
-                "ON DUPLICATE KEY UPDATE column1 = value1, column2 = value2";
-        commonCheck(sql);
+                "ON DUPLICATE KEY UPDATE column1 = value1, column2 = value2"
+                , "insert into user(id,name) select id,name from user ",
+                "insert into user select * from user"};
+
+        for (String sql : sqls) {
+            commonCheck(sql);
+        }
+    }
+
+    /**
+     * delete
+     */
+    @Test
+    public void test00000000003() {
+        String[] sqls = {"delete from user",
+                "delete from user where id = 2 and c = 4"};
+
+        for (String sql : sqls) {
+            commonCheck(sql);
+        }
     }
 
     @Test
     public void test00000000004() {
-        String sql = "insert into user select * from user";
+        String sql = "update user set id = '1' where id = '1'";
         commonCheck(sql);
     }
 }

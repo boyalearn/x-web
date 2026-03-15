@@ -32,6 +32,13 @@ public interface QuerySqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitInsertIntoAsQuery(QuerySqlBaseParser.InsertIntoAsQueryContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code deleteDefault}
+	 * labeled alternative in {@link QuerySqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeleteDefault(QuerySqlBaseParser.DeleteDefaultContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link QuerySqlBaseParser#query}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

@@ -1,6 +1,7 @@
 package com.xweb.sql.core.common;
 
 
+import com.xweb.sql.core.common.delete.SimpleDelete;
 import com.xweb.sql.core.common.expression.ArithmeticExpression;
 import com.xweb.sql.core.common.expression.BetweenAndExpression;
 import com.xweb.sql.core.common.expression.CommonConditionExpression;
@@ -179,9 +180,29 @@ public class CommonAstToSqlVisitor {
             return visit((OnDuplicateInsert) object);
         } else if (object instanceof AsQueryInsert) {
             return visit((AsQueryInsert) object);
-        } else {
+        } else if (object instanceof SimpleDelete) {
+            return visit((SimpleDelete) object);
+        }else {
             throw new RuntimeException("unknown exception class is " + object.getClass().getName());
         }
+    }
+
+    public String visit(SimpleDelete simpleDelete) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(simpleDelete.getDelete());
+        sql.append(SPACE);
+        sql.append(simpleDelete.getFrom());
+        sql.append(SPACE);
+        sql.append(simpleDelete.getTable());
+        if(isNotEmpty(simpleDelete.getWhere())){
+            sql.append(SPACE);
+            sql.append(simpleDelete.getWhere());
+        }
+        if(Optional.ofNullable(simpleDelete.getWhere()).isPresent()){
+            sql.append(SPACE);
+            sql.append(visit(simpleDelete.getWhereExpression()));
+        }
+        return sql.toString();
     }
 
     public String visit(AsQueryInsert asQueryInsert) {

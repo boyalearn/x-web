@@ -1,5 +1,6 @@
 package com.xweb.sql.core.common;
 
+import com.xweb.sql.core.common.delete.SimpleDelete;
 import com.xweb.sql.core.common.expression.BetweenAndExpression;
 import com.xweb.sql.core.common.expression.CommonConditionExpression;
 import com.xweb.sql.core.common.expression.ConcatenationExpression;
@@ -107,9 +108,22 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
             asQueryInsert.setColumns((List) super.visit(ctx.columnAliases()));
         }
         asQueryInsert.setQuery((Select) super.visit(ctx.query()));
-
         return asQueryInsert;
+    }
 
+    @Override
+    public Object visitDeleteDefault(QuerySqlBaseParser.DeleteDefaultContext ctx) {
+        SimpleDelete simpleDelete = new SimpleDelete();
+        simpleDelete.setDelete(ctx.DELETE().getText());
+        simpleDelete.setFrom(ctx.FROM().getText());
+        simpleDelete.setTable(ctx.qualifiedName().getText());
+        if (Optional.ofNullable(ctx.WHERE()).isPresent()) {
+            simpleDelete.setWhere(ctx.WHERE().getText());
+        }
+        if (Optional.ofNullable(ctx.booleanExpression()).isPresent()) {
+            simpleDelete.setWhereExpression((BooleanExpression) super.visit(ctx.booleanExpression()));
+        }
+        return simpleDelete;
     }
 
     @Override
