@@ -494,7 +494,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
             return simpleExpression;
         } else if (predicate instanceof BetweenAndExpression) {
             BetweenAndExpression betweenAndExpression = (BetweenAndExpression) predicate;
-            betweenAndExpression.setLeft(value);
+            betweenAndExpression.setLeft((Item) value);
             return betweenAndExpression;
         } else if (predicate instanceof InExpression) {
             InExpression inExpression = (InExpression) predicate;
@@ -636,9 +636,9 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
             betweenAndExpression.setNot(ctx.NOT().getText());
         }
         betweenAndExpression.setBetween(ctx.BETWEEN().getText());
-        betweenAndExpression.setLower(super.visit(ctx.lower));
+        betweenAndExpression.setLower((Item) super.visit(ctx.lower));
         betweenAndExpression.setAnd(ctx.AND().getText());
-        betweenAndExpression.setUpper(super.visit(ctx.upper));
+        betweenAndExpression.setUpper((Item) super.visit(ctx.upper));
         return betweenAndExpression;
     }
 
