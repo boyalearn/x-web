@@ -39,6 +39,13 @@ public interface QuerySqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeleteDefault(QuerySqlBaseParser.DeleteDefaultContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code updateDefault}
+	 * labeled alternative in {@link QuerySqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUpdateDefault(QuerySqlBaseParser.UpdateDefaultContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link QuerySqlBaseParser#query}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

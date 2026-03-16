@@ -326,6 +326,8 @@ VALUES
 DELETE
     : [Dd][Ee][Ll][Ee][Tt][Ee];
 
+SET : [Ss][Ee][Tt];
+
 EQ  : '=';
 
 NEQ : '<>' | '!=';

@@ -8,6 +8,7 @@ import com.xweb.sql.core.common.expression.CommonConditionExpression;
 import com.xweb.sql.core.common.expression.ConcatenationExpression;
 import com.xweb.sql.core.common.expression.InExpression;
 import com.xweb.sql.core.common.expression.IsNullExpression;
+import com.xweb.sql.core.common.expression.LikeExpression;
 import com.xweb.sql.core.common.expression.PriorityExpression;
 import com.xweb.sql.core.common.insert.AbstractInsert;
 import com.xweb.sql.core.common.insert.AsQueryInsert;
@@ -27,6 +28,7 @@ import com.xweb.sql.core.common.select.BaseSelect;
 import com.xweb.sql.core.common.select.UnionSelect;
 import com.xweb.sql.core.common.table.SimpleTable;
 import com.xweb.sql.core.common.table.UnionTableTable;
+import com.xweb.sql.core.common.update.SimpleUpdate;
 
 import java.util.List;
 import java.util.Optional;
@@ -182,9 +184,55 @@ public class CommonAstToSqlVisitor {
             return visit((AsQueryInsert) object);
         } else if (object instanceof SimpleDelete) {
             return visit((SimpleDelete) object);
-        }else {
+        } else if (object instanceof SimpleUpdate) {
+            return visit((SimpleUpdate) object);
+        } else if (object instanceof LikeExpression) {
+            return visit((LikeExpression) object);
+        } else {
             throw new RuntimeException("unknown exception class is " + object.getClass().getName());
         }
+    }
+
+    public String visit(LikeExpression likeExpression) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(visit(likeExpression.getLeft()));
+        sql.append(SPACE);
+        if (isNotEmpty(likeExpression.getNot())) {
+            sql.append(SPACE);
+            sql.append(likeExpression.getNot());
+        }
+        sql.append(likeExpression.getLike());
+        sql.append(SPACE);
+        sql.append(visit(likeExpression.getPattern()));
+        sql.append(SPACE);
+        sql.append(toStringCommon(likeExpression));
+        return sql.toString();
+    }
+
+    public String visit(SimpleUpdate simpleUpdate) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(simpleUpdate.getUpdate());
+        sql.append(SPACE);
+        sql.append(simpleUpdate.getTable());
+        sql.append(SPACE);
+        sql.append(simpleUpdate.getSet());
+        if (Optional.ofNullable(simpleUpdate.getUpdateItems()).isPresent()) {
+            sql.append(SPACE);
+            final List<Item> updateItems = simpleUpdate.getUpdateItems();
+            for (int i = 0; i < updateItems.size(); i++) {
+                if (i != 0) {
+                    sql.append(COMMA);
+                }
+                sql.append(visit(updateItems.get(i)));
+            }
+        }
+        if (Optional.ofNullable(simpleUpdate.getWhere()).isPresent()) {
+            sql.append(SPACE);
+            sql.append(simpleUpdate.getWhere());
+            sql.append(SPACE);
+            sql.append(visit(simpleUpdate.getWhereExpression()));
+        }
+        return sql.toString();
     }
 
     public String visit(SimpleDelete simpleDelete) {
@@ -194,11 +242,11 @@ public class CommonAstToSqlVisitor {
         sql.append(simpleDelete.getFrom());
         sql.append(SPACE);
         sql.append(simpleDelete.getTable());
-        if(isNotEmpty(simpleDelete.getWhere())){
+        if (isNotEmpty(simpleDelete.getWhere())) {
             sql.append(SPACE);
             sql.append(simpleDelete.getWhere());
         }
-        if(Optional.ofNullable(simpleDelete.getWhere()).isPresent()){
+        if (Optional.ofNullable(simpleDelete.getWhere()).isPresent()) {
             sql.append(SPACE);
             sql.append(visit(simpleDelete.getWhereExpression()));
         }

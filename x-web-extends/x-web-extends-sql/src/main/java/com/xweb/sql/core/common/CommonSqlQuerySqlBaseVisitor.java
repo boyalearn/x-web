@@ -28,6 +28,7 @@ import com.xweb.sql.core.common.select.BaseSelect;
 import com.xweb.sql.core.common.select.UnionSelect;
 import com.xweb.sql.core.common.table.SimpleTable;
 import com.xweb.sql.core.common.table.UnionTableTable;
+import com.xweb.sql.core.common.update.SimpleUpdate;
 import com.xweb.sql.core.parser.QuerySqlBaseBaseVisitor;
 import com.xweb.sql.core.parser.QuerySqlBaseParser;
 
@@ -124,6 +125,24 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
             simpleDelete.setWhereExpression((BooleanExpression) super.visit(ctx.booleanExpression()));
         }
         return simpleDelete;
+    }
+
+    @Override
+    public Object visitUpdateDefault(QuerySqlBaseParser.UpdateDefaultContext ctx) {
+        SimpleUpdate simpleUpdate = new SimpleUpdate();
+        simpleUpdate.setUpdate(ctx.UPDATE().getText());
+        simpleUpdate.setTable(ctx.qualifiedName().getText());
+        simpleUpdate.setSet(ctx.SET().getText());
+        simpleUpdate.setUpdateItems(new ArrayList<>());
+        final List<QuerySqlBaseParser.ExpressionContext> expressions = ctx.expression();
+        for (QuerySqlBaseParser.ExpressionContext expression : expressions) {
+            simpleUpdate.getUpdateItems().add((Item) super.visit(expression));
+        }
+        if (Optional.ofNullable(ctx.WHERE()).isPresent()) {
+            simpleUpdate.setWhere(ctx.WHERE().getText());
+            simpleUpdate.setWhereExpression((BooleanExpression) super.visit(ctx.booleanExpression()));
+        }
+        return simpleUpdate;
     }
 
     @Override
@@ -402,10 +421,13 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
             IsNullExpression isNullExpression = (IsNullExpression) predicate;
             isNullExpression.setLeft(value);
             return isNullExpression;
+        } else if (predicate instanceof LikeExpression) {
+            LikeExpression likeExpression = (LikeExpression) predicate;
+            likeExpression.setLeft(value);
+            return likeExpression;
         } else {
             throw new RuntimeException("express BUG 未支持的解析异常: " + predicate.getClass().getSimpleName());
         }
-
     }
 
     @Override
@@ -560,7 +582,7 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
         }
         likeExpression.setLike(ctx.LIKE().getText());
         likeExpression.setPattern(super.visit(ctx.pattern));
-        return super.visitLike(ctx);
+        return likeExpression;
     }
 
     @Override

@@ -51,7 +51,10 @@ public class CommonSqlParserTest {
                 "SELECT 1 AS found  FROM information_schema.TABLES WHERE table_schema = 'xxx' UNION ALL " +
                         " SELECT 1 AS found FROM information_schema.views WHERE table_schema ='fff' LIMIT 1 ",
                 "select num+ 100 from aaaaaaa bb where a.id + 2000= 11",
-                "select num || bb || cc || '22' from aaaaaaa bb where a.id + 2000= 11"
+                "select num || bb || cc || '22' from aaaaaaa bb where a.id + 2000= 11",
+                "select * from ccc where b.name like '%22%'",
+                "select * from ccc where b.name is not null",
+                "select * from ccc where b.name is null"
         };
         for (String sql : sqls) {
             commonCheck(sql);
@@ -81,7 +84,9 @@ public class CommonSqlParserTest {
     @Test
     public void test00000000003() {
         String[] sqls = {"delete from user",
-                "delete from user where id = 2 and c = 4"};
+                "delete from user where id = 2 and c = 4",
+                "update user set id = '1' where id = '1'"
+        };
 
         for (String sql : sqls) {
             commonCheck(sql);
@@ -90,7 +95,7 @@ public class CommonSqlParserTest {
 
     @Test
     public void test00000000004() {
-        String sql = "update user set id = '1' where id = '1'";
+        String sql = "select * from ccc b where b.id = 2 and  b.name like '%2222%'";
         commonCheck(sql);
     }
 }

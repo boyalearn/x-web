@@ -64,6 +64,18 @@ public class QuerySqlBaseBaseListener implements QuerySqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterUpdateDefault(QuerySqlBaseParser.UpdateDefaultContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitUpdateDefault(QuerySqlBaseParser.UpdateDefaultContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterQuery(QuerySqlBaseParser.QueryContext ctx) { }
 	/**
 	 * {@inheritDoc}

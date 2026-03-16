@@ -56,6 +56,18 @@ public interface QuerySqlBaseListener extends ParseTreeListener {
 	 */
 	void exitDeleteDefault(QuerySqlBaseParser.DeleteDefaultContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code updateDefault}
+	 * labeled alternative in {@link QuerySqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterUpdateDefault(QuerySqlBaseParser.UpdateDefaultContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code updateDefault}
+	 * labeled alternative in {@link QuerySqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitUpdateDefault(QuerySqlBaseParser.UpdateDefaultContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link QuerySqlBaseParser#query}.
 	 * @param ctx the parse tree
 	 */
