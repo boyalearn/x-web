@@ -46,6 +46,13 @@ public interface QuerySqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitUpdateDefault(QuerySqlBaseParser.UpdateDefaultContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code mergeDefault}
+	 * labeled alternative in {@link QuerySqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMergeDefault(QuerySqlBaseParser.MergeDefaultContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link QuerySqlBaseParser#query}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -82,6 +89,33 @@ public interface QuerySqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitOrderByPart(QuerySqlBaseParser.OrderByPartContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link QuerySqlBaseParser#matchThenExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMatchThenExpression(QuerySqlBaseParser.MatchThenExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code mergeUpdateOperator}
+	 * labeled alternative in {@link QuerySqlBaseParser#mergeOperator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMergeUpdateOperator(QuerySqlBaseParser.MergeUpdateOperatorContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code mergeDeleteOperator}
+	 * labeled alternative in {@link QuerySqlBaseParser#mergeOperator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMergeDeleteOperator(QuerySqlBaseParser.MergeDeleteOperatorContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code mergeInsertOperator}
+	 * labeled alternative in {@link QuerySqlBaseParser#mergeOperator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMergeInsertOperator(QuerySqlBaseParser.MergeInsertOperatorContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link QuerySqlBaseParser#limitRowCount}.
 	 * @param ctx the parse tree

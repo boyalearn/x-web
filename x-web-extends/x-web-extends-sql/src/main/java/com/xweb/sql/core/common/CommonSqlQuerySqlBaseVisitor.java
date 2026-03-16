@@ -22,6 +22,12 @@ import com.xweb.sql.core.common.item.SubIndexItem;
 import com.xweb.sql.core.common.item.TableColumnItem;
 import com.xweb.sql.core.common.item.UnionSelectItem;
 import com.xweb.sql.core.common.item.WhenThenItem;
+import com.xweb.sql.core.common.merge.DeleteMergeOperator;
+import com.xweb.sql.core.common.merge.InsertMergeOperator;
+import com.xweb.sql.core.common.merge.MergeOperator;
+import com.xweb.sql.core.common.merge.SimpleMerge;
+import com.xweb.sql.core.common.merge.UpdateMergeOperator;
+import com.xweb.sql.core.common.merge.WhenMatchedThenOperatorItem;
 import com.xweb.sql.core.common.order.DefaultOrderItem;
 import com.xweb.sql.core.common.order.OrderItem;
 import com.xweb.sql.core.common.select.BaseSelect;
@@ -143,6 +149,82 @@ public class CommonSqlQuerySqlBaseVisitor extends QuerySqlBaseBaseVisitor {
             simpleUpdate.setWhereExpression((BooleanExpression) super.visit(ctx.booleanExpression()));
         }
         return simpleUpdate;
+    }
+
+    @Override
+    public Object visitMergeDefault(QuerySqlBaseParser.MergeDefaultContext ctx) {
+        SimpleMerge simpleMerge = new SimpleMerge();
+        simpleMerge.setMerge(ctx.MERGE().getText());
+        simpleMerge.setInto(ctx.INTO().getText());
+        simpleMerge.setTable((Item) super.visit(ctx.target));
+        simpleMerge.setUsing(ctx.USING().getText());
+        simpleMerge.setUseTable((Item) super.visit(ctx.useTable));
+        simpleMerge.setOn(ctx.ON().getText());
+        simpleMerge.setOnConditionExpression((BooleanExpression) super.visit(ctx.booleanExpression()));
+        final List<QuerySqlBaseParser.MatchThenExpressionContext> matchThenExpressionContexts = ctx.matchThenExpression();
+        simpleMerge.setWhenThenItems(new ArrayList<>());
+        for (QuerySqlBaseParser.MatchThenExpressionContext matchThenExpressionContext : matchThenExpressionContexts) {
+            simpleMerge.getWhenThenItems().add((WhenMatchedThenOperatorItem) super.visit(matchThenExpressionContext));
+        }
+        return simpleMerge;
+    }
+
+    @Override
+    public Object visitMatchThenExpression(QuerySqlBaseParser.MatchThenExpressionContext ctx) {
+        WhenMatchedThenOperatorItem whenMatchedThenOperatorItem = new WhenMatchedThenOperatorItem();
+        whenMatchedThenOperatorItem.setWhen(ctx.WHEN().getText());
+        if (Optional.ofNullable(ctx.NOT()).isPresent()) {
+            whenMatchedThenOperatorItem.setNot(ctx.NOT().getText());
+        }
+        whenMatchedThenOperatorItem.setMatched(ctx.MATCHED().getText());
+        if (Optional.ofNullable(ctx.BY()).isPresent()) {
+            whenMatchedThenOperatorItem.setBy(ctx.BY().getText());
+        }
+        if (Optional.ofNullable(ctx.SOURCE()).isPresent()) {
+            whenMatchedThenOperatorItem.setSource(ctx.SOURCE().getText());
+        }
+        whenMatchedThenOperatorItem.setThen(ctx.THEN().getText());
+        whenMatchedThenOperatorItem.setOperator((MergeOperator) super.visit(ctx.mergeOperator()));
+        return whenMatchedThenOperatorItem;
+    }
+
+    @Override
+    public Object visitMergeUpdateOperator(QuerySqlBaseParser.MergeUpdateOperatorContext ctx) {
+        UpdateMergeOperator updateMergeOperator = new UpdateMergeOperator();
+        updateMergeOperator.setUpdate(ctx.UPDATE().getText());
+        if (Optional.ofNullable(ctx.KEY()).isPresent()) {
+            updateMergeOperator.setKey(ctx.KEY().getText());
+        }
+        updateMergeOperator.setSet(ctx.SET().getText());
+        final List<QuerySqlBaseParser.ExpressionContext> expressions = ctx.expression();
+        updateMergeOperator.setUpdateItems(new ArrayList<>());
+        for (QuerySqlBaseParser.ExpressionContext expression : expressions) {
+            updateMergeOperator.getUpdateItems().add((Item) super.visit(expression));
+        }
+        return updateMergeOperator;
+    }
+
+    @Override
+    public Object visitMergeDeleteOperator(QuerySqlBaseParser.MergeDeleteOperatorContext ctx) {
+        DeleteMergeOperator deleteMergeOperator = new DeleteMergeOperator();
+        deleteMergeOperator.setDelete(ctx.DELETE().getText());
+        return deleteMergeOperator;
+    }
+
+    @Override
+    public Object visitMergeInsertOperator(QuerySqlBaseParser.MergeInsertOperatorContext ctx) {
+        InsertMergeOperator insertMergeOperator = new InsertMergeOperator();
+        insertMergeOperator.setInsert(ctx.INSERT().getText());
+        if (Optional.ofNullable(ctx.qualifiedName()).isPresent()) {
+            insertMergeOperator.setTable(ctx.qualifiedName().getText());
+        }
+        insertMergeOperator.setValues(ctx.VALUES().getText());
+        final QuerySqlBaseParser.ColumnAliasesContext columnAliasesContext = ctx.columnAliases();
+        insertMergeOperator.setColumnItems((List) super.visit(columnAliasesContext));
+        if (Optional.ofNullable(ctx.valueAliases()).isPresent()) {
+            insertMergeOperator.setValueItems((List) super.visit(ctx.valueAliases()));
+        }
+        return insertMergeOperator;
     }
 
     @Override

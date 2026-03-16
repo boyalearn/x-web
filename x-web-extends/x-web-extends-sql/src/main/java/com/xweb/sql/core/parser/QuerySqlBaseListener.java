@@ -68,6 +68,18 @@ public interface QuerySqlBaseListener extends ParseTreeListener {
 	 */
 	void exitUpdateDefault(QuerySqlBaseParser.UpdateDefaultContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code mergeDefault}
+	 * labeled alternative in {@link QuerySqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterMergeDefault(QuerySqlBaseParser.MergeDefaultContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code mergeDefault}
+	 * labeled alternative in {@link QuerySqlBaseParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitMergeDefault(QuerySqlBaseParser.MergeDefaultContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link QuerySqlBaseParser#query}.
 	 * @param ctx the parse tree
 	 */
@@ -129,6 +141,52 @@ public interface QuerySqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitOrderByPart(QuerySqlBaseParser.OrderByPartContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link QuerySqlBaseParser#matchThenExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterMatchThenExpression(QuerySqlBaseParser.MatchThenExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QuerySqlBaseParser#matchThenExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitMatchThenExpression(QuerySqlBaseParser.MatchThenExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code mergeUpdateOperator}
+	 * labeled alternative in {@link QuerySqlBaseParser#mergeOperator}.
+	 * @param ctx the parse tree
+	 */
+	void enterMergeUpdateOperator(QuerySqlBaseParser.MergeUpdateOperatorContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code mergeUpdateOperator}
+	 * labeled alternative in {@link QuerySqlBaseParser#mergeOperator}.
+	 * @param ctx the parse tree
+	 */
+	void exitMergeUpdateOperator(QuerySqlBaseParser.MergeUpdateOperatorContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code mergeDeleteOperator}
+	 * labeled alternative in {@link QuerySqlBaseParser#mergeOperator}.
+	 * @param ctx the parse tree
+	 */
+	void enterMergeDeleteOperator(QuerySqlBaseParser.MergeDeleteOperatorContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code mergeDeleteOperator}
+	 * labeled alternative in {@link QuerySqlBaseParser#mergeOperator}.
+	 * @param ctx the parse tree
+	 */
+	void exitMergeDeleteOperator(QuerySqlBaseParser.MergeDeleteOperatorContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code mergeInsertOperator}
+	 * labeled alternative in {@link QuerySqlBaseParser#mergeOperator}.
+	 * @param ctx the parse tree
+	 */
+	void enterMergeInsertOperator(QuerySqlBaseParser.MergeInsertOperatorContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code mergeInsertOperator}
+	 * labeled alternative in {@link QuerySqlBaseParser#mergeOperator}.
+	 * @param ctx the parse tree
+	 */
+	void exitMergeInsertOperator(QuerySqlBaseParser.MergeInsertOperatorContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link QuerySqlBaseParser#limitRowCount}.
 	 * @param ctx the parse tree

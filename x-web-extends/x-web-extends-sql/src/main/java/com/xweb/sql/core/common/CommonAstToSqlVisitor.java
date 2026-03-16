@@ -22,6 +22,11 @@ import com.xweb.sql.core.common.item.SubIndexItem;
 import com.xweb.sql.core.common.item.TableColumnItem;
 import com.xweb.sql.core.common.item.UnionSelectItem;
 import com.xweb.sql.core.common.item.WhenThenItem;
+import com.xweb.sql.core.common.merge.DeleteMergeOperator;
+import com.xweb.sql.core.common.merge.InsertMergeOperator;
+import com.xweb.sql.core.common.merge.SimpleMerge;
+import com.xweb.sql.core.common.merge.UpdateMergeOperator;
+import com.xweb.sql.core.common.merge.WhenMatchedThenOperatorItem;
 import com.xweb.sql.core.common.order.DefaultOrderItem;
 import com.xweb.sql.core.common.order.OrderItem;
 import com.xweb.sql.core.common.select.BaseSelect;
@@ -29,7 +34,9 @@ import com.xweb.sql.core.common.select.UnionSelect;
 import com.xweb.sql.core.common.table.SimpleTable;
 import com.xweb.sql.core.common.table.UnionTableTable;
 import com.xweb.sql.core.common.update.SimpleUpdate;
+import lombok.val;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -188,9 +195,136 @@ public class CommonAstToSqlVisitor {
             return visit((SimpleUpdate) object);
         } else if (object instanceof LikeExpression) {
             return visit((LikeExpression) object);
+        } else if (object instanceof LikeExpression) {
+            return visit((LikeExpression) object);
+        } else if (object instanceof SimpleMerge) {
+            return visit((SimpleMerge) object);
+        } else if (object instanceof WhenMatchedThenOperatorItem) {
+            return visit((WhenMatchedThenOperatorItem) object);
+        } else if (object instanceof WhenMatchedThenOperatorItem) {
+            return visit((WhenMatchedThenOperatorItem) object);
+        } else if (object instanceof UpdateMergeOperator) {
+            return visit((UpdateMergeOperator) object);
+        } else if (object instanceof InsertMergeOperator) {
+            return visit((InsertMergeOperator) object);
+        } else if (object instanceof DeleteMergeOperator) {
+            return visit((DeleteMergeOperator) object);
         } else {
             throw new RuntimeException("unknown exception class is " + object.getClass().getName());
         }
+    }
+
+    public String visit(DeleteMergeOperator deleteMergeOperator) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(SPACE);
+        sql.append(deleteMergeOperator.getDelete());
+        return sql.toString();
+    }
+
+    public String visit(InsertMergeOperator insertMergeOperator) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(SPACE);
+        sql.append(insertMergeOperator.getInsert());
+        if (isNotEmpty(insertMergeOperator.getTable())) {
+            sql.append(SPACE);
+            sql.append(insertMergeOperator.getTable());
+        }
+        sql.append(SPACE);
+        final List<Item> columnItems = insertMergeOperator.getColumnItems();
+        if (Optional.ofNullable(columnItems).isPresent() && !columnItems.isEmpty()) {
+            sql.append(LEFT_BRACKET);
+            for (int i = 0; i < columnItems.size(); i++) {
+                if (i != 0) {
+                    sql.append(COMMA);
+                }
+                sql.append(visit(columnItems.get(i)));
+            }
+            sql.append(RIGHT_BRACKET);
+        }
+        if(isNotEmpty(insertMergeOperator.getValues())){
+            sql.append(insertMergeOperator.getValues());
+        }
+        final List<Item> valueItems = insertMergeOperator.getValueItems();
+        if (Optional.ofNullable(valueItems).isPresent()) {
+            sql.append(LEFT_BRACKET);
+            for (int i = 0; i < valueItems.size(); i++) {
+                if (i != 0) {
+                    sql.append(COMMA);
+                }
+                sql.append(visit(valueItems.get(i)));
+            }
+            sql.append(RIGHT_BRACKET);
+        }
+        return sql.toString();
+    }
+
+    public String visit(UpdateMergeOperator updateMergeOperator) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(SPACE);
+        sql.append(updateMergeOperator.getUpdate());
+        if (isNotEmpty(updateMergeOperator.getKey())) {
+            sql.append(SPACE);
+            sql.append(updateMergeOperator.getKey());
+        }
+        sql.append(SPACE);
+        sql.append(updateMergeOperator.getSet());
+        final List<Item> updateItems = updateMergeOperator.getUpdateItems();
+        for (int i = 0; i < updateItems.size(); i++) {
+            if (i != 0) {
+                sql.append(COMMA);
+            } else {
+                sql.append(SPACE);
+            }
+            sql.append(visit(updateItems.get(i)));
+
+        }
+        return sql.toString();
+    }
+
+    public String visit(WhenMatchedThenOperatorItem whenMatchedThenOperatorItem) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(whenMatchedThenOperatorItem.getWhen());
+        if (isNotEmpty(whenMatchedThenOperatorItem.getNot())) {
+            sql.append(SPACE);
+            sql.append(whenMatchedThenOperatorItem.getNot());
+        }
+        sql.append(SPACE);
+        sql.append(whenMatchedThenOperatorItem.getMatched());
+        if (isNotEmpty(whenMatchedThenOperatorItem.getBy())) {
+            sql.append(SPACE);
+            sql.append(whenMatchedThenOperatorItem.getBy());
+        }
+        if (isNotEmpty(whenMatchedThenOperatorItem.getSource())) {
+            sql.append(SPACE);
+            sql.append(whenMatchedThenOperatorItem.getSource());
+        }
+        sql.append(SPACE);
+        sql.append(whenMatchedThenOperatorItem.getThen());
+        sql.append(visit(whenMatchedThenOperatorItem.getOperator()));
+        return sql.toString();
+    }
+
+    public String visit(SimpleMerge simpleMerge) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(simpleMerge.getMerge());
+        sql.append(SPACE);
+        sql.append(simpleMerge.getInto());
+        sql.append(SPACE);
+        sql.append(visit(simpleMerge.getTable()));
+        sql.append(SPACE);
+        sql.append(simpleMerge.getUsing());
+        sql.append(SPACE);
+        sql.append(visit(simpleMerge.getUseTable()));
+        sql.append(SPACE);
+        sql.append(simpleMerge.getOn());
+        sql.append(SPACE);
+        sql.append(visit(simpleMerge.getOnConditionExpression()));
+        final List<WhenMatchedThenOperatorItem> whenThenItems = simpleMerge.getWhenThenItems();
+        for (WhenMatchedThenOperatorItem whenThenItem : whenThenItems) {
+            sql.append(SPACE);
+            sql.append(visit(whenThenItem));
+        }
+        return sql.toString();
     }
 
     public String visit(LikeExpression likeExpression) {

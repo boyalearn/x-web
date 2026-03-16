@@ -1,6 +1,5 @@
 package com.xweb.sql.mysql;
 
-import com.xweb.sql.core.common.Select;
 import com.xweb.sql.core.common.Statement;
 import com.xweb.sql.core.common.util.SqlUtil;
 

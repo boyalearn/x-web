@@ -76,6 +76,18 @@ public class QuerySqlBaseBaseListener implements QuerySqlBaseListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterMergeDefault(QuerySqlBaseParser.MergeDefaultContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMergeDefault(QuerySqlBaseParser.MergeDefaultContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterQuery(QuerySqlBaseParser.QueryContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -143,6 +155,54 @@ public class QuerySqlBaseBaseListener implements QuerySqlBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitOrderByPart(QuerySqlBaseParser.OrderByPartContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMatchThenExpression(QuerySqlBaseParser.MatchThenExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMatchThenExpression(QuerySqlBaseParser.MatchThenExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMergeUpdateOperator(QuerySqlBaseParser.MergeUpdateOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMergeUpdateOperator(QuerySqlBaseParser.MergeUpdateOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMergeDeleteOperator(QuerySqlBaseParser.MergeDeleteOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMergeDeleteOperator(QuerySqlBaseParser.MergeDeleteOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMergeInsertOperator(QuerySqlBaseParser.MergeInsertOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMergeInsertOperator(QuerySqlBaseParser.MergeInsertOperatorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

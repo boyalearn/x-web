@@ -13,6 +13,8 @@ statement
     | INSERT INTO qualifiedName columnAliases? query                                       #insertIntoAsQuery
     | DELETE FROM qualifiedName (WHERE booleanExpression)?                                 #deleteDefault
     | UPDATE qualifiedName SET expression ( ',' expression )?  (WHERE booleanExpression)?  #updateDefault
+    | MERGE INTO target=tableExpression USING useTable=tableExpression
+      ON booleanExpression matchThenExpression+                                            #mergeDefault
     ;
 
 query
@@ -46,6 +48,17 @@ queryPrimary
 orderByPart
     : ORDER BY orderByExpression (',' orderByExpression)*
     ;
+
+matchThenExpression
+    : WHEN NOT? MATCHED ( BY SOURCE )? THEN mergeOperator
+    ;
+
+mergeOperator
+    : UPDATE KEY? SET expression (',' expression)?                                              #mergeUpdateOperator
+    | DELETE                                                                               #mergeDeleteOperator
+    | INSERT qualifiedName? columnAliases VALUES valueAliases                              #mergeInsertOperator
+    ;
+
 
 limitRowCount
     : rowCount (',' rowCount)?
@@ -391,6 +404,18 @@ MINUTE
 
 SECOND
     : [Ss][Ee][Cc][Oo][Nn][Dd];
+
+MERGE
+    : [Mm][Ee][Rr][Gg][Ee];
+
+USING
+    : [Uu][Ss][Ii][Nn][Gg];
+
+MATCHED
+    : [Mm][Aa][Tt][Cc][Hh][Ee][Dd];
+
+SOURCE
+    : [Ss][Oo][Uu][Rr][Cc][Ee];
 
 PLUS: '+';
 

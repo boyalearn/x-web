@@ -67,11 +67,12 @@ public class CommonSqlParserTest {
      */
     @Test
     public void test00000000002() {
-        String[] sqls = {"INSERT INTO table_name (column1, column2) " +
-                "VALUES (value1, value2) " +
-                "ON DUPLICATE KEY UPDATE column1 = value1, column2 = value2"
-                , "insert into user(id,name) select id,name from user ",
-                "insert into user select * from user"};
+        String[] sqls = {
+                "INSERT INTO table_name (column1, column2) VALUES (value1, value2) " +
+                "ON DUPLICATE KEY UPDATE column1 = value1, column2 = value2",
+                "insert into user(id,name) select id,name from user ",
+                "insert into user select * from user"
+        };
 
         for (String sql : sqls) {
             commonCheck(sql);
@@ -96,6 +97,31 @@ public class CommonSqlParserTest {
     @Test
     public void test00000000004() {
         String sql = "select * from ccc b where b.id = 2 and  b.name like '%2222%'";
+        commonCheck(sql);
+    }
+
+    /**
+     * merge into tableb b --被操作表
+     * using (select * from a) a–参照表 支持子查询
+     * on a.id=b.id–关联关系
+     * when matched --a,b表均匹配到做update
+     * then update set b.nme= b.nme
+     * when not matched–a表有 b表匹配不到做insert （也可以加上 by target）
+     * then insert(id,nme) values(a.id,a.nme)
+     * when not matched by source–a表没有做delete
+     * then delete ;
+     */
+    @Test
+    public void test00000000005() {
+        String sql = "merge into tableb b " +
+                "using (select * from a) a " +
+                "on a.id=b.id " +
+                "when matched " +
+                "then update set b.nme= b.nme " +
+                "when not matched " +
+                "then insert(id,nme) values(a.id,a.nme) " +
+                "when not matched by source " +
+                "then delete";
         commonCheck(sql);
     }
 }
