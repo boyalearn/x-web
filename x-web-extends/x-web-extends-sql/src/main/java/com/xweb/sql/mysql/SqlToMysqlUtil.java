@@ -4,6 +4,7 @@ import com.xweb.sql.core.common.Statement;
 import com.xweb.sql.core.common.util.SqlUtil;
 
 public class SqlToMysqlUtil {
+
     private static MysqlRewriterVisitor mysqlRewriter = new MysqlRewriterVisitor();
 
     static {

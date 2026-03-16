@@ -52,7 +52,6 @@ public class MysqlRewriterVisitor extends AbstractCommonAstVisitor {
             }
         }
 
-
         final BooleanExpression whereExpression = select.getWhereExpression();
         if (null != whereExpression) {
             Object result = visit(whereExpression);

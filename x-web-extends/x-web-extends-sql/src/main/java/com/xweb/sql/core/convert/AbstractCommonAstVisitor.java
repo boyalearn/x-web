@@ -52,7 +52,6 @@ public abstract class AbstractCommonAstVisitor {
             }
         }
 
-
         final BooleanExpression whereExpression = select.getWhereExpression();
         if (null != whereExpression) {
             visit(whereExpression);
@@ -63,7 +62,6 @@ public abstract class AbstractCommonAstVisitor {
                 Item item = itemsGroup.get(i);
                 visit(item);
             }
-
         }
 
         final List<OrderItem> orderItems = select.getOrderItems();
@@ -121,7 +119,6 @@ public abstract class AbstractCommonAstVisitor {
         } else {
             throw new RuntimeException("unknown exception class is " + object.getClass().getName());
         }
-
     }
 
     protected Object visit(UnionSelect unionSelect) {

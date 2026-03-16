@@ -4,7 +4,7 @@
  * '*' 匹配前一项零次或者多次
  *
  */
-grammar QuerySqlBase;
+grammar SqlBase;
 
 statement
     //查询部分
