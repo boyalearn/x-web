@@ -1,6 +1,7 @@
 package com.xweb.sql.core.common;
 
 import com.xweb.sql.core.common.delete.SimpleDelete;
+import com.xweb.sql.core.common.expression.ArithmeticExpression;
 import com.xweb.sql.core.common.expression.BetweenAndExpression;
 import com.xweb.sql.core.common.expression.CommonConditionExpression;
 import com.xweb.sql.core.common.expression.ConcatenationExpression;
@@ -10,7 +11,6 @@ import com.xweb.sql.core.common.expression.IsNullExpression;
 import com.xweb.sql.core.common.expression.LikeExpression;
 import com.xweb.sql.core.common.expression.NotBooleanExpression;
 import com.xweb.sql.core.common.expression.PriorityExpression;
-import com.xweb.sql.core.common.expression.ArithmeticExpression;
 import com.xweb.sql.core.common.insert.AsQueryInsert;
 import com.xweb.sql.core.common.insert.OnDuplicateInsert;
 import com.xweb.sql.core.common.insert.SimpleInsert;
@@ -35,16 +35,14 @@ import com.xweb.sql.core.common.select.UnionSelect;
 import com.xweb.sql.core.common.table.SimpleTable;
 import com.xweb.sql.core.common.table.UnionTableTable;
 import com.xweb.sql.core.common.update.SimpleUpdate;
+import com.xweb.sql.core.parser.SqlBaseBaseVisitor;
 import com.xweb.sql.core.parser.SqlBaseParser;
-
+import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import com.xweb.sql.core.parser.SqlBaseBaseVisitor;
-import lombok.Getter;
 
 @Getter
 public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
@@ -261,7 +259,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     @Override
     public Object visitSubPriorityQueryExpression(SqlBaseParser.SubPriorityQueryExpressionContext ctx) {
         Object result = super.visit(ctx.query());
-        return new PriorityExpression(result);
+        return new PriorityExpression((Item) result);
     }
 
     @Override
@@ -273,13 +271,13 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     @Override
     public Object visitSubQueryTableExpress(SqlBaseParser.SubQueryTableExpressContext ctx) {
         Object result = super.visit(ctx.query());
-        return new PriorityExpression(result);
+        return new PriorityExpression((Item) result);
     }
 
     @Override
     public Object visitSubTableExpressionExpress(SqlBaseParser.SubTableExpressionExpressContext ctx) {
         Object result = super.visit(ctx.tableExpression());
-        return new PriorityExpression(result);
+        return new PriorityExpression((Item) result);
     }
 
     @Override
@@ -378,7 +376,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     @Override
     public Object visitParenthesizedExpression(SqlBaseParser.ParenthesizedExpressionContext ctx) {
         Object result = super.visit(ctx.expression());
-        return new PriorityExpression(result);
+        return new PriorityExpression((Item) result);
     }
 
     @Override
@@ -490,7 +488,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
 
         if (predicate instanceof CommonConditionExpression) {
             CommonConditionExpression simpleExpression = (CommonConditionExpression) predicate;
-            simpleExpression.setLeft(value);
+            simpleExpression.setLeft((Item) value);
             return simpleExpression;
         } else if (predicate instanceof BetweenAndExpression) {
             BetweenAndExpression betweenAndExpression = (BetweenAndExpression) predicate;
@@ -498,15 +496,15 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
             return betweenAndExpression;
         } else if (predicate instanceof InExpression) {
             InExpression inExpression = (InExpression) predicate;
-            inExpression.setLeft(value);
+            inExpression.setLeft((Item) value);
             return inExpression;
         } else if (predicate instanceof IsNullExpression) {
             IsNullExpression isNullExpression = (IsNullExpression) predicate;
-            isNullExpression.setLeft(value);
+            isNullExpression.setLeft((Item) value);
             return isNullExpression;
         } else if (predicate instanceof LikeExpression) {
             LikeExpression likeExpression = (LikeExpression) predicate;
-            likeExpression.setLeft(value);
+            likeExpression.setLeft((Item) value);
             return likeExpression;
         } else {
             throw new RuntimeException("express BUG 未支持的解析异常: " + predicate.getClass().getSimpleName());
@@ -540,7 +538,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
         final SqlBaseParser.ComparisonOperatorContext comparisonOperatorContext = ctx.comparisonOperator();
         CommonConditionExpression simpleExpression = new CommonConditionExpression();
         simpleExpression.setOp(comparisonOperatorContext.getText());
-        simpleExpression.setRight(super.visit(ctx.right));
+        simpleExpression.setRight((Item) super.visit(ctx.right));
         return simpleExpression;
     }
 
@@ -557,8 +555,8 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
         final Object left = super.visit(ctx.left);
         final Object right = super.visit(ctx.right);
         CommonConditionExpression commonConditionExpression = new CommonConditionExpression();
-        commonConditionExpression.setLeft(left);
-        commonConditionExpression.setRight(right);
+        commonConditionExpression.setLeft((Item) left);
+        commonConditionExpression.setRight((Item) right);
         commonConditionExpression.setOp(ctx.operator.getText());
         return commonConditionExpression;
     }
@@ -574,7 +572,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
         }
         if (null != ctx.elseExpression) {
             caseItem.setElseName(ctx.ELSE().getText());
-            caseItem.setElseResult(super.visit(ctx.elseExpression));
+            caseItem.setElseResult((Item) super.visit(ctx.elseExpression));
         }
         caseItem.setEnd(ctx.END().getText());
         return caseItem;
@@ -601,7 +599,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     public Object visitExists(SqlBaseParser.ExistsContext ctx) {
         ExistExpression existExpression = new ExistExpression();
         existExpression.setExist(ctx.EXISTS().getText());
-        existExpression.setExpression(super.visit(ctx.query()));
+        existExpression.setExpression((Item) super.visit(ctx.query()));
         return existExpression;
     }
 
@@ -664,7 +662,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
             likeExpression.setNot(ctx.NOT().getText());
         }
         likeExpression.setLike(ctx.LIKE().getText());
-        likeExpression.setPattern(super.visit(ctx.pattern));
+        likeExpression.setPattern((Item) super.visit(ctx.pattern));
         return likeExpression;
     }
 

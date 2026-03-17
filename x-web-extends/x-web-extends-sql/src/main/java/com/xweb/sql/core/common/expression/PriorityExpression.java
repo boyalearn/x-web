@@ -9,9 +9,9 @@ import lombok.Data;
 @Data
 public class PriorityExpression extends AbstractItem implements BooleanExpression, Table, Item {
 
-    private Object expression;
+    private Item expression;
 
-    public PriorityExpression(Object expression) {
+    public PriorityExpression(Item expression) {
         this.expression = expression;
     }
 }

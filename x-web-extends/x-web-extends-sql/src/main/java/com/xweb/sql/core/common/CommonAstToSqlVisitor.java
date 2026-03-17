@@ -34,9 +34,7 @@ import com.xweb.sql.core.common.select.UnionSelect;
 import com.xweb.sql.core.common.table.SimpleTable;
 import com.xweb.sql.core.common.table.UnionTableTable;
 import com.xweb.sql.core.common.update.SimpleUpdate;
-import lombok.val;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -241,7 +239,7 @@ public class CommonAstToSqlVisitor {
             }
             sql.append(RIGHT_BRACKET);
         }
-        if(isNotEmpty(insertMergeOperator.getValues())){
+        if (isNotEmpty(insertMergeOperator.getValues())) {
             sql.append(insertMergeOperator.getValues());
         }
         final List<Item> valueItems = insertMergeOperator.getValueItems();

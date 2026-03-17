@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 public class InExpression extends AbstractItem implements BooleanExpression {
 
-    private Object left;
+    private Item left;
 
     private String not;
 

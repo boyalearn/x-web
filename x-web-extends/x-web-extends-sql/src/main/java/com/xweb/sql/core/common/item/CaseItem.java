@@ -14,7 +14,7 @@ public class CaseItem implements Item {
 
     private String elseName;
 
-    private Object elseResult;
+    private Item elseResult;
 
     private String end;
 

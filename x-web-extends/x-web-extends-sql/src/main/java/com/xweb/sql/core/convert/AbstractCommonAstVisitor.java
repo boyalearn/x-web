@@ -43,7 +43,6 @@ public abstract class AbstractCommonAstVisitor {
             Item selectItem = selectItems.get(i);
             visit(selectItem);
         }
-
         final List<Table> tableItems = select.getTableItems();
         if (!tableItems.isEmpty()) {
             for (int i = 0; i < tableItems.size(); i++) {
@@ -51,7 +50,6 @@ public abstract class AbstractCommonAstVisitor {
                 visit(tableItem);
             }
         }
-
         final BooleanExpression whereExpression = select.getWhereExpression();
         if (null != whereExpression) {
             visit(whereExpression);
@@ -63,7 +61,6 @@ public abstract class AbstractCommonAstVisitor {
                 visit(item);
             }
         }
-
         final List<OrderItem> orderItems = select.getOrderItems();
         if (!orderItems.isEmpty()) {
             for (int i = 0; i < orderItems.size(); i++) {

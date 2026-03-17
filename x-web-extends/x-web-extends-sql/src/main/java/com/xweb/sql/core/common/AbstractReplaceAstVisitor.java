@@ -24,16 +24,20 @@ import com.xweb.sql.core.common.item.UnionSelectItem;
 import com.xweb.sql.core.common.item.WhenThenItem;
 import com.xweb.sql.core.common.merge.DeleteMergeOperator;
 import com.xweb.sql.core.common.merge.InsertMergeOperator;
+import com.xweb.sql.core.common.merge.MergeOperator;
 import com.xweb.sql.core.common.merge.SimpleMerge;
 import com.xweb.sql.core.common.merge.UpdateMergeOperator;
 import com.xweb.sql.core.common.merge.WhenMatchedThenOperatorItem;
 import com.xweb.sql.core.common.order.DefaultOrderItem;
+import com.xweb.sql.core.common.order.OrderItem;
 import com.xweb.sql.core.common.select.BaseSelect;
 import com.xweb.sql.core.common.select.UnionSelect;
 import com.xweb.sql.core.common.table.SimpleTable;
 import com.xweb.sql.core.common.table.UnionTableTable;
 import com.xweb.sql.core.common.update.SimpleUpdate;
+import javafx.scene.control.Tab;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -113,6 +117,512 @@ public abstract class AbstractReplaceAstVisitor {
         } else {
             throw new RuntimeException("未知的解析异常");
         }
+    }
+
+    public Object visit(BetweenAndExpression betweenAndExpression) {
+        if (Optional.ofNullable(betweenAndExpression.getLeft()).isPresent()) {
+            Item left = (Item) visit(betweenAndExpression.getLeft());
+            if (left != betweenAndExpression.getLeft()) {
+                betweenAndExpression.setLeft(left);
+            }
+        }
+
+        if (Optional.ofNullable(betweenAndExpression.getLower()).isPresent()) {
+            Item lower = (Item) visit(betweenAndExpression.getLower());
+            if (lower != betweenAndExpression.getLower()) {
+                betweenAndExpression.setLower(lower);
+            }
+        }
+
+        if (Optional.ofNullable(betweenAndExpression.getUpper()).isPresent()) {
+            Item upper = (Item) visit(betweenAndExpression.getUpper());
+            if (upper != betweenAndExpression.getUpper()) {
+                betweenAndExpression.setUpper(upper);
+            }
+        }
+        return betweenAndExpression;
+    }
+
+    public Object visit(CommonConditionExpression commonConditionExpression) {
+        if (Optional.ofNullable(commonConditionExpression.getLeft()).isPresent()) {
+            Item left = (Item) visit(commonConditionExpression.getLeft());
+            if (left != commonConditionExpression.getLeft()) {
+                commonConditionExpression.setLeft(left);
+            }
+        }
+
+        if (Optional.ofNullable(commonConditionExpression.getRight()).isPresent()) {
+            Item right = (Item) visit(commonConditionExpression.getRight());
+            if (right != commonConditionExpression.getRight()) {
+                commonConditionExpression.setRight(right);
+            }
+        }
+        return commonConditionExpression;
+    }
+
+    public Object visit(ConcatenationExpression concatenationExpression) {
+        if (Optional.ofNullable(concatenationExpression.getLeft()).isPresent()) {
+            Item left = (Item) visit(concatenationExpression.getLeft());
+            if (left != concatenationExpression.getLeft()) {
+                concatenationExpression.setLeft(left);
+            }
+        }
+        if (Optional.ofNullable(concatenationExpression.getRight()).isPresent()) {
+            Item right = (Item) visit(concatenationExpression.getRight());
+            if (right != concatenationExpression.getRight()) {
+                concatenationExpression.setRight(right);
+            }
+        }
+        return concatenationExpression;
+    }
+
+
+    public Object visit(ExistExpression existExpression) {
+        if (Optional.ofNullable(existExpression.getLeft()).isPresent()) {
+            Item left = (Item) visit(existExpression.getLeft());
+            if (left != existExpression.getLeft()) {
+                existExpression.setLeft(left);
+            }
+        }
+
+        if (Optional.ofNullable(existExpression.getExpression()).isPresent()) {
+            Item expression = (Item) visit(existExpression.getExpression());
+            if (expression != existExpression.getExpression()) {
+                existExpression.setExpression(expression);
+            }
+        }
+
+        return existExpression;
+    }
+
+    public Object visit(InExpression inExpression) {
+        if (Optional.ofNullable(inExpression.getLeft()).isPresent()) {
+            Item left = (Item) visit(inExpression.getLeft());
+            if (left != inExpression.getLeft()) {
+                inExpression.setLeft(left);
+            }
+        }
+
+        final List<Item> items = inExpression.getItems();
+
+        if (Optional.ofNullable(items).isPresent() && !items.isEmpty()) {
+            for (int i = 0; i < items.size(); i++) {
+                Item item = (Item) visit(items.get(i));
+                if (item != items.get(i)) {
+                    items.set(i, item);
+                }
+            }
+        }
+        return inExpression;
+    }
+
+    public Object visit(IsNullExpression isNullExpression) {
+        if (Optional.ofNullable(isNullExpression.getLeft()).isPresent()) {
+            Item left = (Item) visit(isNullExpression.getLeft());
+            if (left != isNullExpression.getLeft()) {
+                isNullExpression.setLeft(left);
+            }
+        }
+        return isNullExpression;
+    }
+
+    public Object visit(LikeExpression likeExpression) {
+        if (Optional.ofNullable(likeExpression.getLeft()).isPresent()) {
+            Item left = (Item) visit(likeExpression.getLeft());
+            if (left != likeExpression.getLeft()) {
+                likeExpression.setLeft(left);
+            }
+        }
+        if (Optional.ofNullable(likeExpression.getPattern()).isPresent()) {
+            Item pattern = (Item) visit(likeExpression.getPattern());
+            if (pattern != likeExpression.getPattern()) {
+                likeExpression.setPattern(pattern);
+            }
+        }
+        return likeExpression;
+    }
+
+    public Object visit(NotBooleanExpression notBooleanExpression) {
+        if (Optional.ofNullable(notBooleanExpression.getExpression()).isPresent()) {
+            BooleanExpression expression = (BooleanExpression) visit(notBooleanExpression.getExpression());
+            if (expression != notBooleanExpression.getExpression()) {
+                notBooleanExpression.setExpression(expression);
+            }
+        }
+        return notBooleanExpression;
+    }
+
+    public Object visit(PriorityExpression priorityExpression) {
+        Item expression = (Item) visit(priorityExpression.getExpression());
+
+        if (expression != priorityExpression.getExpression()) {
+            priorityExpression.setExpression(expression);
+        }
+        return priorityExpression;
+    }
+
+    public Object visit(AsQueryInsert asQueryInsert) {
+        if (Optional.ofNullable(asQueryInsert.getColumns()).isPresent()
+                && !asQueryInsert.getColumns().isEmpty()) {
+            final List<Item> columns = asQueryInsert.getColumns();
+            for (int i = 0; i < columns.size(); i++) {
+                Item item = (Item) visit(columns.get(i));
+                if (item != columns.get(i)) {
+                    columns.set(i, item);
+                }
+            }
+        }
+
+        if (Optional.ofNullable(asQueryInsert.getQuery()).isPresent()) {
+            Select select = (Select) visit(asQueryInsert.getQuery());
+            if (select != asQueryInsert.getQuery()) {
+                asQueryInsert.setQuery(select);
+            }
+        }
+
+        return asQueryInsert;
+    }
+
+    public Object visit(OnDuplicateInsert onDuplicateInsert) {
+        if (Optional.ofNullable(onDuplicateInsert.getInsert()).isPresent()) {
+            SimpleInsert insert = (SimpleInsert) visit(onDuplicateInsert.getInsert());
+            if (insert != onDuplicateInsert.getInsert()) {
+                onDuplicateInsert.setInsert(insert);
+            }
+        }
+
+        if (Optional.ofNullable(onDuplicateInsert.getUpdateColumns()).isPresent()
+                && !onDuplicateInsert.getUpdateColumns().isEmpty()) {
+            final List<Item> updateColumns = onDuplicateInsert.getUpdateColumns();
+            for (int i = 0; i < updateColumns.size(); i++) {
+                Item item = (Item) visit(updateColumns.get(i));
+                if (item != updateColumns.get(i)) {
+                    updateColumns.set(i, item);
+                }
+            }
+        }
+        return onDuplicateInsert;
+
+    }
+
+    public Object visit(SimpleInsert simpleInsert) {
+        List<Item> columns = simpleInsert.getColumns();
+        if (Optional.ofNullable(columns).isPresent() && !columns.isEmpty()) {
+            for (int i = 0; i < columns.size(); i++) {
+                Item item = (Item) visit(columns.get(i));
+                if (item != columns.get(i)) {
+                    columns.set(i, item);
+                }
+            }
+        }
+
+        List<Item> valueItems = simpleInsert.getValueItems();
+        if (Optional.ofNullable(valueItems).isPresent() && !valueItems.isEmpty()) {
+            for (int i = 0; i < valueItems.size(); i++) {
+                Item item = (Item) visit(valueItems.get(i));
+                if (item != valueItems.get(i)) {
+                    valueItems.set(i, item);
+                }
+            }
+        }
+        return simpleInsert;
+    }
+
+    public Object visit(CaseItem caseItem) {
+        final List<WhenThenItem> whenThenItems = caseItem.getWhenThenItems();
+        if (Optional.ofNullable(whenThenItems).isPresent() && !whenThenItems.isEmpty()) {
+            for (int i = 0; i < whenThenItems.size(); i++) {
+                final WhenThenItem whenThenItem = (WhenThenItem) visit(whenThenItems.get(i));
+                if (whenThenItem != whenThenItems.get(i)) {
+                    whenThenItems.set(i, whenThenItem);
+                }
+            }
+        }
+
+        if (Optional.ofNullable(caseItem.getElseResult()).isPresent()) {
+            final Item item = (Item) visit(caseItem.getElseResult());
+            if (item != caseItem.getElseResult()) {
+                caseItem.setElseResult(item);
+            }
+        }
+        return caseItem;
+
+    }
+
+    public Object visit(ConstantItem constantItem) {
+        return constantItem;
+    }
+
+    public Object visit(FunctionCallItem functionCallItem) {
+        final List<Object> params = functionCallItem.getParams();
+        if (Optional.ofNullable(params).isPresent()) {
+            for (int i = 0; i < params.size(); i++) {
+                final Object param = visit(params.get(i));
+                if (param != params.get(i)) {
+                    params.set(i, param);
+                }
+            }
+        }
+        return functionCallItem;
+    }
+
+    public Object visit(SelectAllItem selectAllItem) {
+        return selectAllItem;
+    }
+
+    public Object visit(SubIndexItem subIndexItem) {
+        final Object value = visit(subIndexItem.getValue());
+        if (value != subIndexItem.getValue()) {
+            subIndexItem.setValue(value);
+        }
+
+        final List<Object> indexes = subIndexItem.getIndexes();
+        if (Optional.ofNullable(indexes).isPresent()) {
+            for (int i = 0; i < indexes.size(); i++) {
+                final Object index = visit(indexes.get(i));
+                if (index != indexes.get(i)) {
+                    indexes.set(i, index);
+                }
+            }
+        }
+        return subIndexItem;
+    }
+
+    public Object visit(TableColumnItem tableColumnItem) {
+        return tableColumnItem;
+    }
+
+    public Object visit(UnionSelectItem unionSelectItem) {
+        if (Optional.ofNullable(unionSelectItem.getSelect()).isPresent()) {
+            final Item select = (Item) visit(unionSelectItem.getSelect());
+            if (select != unionSelectItem.getSelect()) {
+                unionSelectItem.setSelect(select);
+            }
+        }
+        return unionSelectItem;
+    }
+
+    public Object visit(WhenThenItem whenThenItem) {
+        if (Optional.ofNullable(whenThenItem.getCondition()).isPresent()) {
+            final BooleanExpression condition = (BooleanExpression) visit(whenThenItem.getCondition());
+            if (condition != whenThenItem.getCondition()) {
+                whenThenItem.setCondition(condition);
+            }
+        }
+        if (Optional.ofNullable(whenThenItem.getResult()).isPresent()) {
+            final Object result = visit(whenThenItem.getResult());
+            if (result != whenThenItem.getResult()) {
+                whenThenItem.setResult(result);
+            }
+        }
+        return whenThenItem;
+    }
+
+    public Object visit(DeleteMergeOperator deleteMergeOperator) {
+        return deleteMergeOperator;
+    }
+
+    public Object visit(InsertMergeOperator insertMergeOperator) {
+        final List<Item> valueItems = insertMergeOperator.getValueItems();
+        if (Optional.ofNullable(valueItems).isPresent() && !valueItems.isEmpty()) {
+            for (int i = 0; i < valueItems.size(); i++) {
+                final Item value = (Item) visit(valueItems.get(i));
+                if (value != valueItems.get(i)) {
+                    valueItems.set(i, value);
+                }
+            }
+        }
+
+        final List<Item> columnItems = insertMergeOperator.getColumnItems();
+        if (Optional.ofNullable(columnItems).isPresent() && !columnItems.isEmpty()) {
+            for (int i = 0; i < columnItems.size(); i++) {
+                final Item value = (Item) visit(columnItems.get(i));
+                if (value != columnItems.get(i)) {
+                    columnItems.set(i, value);
+                }
+            }
+        }
+        return insertMergeOperator;
+
+    }
+
+    public Object visit(SimpleMerge simpleMerge) {
+        if (Optional.ofNullable(simpleMerge.getOnConditionExpression()).isPresent()) {
+            final BooleanExpression condition = (BooleanExpression) visit(simpleMerge.getOnConditionExpression());
+            if (condition != simpleMerge.getOnConditionExpression()) {
+                simpleMerge.setOnConditionExpression(condition);
+            }
+        }
+        final List<WhenMatchedThenOperatorItem> whenThenItems = simpleMerge.getWhenThenItems();
+        if (Optional.ofNullable(whenThenItems).isPresent() && !whenThenItems.isEmpty()) {
+            for (int i = 0; i < whenThenItems.size(); i++) {
+                final WhenMatchedThenOperatorItem item = (WhenMatchedThenOperatorItem) visit(whenThenItems.get(i));
+                if (item != whenThenItems.get(i)) {
+                    whenThenItems.set(i, item);
+                }
+            }
+        }
+        return simpleMerge;
+    }
+
+    public Object visit(UpdateMergeOperator updateMergeOperator) {
+        final List<Item> updateItems = updateMergeOperator.getUpdateItems();
+        if (Optional.ofNullable(updateItems).isPresent() && !updateItems.isEmpty()) {
+            for (int i = 0; i < updateItems.size(); i++) {
+                final Item updateItem = (Item) visit(updateItems.get(i));
+                if (updateItem != updateItems.get(i)) {
+                    updateItems.set(i, updateItem);
+                }
+            }
+        }
+        return updateMergeOperator;
+    }
+
+    public Object visit(WhenMatchedThenOperatorItem whenMatchedThenOperatorItem) {
+        if (Optional.ofNullable(whenMatchedThenOperatorItem.getOperator()).isPresent()) {
+            final Object operator = visit(whenMatchedThenOperatorItem.getOperator());
+            if (operator != whenMatchedThenOperatorItem.getOperator()) {
+                whenMatchedThenOperatorItem.setOperator((MergeOperator) operator);
+            }
+        }
+        return whenMatchedThenOperatorItem;
+    }
+
+    public Object visit(DefaultOrderItem defaultOrderItem) {
+        if (Optional.ofNullable(defaultOrderItem.getItem()).isPresent()) {
+            final Item item = (Item) visit(defaultOrderItem.getItem());
+            if (item != defaultOrderItem.getItem()) {
+                defaultOrderItem.setItem(item);
+            }
+        }
+        return defaultOrderItem;
+    }
+
+    public Object visit(BaseSelect baseSelect) {
+
+        final List<Item> selectItems = baseSelect.getSelectItems();
+        for (int i = 0; i < selectItems.size(); i++) {
+            Item selectItem = (Item) visit(selectItems.get(i));
+            if (selectItem != selectItems.get(i)) {
+                selectItems.set(i, selectItem);
+            }
+        }
+        final List<Table> tableItems = baseSelect.getTableItems();
+        if (!tableItems.isEmpty()) {
+            for (int i = 0; i < tableItems.size(); i++) {
+                Table table = (Table) visit(tableItems.get(i));
+                if (table != tableItems.get(i)) {
+                    tableItems.set(i, table);
+                }
+            }
+        }
+
+
+        final BooleanExpression whereExpression = (BooleanExpression) visit(baseSelect.getWhereExpression());
+        if (null != whereExpression) {
+            baseSelect.setWhereExpression(whereExpression);
+        }
+        final List<Item> itemsGroup = baseSelect.getGroupItems();
+        if (!itemsGroup.isEmpty()) {
+            for (int i = 0; i < itemsGroup.size(); i++) {
+                Item groupItem = (Item) visit(itemsGroup.get(i));
+                if (groupItem != itemsGroup.get(i)) {
+                    itemsGroup.set(i, groupItem);
+                }
+            }
+        }
+
+        final List<OrderItem> orderItems = baseSelect.getOrderItems();
+        if (!orderItems.isEmpty()) {
+            for (int i = 0; i < orderItems.size(); i++) {
+                OrderItem orderItem = (OrderItem) visit(orderItems.get(i));
+                if (orderItem != orderItems.get(i)) {
+                    orderItems.set(i, orderItem);
+                }
+            }
+        }
+        final BooleanExpression havingExpression = baseSelect.getHavingExpression();
+        if (null != havingExpression) {
+            final BooleanExpression having = (BooleanExpression) visit(baseSelect.getHavingExpression());
+            if (having != havingExpression) {
+                baseSelect.setHavingExpression(having);
+            }
+        }
+
+        final List<Item> limitItems = baseSelect.getLimitItems();
+        if (Optional.ofNullable(limitItems).isPresent()) {
+            for (int i = 0; i < limitItems.size(); i++) {
+                final Item limitItem = (Item) visit(limitItems.get(i));
+                if (limitItem != limitItems.get(i)) {
+                    limitItems.set(i, limitItem);
+                }
+            }
+        }
+        return baseSelect;
+    }
+
+    public Object visit(UnionSelect unionSelect) {
+        final List<UnionSelectItem> unionSelectItems = unionSelect.getUnionSelectItems();
+        if (Optional.ofNullable(unionSelectItems).isPresent()) {
+            for (int i = 0; i < unionSelectItems.size(); i++) {
+                final UnionSelectItem unionSelectItem = (UnionSelectItem) visit(unionSelectItems.get(i));
+                if (unionSelectItem != unionSelectItems.get(i)) {
+                    unionSelectItems.set(i, unionSelectItem);
+                }
+            }
+        }
+        return unionSelect;
+    }
+
+    public Object visit(SimpleTable simpleTable) {
+        return simpleTable;
+    }
+
+    public Object visit(UnionTableTable unionTableTable) {
+        if (Optional.ofNullable(unionTableTable.getLeft()).isPresent()) {
+            final Item left = (Item) visit(unionTableTable.getLeft());
+            if (left != unionTableTable.getLeft()) {
+                unionTableTable.setLeft(left);
+            }
+        }
+        final List<UnionTableTable.UnionTableItem> unionTableItems = unionTableTable.getUnionTableItems();
+        if (Optional.ofNullable(unionTableItems).isPresent()) {
+            for (int i = 0; i < unionTableItems.size(); i++) {
+                final UnionTableTable.UnionTableItem unionTableItem = (UnionTableTable.UnionTableItem) visit(unionTableItems.get(i));
+                if (unionTableItem != unionTableItems.get(i)) {
+                    unionTableItems.set(i, unionTableItem);
+                }
+            }
+        }
+
+        return unionTableItems;
+    }
+
+    public Object visit(UnionTableTable.UnionTableItem unionTableItem) {
+        final Item right = (Item) visit(unionTableItem.getRight());
+        if (right != unionTableItem.getRight()) {
+            unionTableItem.setRight(right);
+        }
+        return unionTableItem;
+    }
+
+    public Object visit(SimpleUpdate simpleUpdate) {
+        if (Optional.ofNullable(simpleUpdate.getUpdateItems()).isPresent()) {
+            final List<Item> updateItems = simpleUpdate.getUpdateItems();
+            for (int i = 0; i < updateItems.size(); i++) {
+                final Item updateItem = (Item) visit(updateItems.get(i));
+                if (updateItem != updateItems.get(i)) {
+                    updateItems.set(i, updateItem);
+                }
+            }
+        }
+        if (Optional.ofNullable(simpleUpdate.getWhereExpression()).isPresent()) {
+            final BooleanExpression whereExpression = (BooleanExpression) visit(simpleUpdate.getWhereExpression());
+            if (whereExpression != simpleUpdate.getWhereExpression()) {
+                simpleUpdate.setWhereExpression(whereExpression);
+            }
+        }
+        return simpleUpdate;
     }
 
     public Object visit(ArithmeticExpression arithmeticExpression) {
