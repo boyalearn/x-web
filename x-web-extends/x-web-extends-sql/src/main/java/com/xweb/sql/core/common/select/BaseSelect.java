@@ -4,6 +4,7 @@ package com.xweb.sql.core.common.select;
 import com.xweb.sql.core.common.AbstractItem;
 import com.xweb.sql.core.common.BooleanExpression;
 import com.xweb.sql.core.common.Item;
+import com.xweb.sql.core.common.Page;
 import com.xweb.sql.core.common.Select;
 import com.xweb.sql.core.common.Table;
 import com.xweb.sql.core.common.order.OrderItem;
@@ -44,8 +45,6 @@ public class BaseSelect extends AbstractItem implements Table, Select {
 
     private BooleanExpression havingExpression;
 
-    private String limit;
-
-    private List<Item> limitItems = new ArrayList<>();
+    private Page page;
 
 }

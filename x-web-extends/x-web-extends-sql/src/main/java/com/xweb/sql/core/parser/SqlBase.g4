@@ -42,7 +42,13 @@ queryPrimary
       (GROUP BY groupByExpression (',' groupByExpression)*)?
       orderByPart?
       (HAVING having=havingExpression)?
-      ((LIMIT limit=limitRowCount) | (FETCH (FIRST | NEXT) (fetchFirst=rowCount)? (ROW | ROWS) (ONLY | WITH TIES)))?
+      pageExpression?
+    ;
+
+pageExpression
+    : LIMIT limit=limitRowCount                                                            #limitPageExpress
+    | OFFSET offset=rowCount offsetTag=(ROW | ROWS)?
+      (FETCH (FIRST | NEXT) (fetchFirst=rowCount)? tag=(ROW | ROWS) (ONLY | WITH TIES))?   #offsetPageExpress
     ;
 
 orderByPart
@@ -416,6 +422,9 @@ MATCHED
 
 SOURCE
     : [Ss][Oo][Uu][Rr][Cc][Ee];
+
+OFFSET
+    : [Oo][Ff][Ff][Ss][Ee][Tt];
 
 PLUS: '+';
 

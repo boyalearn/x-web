@@ -1,12 +1,8 @@
 package com.xweb.mysql.driver;
 
-import com.mysql.cj.jdbc.ClientPreparedStatement;
-import com.mysql.cj.jdbc.ConnectionImpl;
 import com.mysql.jdbc.Driver;
 import com.xweb.mysql.driver.jdbc.ExtendsStatement;
-import com.xweb.mysql.driver.jdbc.MysqlExtendsConnection;
-import com.xweb.sql.mysql.SqlToMysqlUtil;
-import net.sf.cglib.proxy.Enhancer;
+import com.xweb.sql.mysql.MysqlUtils;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
@@ -58,7 +54,7 @@ public class MysqlExtendsDriver extends Driver {
                     System.out.println("sql:" + originalSql);
                     if (originalSql.toUpperCase(Locale.ROOT).startsWith("SELECT")) {
                         System.out.println("s" + originalSql);
-                        final String convertSql = SqlToMysqlUtil.convert(originalSql);
+                        final String convertSql = MysqlUtils.convert(originalSql);
                         args[0] = convertSql;
                         System.out.println("d" + convertSql);
                     }

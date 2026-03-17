@@ -14,7 +14,7 @@ import com.mysql.cj.jdbc.JdbcStatement;
 import com.mysql.cj.jdbc.result.CachedResultSetMetaData;
 import com.mysql.cj.jdbc.result.ResultSetInternalMethods;
 import com.mysql.cj.protocol.ServerSessionStateController;
-import com.xweb.sql.mysql.SqlToMysqlUtil;
+import com.xweb.sql.mysql.MysqlUtils;
 
 import java.sql.Array;
 import java.sql.Blob;
@@ -381,7 +381,7 @@ public class MysqlExtendsConnection extends ConnectionImpl {
     public PreparedStatement prepareStatement(String sql) throws SQLException {
         if (sql.toUpperCase(Locale.ROOT).startsWith("SELECT")) {
             System.out.println("s" + sql);
-            final String convertSql = SqlToMysqlUtil.convert(sql);
+            final String convertSql = MysqlUtils.convert(sql);
             System.out.println("d" + convertSql);
             return this.connection.prepareStatement(convertSql);
         }

@@ -19,10 +19,8 @@ import com.mysql.cj.jdbc.result.ResultSetInternalMethods;
 import com.mysql.cj.protocol.Message;
 import com.mysql.cj.protocol.ProtocolEntityFactory;
 import com.mysql.cj.protocol.Resultset;
-import com.xweb.sql.mysql.SqlToMysqlUtil;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.val;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -48,7 +46,6 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 

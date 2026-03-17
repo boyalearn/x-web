@@ -6,7 +6,7 @@ import com.xweb.sql.core.common.Item;
 import lombok.Data;
 
 @Data
-public class ConcatenationExpression extends AbstractItem implements BooleanExpression {
+public class ConcatenationExpression extends LeftAndRightExpression {
 
     private Item left;
 

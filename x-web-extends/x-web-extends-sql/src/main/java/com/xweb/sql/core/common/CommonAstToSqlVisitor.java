@@ -17,6 +17,8 @@ import com.xweb.sql.core.common.insert.SimpleInsert;
 import com.xweb.sql.core.common.item.CaseItem;
 import com.xweb.sql.core.common.item.ConstantItem;
 import com.xweb.sql.core.common.item.FunctionCallItem;
+import com.xweb.sql.core.common.item.LimitPageItem;
+import com.xweb.sql.core.common.item.OffsetPageItem;
 import com.xweb.sql.core.common.item.SelectAllItem;
 import com.xweb.sql.core.common.item.SubIndexItem;
 import com.xweb.sql.core.common.item.TableColumnItem;
@@ -124,17 +126,9 @@ public class CommonAstToSqlVisitor {
             sql.append(visit(havingExpression));
         }
 
-        if (isNotEmpty(select.getLimit())) {
+        if (Optional.ofNullable(select.getPage()).isPresent()) {
             sql.append(SPACE);
-            sql.append(select.getLimit());
-            sql.append(SPACE);
-            final List<Item> limitItems = select.getLimitItems();
-            for (int i = 0; i < limitItems.size(); i++) {
-                if (i != 0) {
-                    sql.append(COMMA);
-                }
-                sql.append(visit(limitItems.get(i)));
-            }
+            sql.append(visit(select.getPage()));
         }
 
         return sql.toString();
@@ -207,9 +201,53 @@ public class CommonAstToSqlVisitor {
             return visit((InsertMergeOperator) object);
         } else if (object instanceof DeleteMergeOperator) {
             return visit((DeleteMergeOperator) object);
+        } else if (object instanceof LimitPageItem) {
+            return visit((LimitPageItem) object);
+        } else if (object instanceof OffsetPageItem) {
+            return visit((OffsetPageItem) object);
         } else {
             throw new RuntimeException("unknown exception class is " + object.getClass().getName());
         }
+    }
+
+    public String visit(OffsetPageItem offsetPageItem) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(offsetPageItem.getOffset());
+        sql.append(SPACE);
+        sql.append(visit(offsetPageItem.getStart()));
+        sql.append(SPACE);
+        sql.append(offsetPageItem.getTagStart());
+        sql.append(SPACE);
+        sql.append(offsetPageItem.getFetch());
+        sql.append(SPACE);
+        sql.append(offsetPageItem.getTagFetch());
+        sql.append(SPACE);
+        sql.append(visit(offsetPageItem.getRow()));
+        sql.append(SPACE);
+        sql.append(offsetPageItem.getTagRow());
+        sql.append(SPACE);
+        sql.append(offsetPageItem.getTagLast());
+        return sql.toString();
+    }
+
+    public String visit(LimitPageItem limitPageItem) {
+        StringBuffer sql = new StringBuffer();
+        sql.append(limitPageItem.getLimit());
+        final List<Item> limitItems = limitPageItem.getLimitItems();
+        sql.append(SPACE);
+        sql.append(visit(limitItems));
+        return sql.toString();
+    }
+
+    public String visit(List<Item> items) {
+        StringBuffer sql = new StringBuffer();
+        for (int i = 0; i < items.size(); i++) {
+            if (i != 0) {
+                sql.append(COMMA);
+            }
+            sql.append(visit(items.get(i)));
+        }
+        return sql.toString();
     }
 
     public String visit(DeleteMergeOperator deleteMergeOperator) {
@@ -581,7 +619,7 @@ public class CommonAstToSqlVisitor {
         StringBuffer sql = new StringBuffer();
         sql.append(visit(subIndexItem.getValue()));
         sql.append(LEFT_SQUARE_BRACKET);
-        final List<Object> indexes = subIndexItem.getIndexes();
+        final List<Item> indexes = subIndexItem.getIndexes();
         for (int i = 0; i < indexes.size(); i++) {
             if (i != 0) {
                 sql.append(COMMA);

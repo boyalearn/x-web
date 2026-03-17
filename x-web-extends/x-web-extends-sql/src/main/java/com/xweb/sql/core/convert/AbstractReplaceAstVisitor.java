@@ -1,5 +1,10 @@
-package com.xweb.sql.core.common;
+package com.xweb.sql.core.convert;
 
+import com.xweb.sql.core.common.BooleanExpression;
+import com.xweb.sql.core.common.Item;
+import com.xweb.sql.core.common.Page;
+import com.xweb.sql.core.common.Select;
+import com.xweb.sql.core.common.Table;
 import com.xweb.sql.core.common.delete.SimpleDelete;
 import com.xweb.sql.core.common.expression.ArithmeticExpression;
 import com.xweb.sql.core.common.expression.BetweenAndExpression;
@@ -8,6 +13,7 @@ import com.xweb.sql.core.common.expression.ConcatenationExpression;
 import com.xweb.sql.core.common.expression.ExistExpression;
 import com.xweb.sql.core.common.expression.InExpression;
 import com.xweb.sql.core.common.expression.IsNullExpression;
+import com.xweb.sql.core.common.expression.LeftAndRightExpression;
 import com.xweb.sql.core.common.expression.LikeExpression;
 import com.xweb.sql.core.common.expression.NotBooleanExpression;
 import com.xweb.sql.core.common.expression.PriorityExpression;
@@ -17,6 +23,8 @@ import com.xweb.sql.core.common.insert.SimpleInsert;
 import com.xweb.sql.core.common.item.CaseItem;
 import com.xweb.sql.core.common.item.ConstantItem;
 import com.xweb.sql.core.common.item.FunctionCallItem;
+import com.xweb.sql.core.common.item.LimitPageItem;
+import com.xweb.sql.core.common.item.OffsetPageItem;
 import com.xweb.sql.core.common.item.SelectAllItem;
 import com.xweb.sql.core.common.item.SubIndexItem;
 import com.xweb.sql.core.common.item.TableColumnItem;
@@ -35,7 +43,7 @@ import com.xweb.sql.core.common.select.UnionSelect;
 import com.xweb.sql.core.common.table.SimpleTable;
 import com.xweb.sql.core.common.table.UnionTableTable;
 import com.xweb.sql.core.common.update.SimpleUpdate;
-import javafx.scene.control.Tab;
+import lombok.val;
 
 import java.util.List;
 import java.util.Optional;
@@ -80,6 +88,10 @@ public abstract class AbstractReplaceAstVisitor {
             return visit((ConstantItem) object);
         } else if (object instanceof FunctionCallItem) {
             return visit((FunctionCallItem) object);
+        } else if (object instanceof LimitPageItem) {
+            return visit((LimitPageItem) object);
+        } else if (object instanceof OffsetPageItem) {
+            return visit((OffsetPageItem) object);
         } else if (object instanceof SelectAllItem) {
             return visit((SelectAllItem) object);
         } else if (object instanceof SubIndexItem) {
@@ -119,7 +131,7 @@ public abstract class AbstractReplaceAstVisitor {
         }
     }
 
-    public Object visit(BetweenAndExpression betweenAndExpression) {
+    protected Object visit(BetweenAndExpression betweenAndExpression) {
         if (Optional.ofNullable(betweenAndExpression.getLeft()).isPresent()) {
             Item left = (Item) visit(betweenAndExpression.getLeft());
             if (left != betweenAndExpression.getLeft()) {
@@ -143,41 +155,33 @@ public abstract class AbstractReplaceAstVisitor {
         return betweenAndExpression;
     }
 
-    public Object visit(CommonConditionExpression commonConditionExpression) {
-        if (Optional.ofNullable(commonConditionExpression.getLeft()).isPresent()) {
-            Item left = (Item) visit(commonConditionExpression.getLeft());
-            if (left != commonConditionExpression.getLeft()) {
-                commonConditionExpression.setLeft(left);
-            }
-        }
-
-        if (Optional.ofNullable(commonConditionExpression.getRight()).isPresent()) {
-            Item right = (Item) visit(commonConditionExpression.getRight());
-            if (right != commonConditionExpression.getRight()) {
-                commonConditionExpression.setRight(right);
-            }
-        }
-        return commonConditionExpression;
+    protected Object visit(CommonConditionExpression commonConditionExpression) {
+        return visit((LeftAndRightExpression) commonConditionExpression);
     }
 
-    public Object visit(ConcatenationExpression concatenationExpression) {
-        if (Optional.ofNullable(concatenationExpression.getLeft()).isPresent()) {
-            Item left = (Item) visit(concatenationExpression.getLeft());
-            if (left != concatenationExpression.getLeft()) {
-                concatenationExpression.setLeft(left);
+    protected Object visit(LeftAndRightExpression leftAndRightExpression) {
+        if (Optional.ofNullable(leftAndRightExpression.getLeft()).isPresent()) {
+            Item left = (Item) visit(leftAndRightExpression.getLeft());
+            if (left != leftAndRightExpression.getLeft()) {
+                leftAndRightExpression.setLeft(left);
             }
         }
-        if (Optional.ofNullable(concatenationExpression.getRight()).isPresent()) {
-            Item right = (Item) visit(concatenationExpression.getRight());
-            if (right != concatenationExpression.getRight()) {
-                concatenationExpression.setRight(right);
+
+        if (Optional.ofNullable(leftAndRightExpression.getRight()).isPresent()) {
+            Item right = (Item) visit(leftAndRightExpression.getRight());
+            if (right != leftAndRightExpression.getRight()) {
+                leftAndRightExpression.setRight(right);
             }
         }
-        return concatenationExpression;
+        return leftAndRightExpression;
+    }
+
+    protected Object visit(ConcatenationExpression concatenationExpression) {
+        return visit((LeftAndRightExpression) concatenationExpression);
     }
 
 
-    public Object visit(ExistExpression existExpression) {
+    protected Object visit(ExistExpression existExpression) {
         if (Optional.ofNullable(existExpression.getLeft()).isPresent()) {
             Item left = (Item) visit(existExpression.getLeft());
             if (left != existExpression.getLeft()) {
@@ -195,7 +199,7 @@ public abstract class AbstractReplaceAstVisitor {
         return existExpression;
     }
 
-    public Object visit(InExpression inExpression) {
+    protected Object visit(InExpression inExpression) {
         if (Optional.ofNullable(inExpression.getLeft()).isPresent()) {
             Item left = (Item) visit(inExpression.getLeft());
             if (left != inExpression.getLeft()) {
@@ -216,7 +220,7 @@ public abstract class AbstractReplaceAstVisitor {
         return inExpression;
     }
 
-    public Object visit(IsNullExpression isNullExpression) {
+    protected Object visit(IsNullExpression isNullExpression) {
         if (Optional.ofNullable(isNullExpression.getLeft()).isPresent()) {
             Item left = (Item) visit(isNullExpression.getLeft());
             if (left != isNullExpression.getLeft()) {
@@ -226,7 +230,7 @@ public abstract class AbstractReplaceAstVisitor {
         return isNullExpression;
     }
 
-    public Object visit(LikeExpression likeExpression) {
+    protected Object visit(LikeExpression likeExpression) {
         if (Optional.ofNullable(likeExpression.getLeft()).isPresent()) {
             Item left = (Item) visit(likeExpression.getLeft());
             if (left != likeExpression.getLeft()) {
@@ -242,7 +246,7 @@ public abstract class AbstractReplaceAstVisitor {
         return likeExpression;
     }
 
-    public Object visit(NotBooleanExpression notBooleanExpression) {
+    protected Object visit(NotBooleanExpression notBooleanExpression) {
         if (Optional.ofNullable(notBooleanExpression.getExpression()).isPresent()) {
             BooleanExpression expression = (BooleanExpression) visit(notBooleanExpression.getExpression());
             if (expression != notBooleanExpression.getExpression()) {
@@ -252,7 +256,7 @@ public abstract class AbstractReplaceAstVisitor {
         return notBooleanExpression;
     }
 
-    public Object visit(PriorityExpression priorityExpression) {
+    protected Object visit(PriorityExpression priorityExpression) {
         Item expression = (Item) visit(priorityExpression.getExpression());
 
         if (expression != priorityExpression.getExpression()) {
@@ -261,7 +265,7 @@ public abstract class AbstractReplaceAstVisitor {
         return priorityExpression;
     }
 
-    public Object visit(AsQueryInsert asQueryInsert) {
+    protected Object visit(AsQueryInsert asQueryInsert) {
         if (Optional.ofNullable(asQueryInsert.getColumns()).isPresent()
                 && !asQueryInsert.getColumns().isEmpty()) {
             final List<Item> columns = asQueryInsert.getColumns();
@@ -283,7 +287,7 @@ public abstract class AbstractReplaceAstVisitor {
         return asQueryInsert;
     }
 
-    public Object visit(OnDuplicateInsert onDuplicateInsert) {
+    protected Object visit(OnDuplicateInsert onDuplicateInsert) {
         if (Optional.ofNullable(onDuplicateInsert.getInsert()).isPresent()) {
             SimpleInsert insert = (SimpleInsert) visit(onDuplicateInsert.getInsert());
             if (insert != onDuplicateInsert.getInsert()) {
@@ -305,30 +309,20 @@ public abstract class AbstractReplaceAstVisitor {
 
     }
 
-    public Object visit(SimpleInsert simpleInsert) {
-        List<Item> columns = simpleInsert.getColumns();
-        if (Optional.ofNullable(columns).isPresent() && !columns.isEmpty()) {
-            for (int i = 0; i < columns.size(); i++) {
-                Item item = (Item) visit(columns.get(i));
-                if (item != columns.get(i)) {
-                    columns.set(i, item);
-                }
-            }
+    protected Object visit(SimpleInsert simpleInsert) {
+        List<Item> columns = visit(simpleInsert.getColumns());
+        if (columns != simpleInsert.getColumns()) {
+            simpleInsert.setColumns(columns);
+        }
+        List<Item> valueItems = visit(simpleInsert.getValueItems());
+        if (valueItems != simpleInsert.getValueItems()) {
+            simpleInsert.setValueItems(valueItems);
         }
 
-        List<Item> valueItems = simpleInsert.getValueItems();
-        if (Optional.ofNullable(valueItems).isPresent() && !valueItems.isEmpty()) {
-            for (int i = 0; i < valueItems.size(); i++) {
-                Item item = (Item) visit(valueItems.get(i));
-                if (item != valueItems.get(i)) {
-                    valueItems.set(i, item);
-                }
-            }
-        }
         return simpleInsert;
     }
 
-    public Object visit(CaseItem caseItem) {
+    protected Object visit(CaseItem caseItem) {
         final List<WhenThenItem> whenThenItems = caseItem.getWhenThenItems();
         if (Optional.ofNullable(whenThenItems).isPresent() && !whenThenItems.isEmpty()) {
             for (int i = 0; i < whenThenItems.size(); i++) {
@@ -349,11 +343,11 @@ public abstract class AbstractReplaceAstVisitor {
 
     }
 
-    public Object visit(ConstantItem constantItem) {
+    protected Object visit(ConstantItem constantItem) {
         return constantItem;
     }
 
-    public Object visit(FunctionCallItem functionCallItem) {
+    protected Object visit(FunctionCallItem functionCallItem) {
         final List<Object> params = functionCallItem.getParams();
         if (Optional.ofNullable(params).isPresent()) {
             for (int i = 0; i < params.size(); i++) {
@@ -366,33 +360,53 @@ public abstract class AbstractReplaceAstVisitor {
         return functionCallItem;
     }
 
-    public Object visit(SelectAllItem selectAllItem) {
+    protected Object visit(LimitPageItem limitPageItem) {
+        final List<Item> limitItems = limitPageItem.getLimitItems();
+        final List<Item> visitItems = visit(limitItems);
+        if (visitItems != limitItems) {
+            limitPageItem.setLimitItems(visitItems);
+        }
+        return limitPageItem;
+    }
+
+    protected Object visit(OffsetPageItem offsetPageItem) {
+        if (Optional.ofNullable(offsetPageItem.getStart()).isPresent()) {
+            Item start = (Item) visit(offsetPageItem.getStart());
+            if (start != offsetPageItem.getStart()) {
+                offsetPageItem.setStart(start);
+            }
+        }
+        if (Optional.ofNullable(offsetPageItem.getRow()).isPresent()) {
+            Item row = (Item) visit(offsetPageItem.getRow());
+            if (row != offsetPageItem.getRow()) {
+                offsetPageItem.setRow(row);
+            }
+        }
+        return offsetPageItem;
+    }
+
+    protected Object visit(SelectAllItem selectAllItem) {
         return selectAllItem;
     }
 
-    public Object visit(SubIndexItem subIndexItem) {
+    protected Object visit(SubIndexItem subIndexItem) {
         final Object value = visit(subIndexItem.getValue());
         if (value != subIndexItem.getValue()) {
             subIndexItem.setValue(value);
         }
 
-        final List<Object> indexes = subIndexItem.getIndexes();
-        if (Optional.ofNullable(indexes).isPresent()) {
-            for (int i = 0; i < indexes.size(); i++) {
-                final Object index = visit(indexes.get(i));
-                if (index != indexes.get(i)) {
-                    indexes.set(i, index);
-                }
-            }
+        final List<Item> indexes = visit(subIndexItem.getIndexes());
+        if (indexes != subIndexItem.getIndexes()) {
+            subIndexItem.setIndexes(indexes);
         }
         return subIndexItem;
     }
 
-    public Object visit(TableColumnItem tableColumnItem) {
+    protected Object visit(TableColumnItem tableColumnItem) {
         return tableColumnItem;
     }
 
-    public Object visit(UnionSelectItem unionSelectItem) {
+    protected Object visit(UnionSelectItem unionSelectItem) {
         if (Optional.ofNullable(unionSelectItem.getSelect()).isPresent()) {
             final Item select = (Item) visit(unionSelectItem.getSelect());
             if (select != unionSelectItem.getSelect()) {
@@ -402,7 +416,7 @@ public abstract class AbstractReplaceAstVisitor {
         return unionSelectItem;
     }
 
-    public Object visit(WhenThenItem whenThenItem) {
+    protected Object visit(WhenThenItem whenThenItem) {
         if (Optional.ofNullable(whenThenItem.getCondition()).isPresent()) {
             final BooleanExpression condition = (BooleanExpression) visit(whenThenItem.getCondition());
             if (condition != whenThenItem.getCondition()) {
@@ -418,67 +432,59 @@ public abstract class AbstractReplaceAstVisitor {
         return whenThenItem;
     }
 
-    public Object visit(DeleteMergeOperator deleteMergeOperator) {
+    protected Object visit(DeleteMergeOperator deleteMergeOperator) {
         return deleteMergeOperator;
     }
 
-    public Object visit(InsertMergeOperator insertMergeOperator) {
+    protected Object visit(InsertMergeOperator insertMergeOperator) {
         final List<Item> valueItems = insertMergeOperator.getValueItems();
-        if (Optional.ofNullable(valueItems).isPresent() && !valueItems.isEmpty()) {
-            for (int i = 0; i < valueItems.size(); i++) {
-                final Item value = (Item) visit(valueItems.get(i));
-                if (value != valueItems.get(i)) {
-                    valueItems.set(i, value);
-                }
-            }
+        if (valueItems != insertMergeOperator.getValueItems()) {
+            insertMergeOperator.setValueItems(valueItems);
         }
 
-        final List<Item> columnItems = insertMergeOperator.getColumnItems();
-        if (Optional.ofNullable(columnItems).isPresent() && !columnItems.isEmpty()) {
-            for (int i = 0; i < columnItems.size(); i++) {
-                final Item value = (Item) visit(columnItems.get(i));
-                if (value != columnItems.get(i)) {
-                    columnItems.set(i, value);
-                }
-            }
+        final List<Item> columnItems = visit(insertMergeOperator.getColumnItems());
+        if (columnItems != insertMergeOperator.getColumnItems()) {
+            insertMergeOperator.setColumnItems(columnItems);
         }
         return insertMergeOperator;
-
     }
 
-    public Object visit(SimpleMerge simpleMerge) {
+    protected List<Item> visit(List<Item> items) {
+        if (Optional.ofNullable(items).isPresent() && !items.isEmpty()) {
+            for (int i = 0; i < items.size(); i++) {
+                final Item value = (Item) visit(items.get(i));
+                if (value != items.get(i)) {
+                    items.set(i, value);
+                }
+            }
+        }
+        return items;
+    }
+
+    protected Object visit(SimpleMerge simpleMerge) {
         if (Optional.ofNullable(simpleMerge.getOnConditionExpression()).isPresent()) {
             final BooleanExpression condition = (BooleanExpression) visit(simpleMerge.getOnConditionExpression());
             if (condition != simpleMerge.getOnConditionExpression()) {
                 simpleMerge.setOnConditionExpression(condition);
             }
         }
-        final List<WhenMatchedThenOperatorItem> whenThenItems = simpleMerge.getWhenThenItems();
-        if (Optional.ofNullable(whenThenItems).isPresent() && !whenThenItems.isEmpty()) {
-            for (int i = 0; i < whenThenItems.size(); i++) {
-                final WhenMatchedThenOperatorItem item = (WhenMatchedThenOperatorItem) visit(whenThenItems.get(i));
-                if (item != whenThenItems.get(i)) {
-                    whenThenItems.set(i, item);
-                }
-            }
+        final List<WhenMatchedThenOperatorItem> whenThenItems =
+                (List<WhenMatchedThenOperatorItem>) visit(simpleMerge.getWhenThenItems());
+        if (whenThenItems != simpleMerge.getWhenThenItems()) {
+            simpleMerge.setWhenThenItems(whenThenItems);
         }
         return simpleMerge;
     }
 
-    public Object visit(UpdateMergeOperator updateMergeOperator) {
-        final List<Item> updateItems = updateMergeOperator.getUpdateItems();
-        if (Optional.ofNullable(updateItems).isPresent() && !updateItems.isEmpty()) {
-            for (int i = 0; i < updateItems.size(); i++) {
-                final Item updateItem = (Item) visit(updateItems.get(i));
-                if (updateItem != updateItems.get(i)) {
-                    updateItems.set(i, updateItem);
-                }
-            }
+    protected Object visit(UpdateMergeOperator updateMergeOperator) {
+        final List<Item> updateItems = visit(updateMergeOperator.getUpdateItems());
+        if (updateItems != updateMergeOperator.getUpdateItems()) {
+            updateMergeOperator.setUpdateItems(updateItems);
         }
         return updateMergeOperator;
     }
 
-    public Object visit(WhenMatchedThenOperatorItem whenMatchedThenOperatorItem) {
+    protected Object visit(WhenMatchedThenOperatorItem whenMatchedThenOperatorItem) {
         if (Optional.ofNullable(whenMatchedThenOperatorItem.getOperator()).isPresent()) {
             final Object operator = visit(whenMatchedThenOperatorItem.getOperator());
             if (operator != whenMatchedThenOperatorItem.getOperator()) {
@@ -488,7 +494,7 @@ public abstract class AbstractReplaceAstVisitor {
         return whenMatchedThenOperatorItem;
     }
 
-    public Object visit(DefaultOrderItem defaultOrderItem) {
+    protected Object visit(DefaultOrderItem defaultOrderItem) {
         if (Optional.ofNullable(defaultOrderItem.getItem()).isPresent()) {
             final Item item = (Item) visit(defaultOrderItem.getItem());
             if (item != defaultOrderItem.getItem()) {
@@ -498,15 +504,13 @@ public abstract class AbstractReplaceAstVisitor {
         return defaultOrderItem;
     }
 
-    public Object visit(BaseSelect baseSelect) {
+    protected Object visit(BaseSelect baseSelect) {
 
-        final List<Item> selectItems = baseSelect.getSelectItems();
-        for (int i = 0; i < selectItems.size(); i++) {
-            Item selectItem = (Item) visit(selectItems.get(i));
-            if (selectItem != selectItems.get(i)) {
-                selectItems.set(i, selectItem);
-            }
+        final List<Item> selectItems = visit(baseSelect.getSelectItems());
+        if (selectItems != baseSelect.getSelectItems()) {
+            baseSelect.setSelectItems(selectItems);
         }
+
         final List<Table> tableItems = baseSelect.getTableItems();
         if (!tableItems.isEmpty()) {
             for (int i = 0; i < tableItems.size(); i++) {
@@ -517,11 +521,13 @@ public abstract class AbstractReplaceAstVisitor {
             }
         }
 
-
-        final BooleanExpression whereExpression = (BooleanExpression) visit(baseSelect.getWhereExpression());
-        if (null != whereExpression) {
-            baseSelect.setWhereExpression(whereExpression);
+        if (Optional.ofNullable(baseSelect.getWhereExpression()).isPresent()) {
+            final BooleanExpression whereExpression = (BooleanExpression) visit(baseSelect.getWhereExpression());
+            if (baseSelect.getWhereExpression() != whereExpression) {
+                baseSelect.setWhereExpression(whereExpression);
+            }
         }
+
         final List<Item> itemsGroup = baseSelect.getGroupItems();
         if (!itemsGroup.isEmpty()) {
             for (int i = 0; i < itemsGroup.size(); i++) {
@@ -549,19 +555,16 @@ public abstract class AbstractReplaceAstVisitor {
             }
         }
 
-        final List<Item> limitItems = baseSelect.getLimitItems();
-        if (Optional.ofNullable(limitItems).isPresent()) {
-            for (int i = 0; i < limitItems.size(); i++) {
-                final Item limitItem = (Item) visit(limitItems.get(i));
-                if (limitItem != limitItems.get(i)) {
-                    limitItems.set(i, limitItem);
-                }
+        if (Optional.ofNullable(baseSelect.getPage()).isPresent()) {
+            final Page page = (Page) visit(baseSelect.getPage());
+            if (page != baseSelect.getPage()) {
+                baseSelect.setPage(page);
             }
         }
         return baseSelect;
     }
 
-    public Object visit(UnionSelect unionSelect) {
+    protected Object visit(UnionSelect unionSelect) {
         final List<UnionSelectItem> unionSelectItems = unionSelect.getUnionSelectItems();
         if (Optional.ofNullable(unionSelectItems).isPresent()) {
             for (int i = 0; i < unionSelectItems.size(); i++) {
@@ -574,11 +577,11 @@ public abstract class AbstractReplaceAstVisitor {
         return unionSelect;
     }
 
-    public Object visit(SimpleTable simpleTable) {
+    protected Object visit(SimpleTable simpleTable) {
         return simpleTable;
     }
 
-    public Object visit(UnionTableTable unionTableTable) {
+    protected Object visit(UnionTableTable unionTableTable) {
         if (Optional.ofNullable(unionTableTable.getLeft()).isPresent()) {
             final Item left = (Item) visit(unionTableTable.getLeft());
             if (left != unionTableTable.getLeft()) {
@@ -598,7 +601,7 @@ public abstract class AbstractReplaceAstVisitor {
         return unionTableItems;
     }
 
-    public Object visit(UnionTableTable.UnionTableItem unionTableItem) {
+    protected Object visit(UnionTableTable.UnionTableItem unionTableItem) {
         final Item right = (Item) visit(unionTableItem.getRight());
         if (right != unionTableItem.getRight()) {
             unionTableItem.setRight(right);
@@ -606,7 +609,7 @@ public abstract class AbstractReplaceAstVisitor {
         return unionTableItem;
     }
 
-    public Object visit(SimpleUpdate simpleUpdate) {
+    protected Object visit(SimpleUpdate simpleUpdate) {
         if (Optional.ofNullable(simpleUpdate.getUpdateItems()).isPresent()) {
             final List<Item> updateItems = simpleUpdate.getUpdateItems();
             for (int i = 0; i < updateItems.size(); i++) {
@@ -625,7 +628,7 @@ public abstract class AbstractReplaceAstVisitor {
         return simpleUpdate;
     }
 
-    public Object visit(ArithmeticExpression arithmeticExpression) {
+    protected Object visit(ArithmeticExpression arithmeticExpression) {
         if (Optional.ofNullable(arithmeticExpression.getLeft()).isPresent()) {
             final Object visit = visit(arithmeticExpression.getLeft());
             if (visit != arithmeticExpression.getLeft()) {
@@ -641,7 +644,7 @@ public abstract class AbstractReplaceAstVisitor {
         return arithmeticExpression;
     }
 
-    public Object visit(SimpleDelete simpleDelete) {
+    protected Object visit(SimpleDelete simpleDelete) {
         if (Optional.ofNullable(simpleDelete.getWhereExpression()).isPresent()) {
             final Object visit = visit(simpleDelete.getWhereExpression());
             if (visit != simpleDelete.getWhereExpression()) {

@@ -2,9 +2,8 @@ package com.xweb.sql.core.parser.base;
 
 import com.xweb.sql.core.StringUtil;
 import com.xweb.sql.core.common.CommonAstToSqlVisitor;
-import com.xweb.sql.core.common.Select;
 import com.xweb.sql.core.common.Statement;
-import com.xweb.sql.core.common.util.SqlUtil;
+import com.xweb.sql.core.common.util.CommonSqlUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.Assert;
 
@@ -13,9 +12,9 @@ public class CommonSqlParserTest {
 
     private void commonCheck(String sql) {
         System.out.println("S:" + sql);
-        Statement select = SqlUtil.readSqlToAST(sql);
+        Statement statement = CommonSqlUtil.commonSqlToAST(sql);
         CommonAstToSqlVisitor commonAstToSqlVisitor = new CommonAstToSqlVisitor();
-        String recoverSql = commonAstToSqlVisitor.visit(select);
+        String recoverSql = commonAstToSqlVisitor.visit(statement);
         System.out.println("D:" + recoverSql);
         Assert.isTrue(StringUtil.replaceAllEmpty(sql).equals(StringUtil.replaceAllEmpty(recoverSql)), "恢复后不一样了");
     }
@@ -54,6 +53,8 @@ public class CommonSqlParserTest {
                 "select num || bb || cc || '22' from aaaaaaa bb where a.id + 2000= 11",
                 "select * from ccc where b.name like '%22%'",
                 "select * from ccc where b.name is not null",
+                "select * from bbb where b.name is not null limit 1,2",
+                "select * from bbb where b.name is not null limit 1",
                 "select * from ccc where b.name is null"
         };
         for (String sql : sqls) {
@@ -69,7 +70,7 @@ public class CommonSqlParserTest {
     public void test00000000002() {
         String[] sqls = {
                 "INSERT INTO table_name (column1, column2) VALUES (value1, value2) " +
-                "ON DUPLICATE KEY UPDATE column1 = value1, column2 = value2",
+                        "ON DUPLICATE KEY UPDATE column1 = value1, column2 = value2",
                 "insert into user(id,name) select id,name from user ",
                 "insert into user select * from user"
         };
@@ -122,6 +123,12 @@ public class CommonSqlParserTest {
                 "then insert(id,nme) values(a.id,a.nme) " +
                 "when not matched by source " +
                 "then delete";
+        commonCheck(sql);
+    }
+
+    @Test
+    public void test00000000006() {
+        String sql = "select * from bbb where b.name is not null OFFSET 1 ROWS FETCH NEXT 10 ROWS ONLY";
         commonCheck(sql);
     }
 }

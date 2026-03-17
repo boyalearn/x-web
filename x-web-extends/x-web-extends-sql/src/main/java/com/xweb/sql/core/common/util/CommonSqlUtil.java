@@ -9,11 +9,11 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
-public final class SqlUtil {
+public final class CommonSqlUtil {
 
     private static final CommonAstToSqlVisitor commonAstToSqlVisitor = new CommonAstToSqlVisitor();
 
-    public static Statement readSqlToAST(String sql) {
+    public static Statement commonSqlToAST(String sql) {
         CodePointCharStream input = CharStreams.fromString(sql);
         SqlBaseLexer lexer = new SqlBaseLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);

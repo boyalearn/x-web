@@ -17,6 +17,8 @@ import com.xweb.sql.core.common.insert.SimpleInsert;
 import com.xweb.sql.core.common.item.CaseItem;
 import com.xweb.sql.core.common.item.ConstantItem;
 import com.xweb.sql.core.common.item.FunctionCallItem;
+import com.xweb.sql.core.common.item.LimitPageItem;
+import com.xweb.sql.core.common.item.OffsetPageItem;
 import com.xweb.sql.core.common.item.SelectAllItem;
 import com.xweb.sql.core.common.item.SubIndexItem;
 import com.xweb.sql.core.common.item.TableColumnItem;
@@ -366,11 +368,54 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
             select.setHavingExpression((BooleanExpression) super.visit(ctx.havingExpression()));
         }
 
-        if (Optional.ofNullable(ctx.LIMIT()).isPresent()) {
-            select.setLimit(ctx.LIMIT().getText());
-            select.setLimitItems((List) super.visit(ctx.limitRowCount()));
+        if (Optional.ofNullable(ctx.pageExpression()).isPresent()) {
+            select.setPage((Page) super.visit(ctx.pageExpression()));
         }
         return select;
+    }
+
+    @Override
+    public Object visitLimitPageExpress(SqlBaseParser.LimitPageExpressContext ctx) {
+        LimitPageItem limitPageItem = new LimitPageItem();
+        limitPageItem.setLimit(ctx.LIMIT().getText());
+        limitPageItem.setLimitItems((List<Item>) super.visit(ctx.limit));
+        return limitPageItem;
+    }
+
+    @Override
+    public Object visitOffsetPageExpress(SqlBaseParser.OffsetPageExpressContext ctx) {
+        OffsetPageItem offsetPageItem = new OffsetPageItem();
+        offsetPageItem.setOffset(ctx.OFFSET().getText());
+        offsetPageItem.setStart((Item) super.visit(ctx.offset));
+        offsetPageItem.setTagStart(ctx.offsetTag.getText());
+
+        if (Optional.ofNullable(ctx.FETCH()).isPresent()) {
+            offsetPageItem.setFetch(ctx.FETCH().getText());
+        }
+
+        if (Optional.ofNullable(ctx.NEXT()).isPresent()) {
+            offsetPageItem.setTagFetch(ctx.NEXT().getText());
+        }
+
+        if (Optional.ofNullable(ctx.FIRST()).isPresent()) {
+            offsetPageItem.setTagFetch(ctx.FIRST().getText());
+
+        }
+
+        if (Optional.ofNullable(ctx.fetchFirst).isPresent()) {
+            offsetPageItem.setRow((Item) super.visit(ctx.fetchFirst));
+        }
+
+        offsetPageItem.setTagRow(ctx.tag.getText());
+
+        if (Optional.ofNullable(ctx.ONLY()).isPresent()) {
+            offsetPageItem.setTagLast(ctx.ONLY().getText());
+
+        }
+        if (Optional.ofNullable(ctx.WITH()).isPresent()) {
+            offsetPageItem.setTagLast(ctx.WITH().getText() + " " + ctx.TIES().getText());
+        }
+        return offsetPageItem;
     }
 
     @Override
@@ -610,7 +655,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
         subIndexItem.setValue(super.visit(ctx.primaryExpression()));
         final List<SqlBaseParser.ValueExpressionContext> valueExpressionContexts = ctx.valueExpression();
         for (SqlBaseParser.ValueExpressionContext valueExpressionContext : valueExpressionContexts) {
-            subIndexItem.getIndexes().add(super.visit(valueExpressionContext));
+            subIndexItem.getIndexes().add((Item) super.visit(valueExpressionContext));
         }
         return subIndexItem;
     }
