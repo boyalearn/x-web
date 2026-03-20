@@ -12,6 +12,7 @@ import com.xweb.sql.core.common.expression.CommonConditionExpression;
 import com.xweb.sql.core.common.expression.ConcatenationExpression;
 import com.xweb.sql.core.common.expression.ExistExpression;
 import com.xweb.sql.core.common.expression.InExpression;
+import com.xweb.sql.core.common.expression.IntervalExpression;
 import com.xweb.sql.core.common.expression.IsNullExpression;
 import com.xweb.sql.core.common.expression.LeftAndRightExpression;
 import com.xweb.sql.core.common.expression.LikeExpression;
@@ -126,9 +127,21 @@ public abstract class AbstractReplaceAstVisitor {
             return visit((UnionTableTable.UnionTableItem) object);
         } else if (object instanceof SimpleUpdate) {
             return visit((SimpleUpdate) object);
+        } else if (object instanceof IntervalExpression) {
+            return visit((IntervalExpression) object);
         } else {
             throw new RuntimeException("未知的解析异常");
         }
+    }
+
+    protected Object visit(IntervalExpression intervalExpression) {
+        if (Optional.ofNullable(intervalExpression.getLeft()).isPresent()) {
+            Item left = (Item) visit(intervalExpression.getLeft());
+            if (left != intervalExpression.getLeft()) {
+                intervalExpression.setLeft(left);
+            }
+        }
+        return intervalExpression;
     }
 
     protected Object visit(BetweenAndExpression betweenAndExpression) {

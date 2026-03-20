@@ -7,6 +7,7 @@ import com.xweb.sql.core.common.expression.BetweenAndExpression;
 import com.xweb.sql.core.common.expression.CommonConditionExpression;
 import com.xweb.sql.core.common.expression.ConcatenationExpression;
 import com.xweb.sql.core.common.expression.InExpression;
+import com.xweb.sql.core.common.expression.IntervalExpression;
 import com.xweb.sql.core.common.expression.IsNullExpression;
 import com.xweb.sql.core.common.expression.LikeExpression;
 import com.xweb.sql.core.common.expression.PriorityExpression;
@@ -205,9 +206,41 @@ public class CommonAstToSqlVisitor {
             return visit((LimitPageItem) object);
         } else if (object instanceof OffsetPageItem) {
             return visit((OffsetPageItem) object);
+        } else if (object instanceof IntervalExpression) {
+            return visit((IntervalExpression) object);
         } else {
             throw new RuntimeException("unknown exception class is " + object.getClass().getName());
         }
+    }
+
+    public String visit(IntervalExpression intervalExpression) {
+        StringBuffer sql = new StringBuffer();
+        if (Optional.ofNullable(intervalExpression.getLeft()).isPresent()) {
+            sql.append(visit(intervalExpression.getLeft()));
+            sql.append(SPACE);
+        }
+        if(isNotEmpty(intervalExpression.getOperator())){
+            sql.append(intervalExpression.getOperator());
+            sql.append(SPACE);
+        }
+        sql.append(intervalExpression.getInterval());
+        if (isNotEmpty(intervalExpression.getSign())) {
+            sql.append(intervalExpression.getSign());
+        }
+        if (isNotEmpty(intervalExpression.getStringIntervalField())) {
+            sql.append(SPACE);
+            sql.append(intervalExpression.getStringIntervalField());
+        }
+        if (isNotEmpty(intervalExpression.getNumber())) {
+            sql.append(SPACE);
+            sql.append(intervalExpression.getNumber());
+        }
+        if (isNotEmpty(intervalExpression.getIntervalField())) {
+            sql.append(SPACE);
+            sql.append(intervalExpression.getIntervalField());
+        }
+        sql.append(toStringCommon(intervalExpression));
+        return sql.toString();
     }
 
     public String visit(OffsetPageItem offsetPageItem) {

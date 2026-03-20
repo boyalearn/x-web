@@ -55,7 +55,13 @@ public class CommonSqlParserTest {
                 "select * from ccc where b.name is not null",
                 "select * from bbb where b.name is not null limit 1,2",
                 "select * from bbb where b.name is not null limit 1",
-                "select * from ccc where b.name is null"
+                "select * from ccc where b.name is null",
+                "select * from bbb where b.name is not null OFFSET 1 ROWS FETCH NEXT 10 ROWS ONLY",
+                "SELECT '2023-04-01 12:00:00' - INTERVAL 1 HOUR AS new_time ",
+                "SELECT '2023-04-01 12:00:00' - INTERVAL '1 HOUR' AS new_time ",
+                "SELECT '2023-04-01 12:00:00' - INTERVAL 1 HOUR AS new_time from dual",
+                "SELECT DATEADD( hour, -1, '2023-04-01T12:00:00') AS new_time ",
+                "SELECT DATE_SUB('2023-04-01 12:00:00', INTERVAL 1 HOUR) AS new_time"
         };
         for (String sql : sqls) {
             commonCheck(sql);
@@ -128,7 +134,7 @@ public class CommonSqlParserTest {
 
     @Test
     public void test00000000006() {
-        String sql = "select * from bbb where b.name is not null OFFSET 1 ROWS FETCH NEXT 10 ROWS ONLY";
+        String sql = "SELECT DATEADD( hour, -1, '2023-04-01T12:00:00') AS new_time ";
         commonCheck(sql);
     }
 }

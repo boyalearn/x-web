@@ -7,6 +7,7 @@ import com.xweb.sql.core.common.expression.CommonConditionExpression;
 import com.xweb.sql.core.common.expression.ConcatenationExpression;
 import com.xweb.sql.core.common.expression.ExistExpression;
 import com.xweb.sql.core.common.expression.InExpression;
+import com.xweb.sql.core.common.expression.IntervalExpression;
 import com.xweb.sql.core.common.expression.IsNullExpression;
 import com.xweb.sql.core.common.expression.LikeExpression;
 import com.xweb.sql.core.common.expression.NotBooleanExpression;
@@ -434,7 +435,8 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
         } else if (expression instanceof PriorityExpression
                 || expression instanceof FunctionCallItem
                 || expression instanceof ArithmeticExpression
-                || expression instanceof ConcatenationExpression) {
+                || expression instanceof ConcatenationExpression
+                || expression instanceof IntervalExpression) {
             //nothing to do
         } else {
             throw new RuntimeException("select Item BUG 未支持的解析异常: " + expression.getClass().getSimpleName());
@@ -551,6 +553,10 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
             LikeExpression likeExpression = (LikeExpression) predicate;
             likeExpression.setLeft((Item) value);
             return likeExpression;
+        } else if (predicate instanceof IntervalExpression) {
+            IntervalExpression intervalExpression = (IntervalExpression) predicate;
+            intervalExpression.setLeft((Item) value);
+            return intervalExpression;
         } else {
             throw new RuntimeException("express BUG 未支持的解析异常: " + predicate.getClass().getSimpleName());
         }
@@ -632,7 +638,13 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
             functionCallItem.setQuantifier(ctx.setQuantifier().getText());
         }
 
+
         functionCallItem.setParams(new ArrayList<>());
+        if (Optional.ofNullable(ctx.intervalField()).isPresent()) {
+            final ConstantItem constantItem = new ConstantItem();
+            constantItem.setConstant(ctx.intervalField().getText());
+            functionCallItem.getParams().add(constantItem);
+        }
         final List<SqlBaseParser.ExpressionContext> expressions = ctx.expression();
         for (SqlBaseParser.ExpressionContext expression : expressions) {
             functionCallItem.getParams().add(super.visit(expression));
@@ -723,6 +735,41 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
+    public Object visitArithmeticInterval(SqlBaseParser.ArithmeticIntervalContext ctx) {
+        IntervalExpression intervalExpression = (IntervalExpression) super.visit(ctx.interval());
+        intervalExpression.setOperator(ctx.operator.getText());
+        return intervalExpression;
+    }
+
+
+    @Override
+    public Object visitNumberInterval(SqlBaseParser.NumberIntervalContext ctx) {
+        IntervalExpression intervalExpression = new IntervalExpression();
+        intervalExpression.setInterval(ctx.INTERVAL().getText());
+        if (Optional.ofNullable(ctx.sign).isPresent()) {
+            intervalExpression.setSign(ctx.sign.getText());
+        }
+        if (Optional.ofNullable(ctx.from).isPresent()) {
+            intervalExpression.setIntervalField(ctx.from.getText());
+        }
+        intervalExpression.setNumber(ctx.number().getText());
+        return intervalExpression;
+    }
+
+    @Override
+    public Object visitStringInterval(SqlBaseParser.StringIntervalContext ctx) {
+        IntervalExpression intervalExpression = new IntervalExpression();
+        intervalExpression.setInterval(ctx.INTERVAL().getText());
+        if (Optional.ofNullable(ctx.sign).isPresent()) {
+            intervalExpression.setSign(ctx.sign.getText());
+        }
+        if (Optional.ofNullable(ctx.string()).isPresent()) {
+            intervalExpression.setIntervalField(ctx.string().getText());
+        }
+        return intervalExpression;
+    }
+
+    @Override
     public Object visitDynamicParameter(SqlBaseParser.DynamicParameterContext ctx) {
         ConstantItem constantItem = new ConstantItem();
         constantItem.setConstant(ctx.getText());
@@ -742,6 +789,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
         constantItem.setConstant(ctx.getText());
         return constantItem;
     }
+
 
     @Override
     public Object visitColumnReference(SqlBaseParser.ColumnReferenceContext ctx) {
@@ -771,6 +819,12 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
         ConstantItem constantItem = new ConstantItem();
         constantItem.setConstant(o.toString());
         return constantItem;
+    }
+
+    @Override
+    public Object visitIntervalLiteral(SqlBaseParser.IntervalLiteralContext ctx) {
+        Object result = super.visit(ctx.interval());
+        return result;
     }
 
     @Override

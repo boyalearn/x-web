@@ -568,6 +568,18 @@ public interface SqlBaseListener extends ParseTreeListener {
 	 */
 	void exitNullPredicate(SqlBaseParser.NullPredicateContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code arithmeticInterval}
+	 * labeled alternative in {@link SqlBaseParser#predicate}.
+	 * @param ctx the parse tree
+	 */
+	void enterArithmeticInterval(SqlBaseParser.ArithmeticIntervalContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code arithmeticInterval}
+	 * labeled alternative in {@link SqlBaseParser#predicate}.
+	 * @param ctx the parse tree
+	 */
+	void exitArithmeticInterval(SqlBaseParser.ArithmeticIntervalContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code valueExpressionDefault}
 	 * labeled alternative in {@link SqlBaseParser#valueExpression}.
 	 * @param ctx the parse tree
@@ -651,16 +663,6 @@ public interface SqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTimeZoneString(SqlBaseParser.TimeZoneStringContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link SqlBaseParser#interval}.
-	 * @param ctx the parse tree
-	 */
-	void enterInterval(SqlBaseParser.IntervalContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link SqlBaseParser#interval}.
-	 * @param ctx the parse tree
-	 */
-	void exitInterval(SqlBaseParser.IntervalContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SqlBaseParser#intervalField}.
 	 * @param ctx the parse tree
@@ -816,6 +818,18 @@ public interface SqlBaseListener extends ParseTreeListener {
 	 */
 	void exitExists(SqlBaseParser.ExistsContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code intervalLiteral}
+	 * labeled alternative in {@link SqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterIntervalLiteral(SqlBaseParser.IntervalLiteralContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code intervalLiteral}
+	 * labeled alternative in {@link SqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitIntervalLiteral(SqlBaseParser.IntervalLiteralContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code numericLiteral}
 	 * labeled alternative in {@link SqlBaseParser#primaryExpression}.
 	 * @param ctx the parse tree
@@ -851,6 +865,30 @@ public interface SqlBaseListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSubScript(SqlBaseParser.SubScriptContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code numberInterval}
+	 * labeled alternative in {@link SqlBaseParser#interval}.
+	 * @param ctx the parse tree
+	 */
+	void enterNumberInterval(SqlBaseParser.NumberIntervalContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code numberInterval}
+	 * labeled alternative in {@link SqlBaseParser#interval}.
+	 * @param ctx the parse tree
+	 */
+	void exitNumberInterval(SqlBaseParser.NumberIntervalContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code stringInterval}
+	 * labeled alternative in {@link SqlBaseParser#interval}.
+	 * @param ctx the parse tree
+	 */
+	void enterStringInterval(SqlBaseParser.StringIntervalContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code stringInterval}
+	 * labeled alternative in {@link SqlBaseParser#interval}.
+	 * @param ctx the parse tree
+	 */
+	void exitStringInterval(SqlBaseParser.StringIntervalContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SqlBaseParser#onDuplicateCondition}.
 	 * @param ctx the parse tree

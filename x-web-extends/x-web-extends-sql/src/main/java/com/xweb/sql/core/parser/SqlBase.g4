@@ -160,6 +160,7 @@ predicate[ParserRuleContext value]
     | NOT? IN '(' query ')'                                                                #inSubquery
     | NOT? LIKE pattern=valueExpression (ESCAPE escape=valueExpression)?                   #like
     | IS NOT? NULL                                                                         #nullPredicate
+    | operator=(PLUS | MINUS)? interval                                                    #arithmeticInterval
     ;
 
 valueExpression
@@ -176,10 +177,6 @@ timeZoneSpecifier
     | TIME ZONE string                                                                     #timeZoneString
     ;
 
-interval
-    : INTERVAL sign=(PLUS | MINUS)? string from=intervalField (TO to=intervalField)?
-    ;
-
 intervalField
     : YEAR | MONTH | DAY | HOUR | MINUTE | SECOND
     ;
@@ -188,8 +185,9 @@ primaryExpression
     //新增在应用中解析的时候sql值可能是个参数
     : PARAMETER                                                                            #dynamicParameter
     //MYSQL中特殊解析
-    | D_ANT identifier                                                                     #specialVariable
+    | ANT_ANT identifier                                                                   #specialVariable
     | NULL                                                                                 #nullLiteral
+    | interval                                                                             #intervalLiteral
     | identifier string                                                                    #typeConstructor
     | number                                                                               #numericLiteral
     | string                                                                               #stringLiteral
@@ -199,11 +197,18 @@ primaryExpression
     | CASE whenClause+ (ELSE elseExpression=expression)? END                               #simpleCase
     | value=primaryExpression '[' index=valueExpression (',' valueExpression)? ']'         #subScript
     | qualifiedName '(' (setQuantifier? expression (',' expression)*)? ')'                 #functionCall
+    | qualifiedName '(' (setQuantifier? intervalField (',' expression)*)? ')'              #functionCall
     | qualifiedName '(' ')'                                                                #functionCall
     //MYSQL中特殊解析
     | identifier                                                                           #columnReference
     | base=primaryExpression '.' fieldName=identifier                                      #dereference
     | '(' expression ')'                                                                   #parenthesizedExpression
+    ;
+
+
+interval
+    : INTERVAL sign=(PLUS | MINUS)? number from=intervalField (TO to=intervalField)?      #numberInterval
+    | INTERVAL sign=(PLUS | MINUS)? string (TO to=intervalField)?                         #stringInterval
     ;
 
 onDuplicateCondition
@@ -446,7 +451,7 @@ CONCAT
 PARAMETER
     : '?';
 
-D_ANT
+ANT_ANT
     : '@@';
 
 STRING

@@ -341,6 +341,13 @@ public interface SqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitNullPredicate(SqlBaseParser.NullPredicateContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code arithmeticInterval}
+	 * labeled alternative in {@link SqlBaseParser#predicate}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArithmeticInterval(SqlBaseParser.ArithmeticIntervalContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code valueExpressionDefault}
 	 * labeled alternative in {@link SqlBaseParser#valueExpression}.
 	 * @param ctx the parse tree
@@ -389,12 +396,6 @@ public interface SqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitTimeZoneString(SqlBaseParser.TimeZoneStringContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link SqlBaseParser#interval}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitInterval(SqlBaseParser.IntervalContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SqlBaseParser#intervalField}.
 	 * @param ctx the parse tree
@@ -486,6 +487,13 @@ public interface SqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExists(SqlBaseParser.ExistsContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code intervalLiteral}
+	 * labeled alternative in {@link SqlBaseParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIntervalLiteral(SqlBaseParser.IntervalLiteralContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code numericLiteral}
 	 * labeled alternative in {@link SqlBaseParser#primaryExpression}.
 	 * @param ctx the parse tree
@@ -506,6 +514,20 @@ public interface SqlBaseVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitSubScript(SqlBaseParser.SubScriptContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code numberInterval}
+	 * labeled alternative in {@link SqlBaseParser#interval}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNumberInterval(SqlBaseParser.NumberIntervalContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code stringInterval}
+	 * labeled alternative in {@link SqlBaseParser#interval}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStringInterval(SqlBaseParser.StringIntervalContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SqlBaseParser#onDuplicateCondition}.
 	 * @param ctx the parse tree
