@@ -436,7 +436,8 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
                 || expression instanceof FunctionCallItem
                 || expression instanceof ArithmeticExpression
                 || expression instanceof ConcatenationExpression
-                || expression instanceof IntervalExpression) {
+                || expression instanceof IntervalExpression
+                || expression instanceof SubIndexItem) {
             //nothing to do
         } else {
             throw new RuntimeException("select Item BUG 未支持的解析异常: " + expression.getClass().getSimpleName());
@@ -664,7 +665,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     public Object visitSubScript(SqlBaseParser.SubScriptContext ctx) {
         SubIndexItem subIndexItem = new SubIndexItem();
         subIndexItem.setIndexes(new ArrayList<>());
-        subIndexItem.setValue(super.visit(ctx.primaryExpression()));
+        subIndexItem.setValue((Item) super.visit(ctx.primaryExpression()));
         final List<SqlBaseParser.ValueExpressionContext> valueExpressionContexts = ctx.valueExpression();
         for (SqlBaseParser.ValueExpressionContext valueExpressionContext : valueExpressionContexts) {
             subIndexItem.getIndexes().add((Item) super.visit(valueExpressionContext));

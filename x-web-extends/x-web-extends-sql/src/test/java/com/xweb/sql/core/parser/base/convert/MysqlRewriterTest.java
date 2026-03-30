@@ -20,4 +20,20 @@ public class MysqlRewriterTest {
         String afterSql = MysqlUtils.convert(sql);
         System.out.println("o:" + afterSql);
     }
+
+    @Test
+    public void test00000000003() {
+        String sql = "select name[1],data[2,5] from bbb where b.name is not null OFFSET 1 ROWS FETCH NEXT 10 ROWS ONLY";
+        System.out.println("s:" + sql);
+        String afterSql = MysqlUtils.convert(sql);
+        System.out.println("o:" + afterSql);
+    }
+
+    @Test
+    public void test00000000004() {
+        String sql = "select name[1],data[2,5],id from (select name[1],data[2,5],id from bbb where b.name is not null group by 3,2,1) where b.name is not null group by 3,2,1";
+        System.out.println("s:" + sql);
+        String afterSql = MysqlUtils.convert(sql);
+        System.out.println("o:" + afterSql);
+    }
 }

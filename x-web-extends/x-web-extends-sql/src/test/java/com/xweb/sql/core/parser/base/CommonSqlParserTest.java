@@ -134,7 +134,7 @@ public class CommonSqlParserTest {
 
     @Test
     public void test00000000006() {
-        String sql = "SELECT DATEADD( hour, -1, '2023-04-01T12:00:00') AS new_time ";
+        String sql = "SELECT A,B,C FROM AAA WHERE b = 222 group by 2,3 ";
         commonCheck(sql);
     }
 }

@@ -405,7 +405,7 @@ public abstract class AbstractReplaceAstVisitor {
     protected Object visit(SubIndexItem subIndexItem) {
         final Object value = visit(subIndexItem.getValue());
         if (value != subIndexItem.getValue()) {
-            subIndexItem.setValue(value);
+            subIndexItem.setValue((Item)value);
         }
 
         final List<Item> indexes = visit(subIndexItem.getIndexes());

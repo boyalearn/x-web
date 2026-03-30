@@ -94,6 +94,7 @@ public class CommonAstToSqlVisitor {
         }
         final List<Item> itemsGroup = select.getGroupItems();
         if (!itemsGroup.isEmpty()) {
+            sql.append(SPACE);
             sql.append(select.getGroup());
             for (int i = 0; i < itemsGroup.size(); i++) {
                 Item item = itemsGroup.get(i);

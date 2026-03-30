@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class SubIndexItem extends AbstractItem {
 
-    private Object value;
+    private Item value;
 
     private List<Item> indexes;
 
