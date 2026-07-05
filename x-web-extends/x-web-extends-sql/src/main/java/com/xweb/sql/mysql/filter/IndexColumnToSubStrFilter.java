@@ -30,6 +30,7 @@ public class IndexColumnToSubStrFilter implements MysqlFilter {
         FunctionCallItem functionCallItem = new FunctionCallItem();
         functionCallItem.setName(NAME);
         functionCallItem.setParams(new ArrayList<>());
+        functionCallItem.getParams().add(subIndexItem.getValue());
         if (subIndexItem.getIndexes().size() == 1) {
             functionCallItem.getParams().addAll(subIndexItem.getIndexes());
         } else {
