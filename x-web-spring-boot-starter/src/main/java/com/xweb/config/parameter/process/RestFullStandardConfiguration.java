@@ -98,4 +98,9 @@ public class RestFullStandardConfiguration implements WebMvcConfigurer {
         requestMappingHandlerAdapter.setReturnValueHandlers(returnValueHandlers);
         return responseBodyReturnHandler;
     }
+
+
+    public static void main(String[] args) {
+
+    }
 }

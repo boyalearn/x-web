@@ -13,8 +13,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @author zouhuixing
  * @date 2023/6/14
  */
-@EnableSwagger2
-@Configuration
 public class WebConfig {
 
     @Bean

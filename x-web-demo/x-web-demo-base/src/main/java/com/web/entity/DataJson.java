@@ -7,6 +7,8 @@ import lombok.Setter;
 @Setter
 public class DataJson {
 
+    private DataJson data;
+
     private String userName;
 
     private String age;

@@ -16,7 +16,7 @@ public @interface ResultBody {
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target({})
-    public @interface Field {
+    @interface Field {
 
         String[] exclude() default {};
 

@@ -13,6 +13,9 @@ public class XWebJacksonAnnotationInterceptor extends JacksonAnnotationIntrospec
 
     @Override
     public boolean hasIgnoreMarker(AnnotatedMember m) {
+        if (super.hasIgnoreMarker(m)) {
+            return true;
+        }
         String[] parameterNames = FIELDS.get();
         if (Optional.ofNullable(parameterNames).isPresent()) {
             Member member = m.getMember();
