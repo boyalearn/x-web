@@ -6,12 +6,7 @@ import com.xweb.common.web.parameter.resolver.FormBody;
 import com.xweb.common.web.response.RespResult;
 import com.xweb.common.web.response.ResultBody;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
@@ -53,7 +48,7 @@ public class DemoController {
         return new HashMap<>();
     }
 
-    @ResultBody(field = @ResultBody.Field(exclude = "names"))
+    @ResultBody(fields= "names")
     @GetMapping("/parameter")
     public RespResult<String> parameter(@FormBody RequestParameter parameter) {
         System.out.println(parameter.toString());
