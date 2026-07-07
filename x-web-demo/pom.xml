@@ -16,9 +16,7 @@
         <module>x-web-demo-nacos</module>
         <module>x-web-demo-no-web-feign-hystrix-mybatis</module>
         <module>x-web-demo-test</module>
-<!--
         <module>x-web-demo-phoenix</module>
--->
     </modules>
 
     <artifactId>x-web-demo</artifactId>

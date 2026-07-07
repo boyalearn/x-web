@@ -16,7 +16,7 @@
         <module>x-web-extends-sql</module>
         <module>x-web-extends-bpmn</module>
         <module>x-web-extends-driver</module>
-        <module>x-web-extends-algorithm</module>
+<!--        <module>x-web-extends-algorithm</module>-->
     </modules>
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
