@@ -9,7 +9,7 @@
       </div>
       <el-dropdown>
         <span class="el-dropdown-link">
-          下拉菜单<i class="el-icon-arrow-down el-icon--right"></i>
+          操作<i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item>黄金糕</el-dropdown-item>

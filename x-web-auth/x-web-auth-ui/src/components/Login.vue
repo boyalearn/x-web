@@ -1,7 +1,7 @@
 <template>
   <div class="login-box">
     <div style="height: 100px"></div>
-    <el-form :model="loginForm" status-icon :rules="rules" ref="ruleForm" class="login-form">
+    <el-form :model="loginForm" status-icon  class="login-form">
       <div class="login-title">
         <a>Xauth admin v1.0 登录</a>
       </div>
@@ -13,7 +13,7 @@
       </el-form-item>
 
       <el-form-item label-width="0">
-        <el-button type="success" style="width: 100%" @click="submitForm('ruleForm')">提交</el-button>
+        <el-button type="success" style="width: 100%" @click="submitForm()">提交</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -53,7 +53,7 @@ export default {
     };
   },
   methods: {
-    submitForm(formName) {
+    submitForm() {
       var _this = this;
       this.$axios.post("/xauth/oauth/token?grant_type=password&username=" +
         _this.loginForm.name + "&password=" +
@@ -68,7 +68,8 @@ export default {
         }
 
       }).catch(function (error) {
-        _this.$message.error(error.response.data.error_description);
+        console.log("error",error)
+        //_this.$message.error(error.response.data.error_description);
       });
 
     },

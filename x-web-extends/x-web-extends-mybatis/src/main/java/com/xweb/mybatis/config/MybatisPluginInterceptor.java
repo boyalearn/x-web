@@ -25,7 +25,7 @@ public class MybatisPluginInterceptor implements Interceptor {
         Object[] args = invocation.getArgs();
         BoundSql boundSql = (BoundSql) args[5];
         String sql = boundSql.getSql();
-        System.out.println(MybatisSQLUtil.combineCompleteSQL(sql, boundSql.getParameterMappings(), boundSql.getParameterObject()));
+        //System.out.println(MybatisSQLUtil.combineCompleteSQL(sql, boundSql.getParameterMappings(), boundSql.getParameterObject()));
         return invocation.proceed();
     }
 

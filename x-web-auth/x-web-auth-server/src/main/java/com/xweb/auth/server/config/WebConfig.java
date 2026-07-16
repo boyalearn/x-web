@@ -41,7 +41,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Configuration
-@EnableSwagger2
+//@EnableSwagger2
 public class WebConfig implements WebMvcConfigurer {
 
     @Value("${spring.swagger.enabled:false}")
@@ -86,8 +86,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        //registry.addInterceptor(authInterceptor);
-        //registry.addInterceptor(loggerInterceptor);
+        registry.addInterceptor(authInterceptor);
+        registry.addInterceptor(loggerInterceptor);
     }
 
     @Override
@@ -123,19 +123,19 @@ public class WebConfig implements WebMvcConfigurer {
         return objectMapper;
     }
 
-    @Bean
-    public Docket productApi() {
-        return new Docket(DocumentationType.SWAGGER_2).enable(enable)
-                .apiInfo(apiInfo())
-                .select()
-                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
-                .paths(PathSelectors.any())
-                .build();
-
-    }
-
-    private ApiInfo apiInfo() {
-        return new ApiInfoBuilder().title("XAuth API").description("API 文档")
-                .version("1.0").build();
-    }
+//    @Bean
+//    public Docket productApi() {
+//        return new Docket(DocumentationType.SWAGGER_2).enable(enable)
+//                .apiInfo(apiInfo())
+//                .select()
+//                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+//                .paths(PathSelectors.any())
+//                .build();
+//
+//    }
+//
+//    private ApiInfo apiInfo() {
+//        return new ApiInfoBuilder().title("XAuth API").description("API 文档")
+//                .version("1.0").build();
+//    }
 }

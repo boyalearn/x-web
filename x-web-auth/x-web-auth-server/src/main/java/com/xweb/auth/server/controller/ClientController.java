@@ -19,6 +19,7 @@ import com.xweb.logger.annotation.XWebLogger;
 import com.xweb.logger.utils.XWebLoggerHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,6 +53,7 @@ public class ClientController {
     @PostMapping()
     @Auth(roles = {XAuthRole.SUPPER_ADMIN})
     @XWebLogger(model = "应用管理", option = Option.INSERT)
+    @Transactional
     public RespResult<String> addClient(@Validated(Insert.class) @RequestBody Client client) throws BusinessException {
         clientService.addClient(client);
         try {

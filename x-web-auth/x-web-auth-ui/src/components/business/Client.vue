@@ -578,6 +578,8 @@ export default {
           type: 'success'
         });
         _this.init();
+      }).catch(error=>{
+        console.log("error",error);
       })
     },
     handleUpdate() {

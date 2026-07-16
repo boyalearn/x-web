@@ -21,15 +21,16 @@ axios.interceptors.request.use(config => {
   // 为请求头添加x-access-token字段为服务端返回的token
   var token = sessionStorage.getItem('token');
   if (null == token) {
-    router.push({
-      path: "/login"
-    });
+    router.push("/login").catch(error=>{
+      console.log("error",error)
+    })
   }
   config.headers['x-access-token'] = sessionStorage.getItem('token')
   // return config是固定用法 必须有返回值
   return config
 });
 axios.interceptors.response.use((config) => {
+  console.log("config.data",config.data)
   if ("token error" == config.data.message) {
     router.push({
       path: "/login"
