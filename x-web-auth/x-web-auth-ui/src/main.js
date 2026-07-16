@@ -35,7 +35,7 @@ axios.interceptors.response.use((config) => {
     router.push({
       path: "/login"
     });
-  } else if ("0000" != config.data.code) {
+  } else if ("0000" != config.data.code && config.data.access_token == null) {
     ElementUI.Notification.error({
       title: '错误',
       message: config.data.message,
