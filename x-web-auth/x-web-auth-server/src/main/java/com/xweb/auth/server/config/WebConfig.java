@@ -1,33 +1,11 @@
 package com.xweb.auth.server.config;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.xweb.auth.server.service.ISystemLoggerService;
-import com.xweb.common.auth.XWebTokenEnhancer;
-import com.xweb.common.auth.interceptor.XWebAuthInterceptor;
-import com.xweb.common.jackson.NumEnumDeserializer;
-import com.xweb.common.jackson.NumEnumSerializer;
-import com.xweb.common.web.parameter.converter.NumberEnumConverterFactory;
-import com.xweb.common.web.parameter.resolver.FormParamHandlerMethodArgumentResolver;
-import com.xweb.common.web.standard.IEnum;
-import com.xweb.logger.interceptor.XWebLoggerInterceptor;
-import com.xweb.mybatis.config.MybatisPluginInterceptor;
 import io.swagger.annotations.ApiOperation;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.format.FormatterRegistry;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -37,105 +15,41 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
+@EnableWebMvc
+@EnableSwagger2
 @Configuration
-//@EnableSwagger2
 public class WebConfig implements WebMvcConfigurer {
 
     @Value("${spring.swagger.enabled:false}")
     private boolean enable;
 
     @Bean
-    public XWebTokenEnhancer webTokenEnhancer() {
-        XWebTokenEnhancer webTokenEnhancer = new XWebTokenEnhancer();
-        webTokenEnhancer.setSigningKey("1234");
-        return webTokenEnhancer;
+    public Docket productApi() {
+        return new Docket(DocumentationType.SWAGGER_2).enable(enable)
+                .apiInfo(apiInfo())
+                .select()
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .paths(PathSelectors.any())
+                .build();
     }
 
-    @Bean
-    public XWebAuthInterceptor authInterceptor(XWebTokenEnhancer webTokenEnhancer) {
-        return new XWebAuthInterceptor(webTokenEnhancer);
+    private ApiInfo apiInfo() {
+        return new ApiInfoBuilder().title("XAuth API").description("API 文档")
+                .version("1.0").build();
     }
 
-    @Bean
-    public XWebLoggerInterceptor loggerInterceptor(ISystemLoggerService systemLoggerService,
-                                                   XWebTokenEnhancer webTokenEnhancer) {
-        return new XWebLoggerInterceptor(systemLoggerService, webTokenEnhancer);
-    }
-
-    @Bean
-    public String initMybatis(SqlSessionFactory sqlSessionFactory) {
-        sqlSessionFactory.getConfiguration().addInterceptor(new MybatisPluginInterceptor());
-        return "--";
-    }
-
-    @Autowired
-    private XWebAuthInterceptor authInterceptor;
-
-    @Autowired
-    private XWebLoggerInterceptor loggerInterceptor;
 
     @Override
-    public void addFormatters(FormatterRegistry registry) {
-        registry.removeConvertible(String.class, Enum.class);
-        registry.removeConvertible(Enum.class, String.class);
-        registry.addConverterFactory(new NumberEnumConverterFactory());
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 解决静态资源⽆法访问
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/");
+        // 解决swagger⽆法访问
+        registry.addResourceHandler("/swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        // 解决swagger的js⽂件⽆法访问
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(authInterceptor);
-        registry.addInterceptor(loggerInterceptor);
-    }
-
-    @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new FormParamHandlerMethodArgumentResolver());
-    }
-
-    @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-
-        for (HttpMessageConverter<?> converter : converters) {
-            if (converter instanceof StringHttpMessageConverter) {
-                ((StringHttpMessageConverter) converter).setDefaultCharset(StandardCharsets.UTF_8);
-            } else if (converter instanceof MappingJackson2HttpMessageConverter) {
-                MappingJackson2HttpMessageConverter messageConverter = (MappingJackson2HttpMessageConverter) converter;
-                messageConverter.setObjectMapper(objectMapper());
-            }
-        }
-    }
-
-    private ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(JsonInclude.Include.ALWAYS);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false);
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-
-        SimpleModule simpleModule = new SimpleModule();
-        simpleModule.addSerializer(IEnum.class, new NumEnumSerializer());
-        simpleModule.addDeserializer(Enum.class, new NumEnumDeserializer(Enum.class));
-        objectMapper.registerModule(simpleModule);
-        return objectMapper;
-    }
-
-//    @Bean
-//    public Docket productApi() {
-//        return new Docket(DocumentationType.SWAGGER_2).enable(enable)
-//                .apiInfo(apiInfo())
-//                .select()
-//                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
-//                .paths(PathSelectors.any())
-//                .build();
-//
-//    }
-//
-//    private ApiInfo apiInfo() {
-//        return new ApiInfoBuilder().title("XAuth API").description("API 文档")
-//                .version("1.0").build();
-//    }
 }

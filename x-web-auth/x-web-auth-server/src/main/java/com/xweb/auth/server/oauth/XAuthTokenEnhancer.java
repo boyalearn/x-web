@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.common.util.JsonParser;
 import org.springframework.security.oauth2.common.util.JsonParserFactory;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
@@ -20,12 +21,13 @@ import java.util.*;
  * 作者姓名: zouhuixing
  * 创建时间: 2022/8/27 4:09
  ******************************/
+@Component
 public class XAuthTokenEnhancer extends JwtAccessTokenConverter {
 
 
     private static final Set<String> CUSTOM_GRANT_TYPES = new HashSet<String>(Arrays.asList(new String[]{"password", "implicit"}));
 
-    private JsonParser objectMapper = JsonParserFactory.create();
+    private static JsonParser objectMapper = JsonParserFactory.create();
 
     private IUserService userService;
 

@@ -6,6 +6,7 @@ import com.xweb.auth.server.service.IUserService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
@@ -14,6 +15,7 @@ import java.util.Optional;
  * 作者姓名: zouhuixing
  * 创建时间: 2022/8/27 4:10
  ******************************/
+@Component
 public class XAuthUserDetailsService implements UserDetailsService {
 
     private IUserService userService;
