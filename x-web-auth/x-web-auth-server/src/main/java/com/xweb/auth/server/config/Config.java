@@ -1,6 +1,7 @@
 package com.xweb.auth.server.config;
 
 import com.xweb.auth.server.oauth.XAuthAccessTokenEnhancer;
+import com.xweb.auth.server.oauth.XAuthUserDetailsService;
 import com.xweb.auth.server.service.IUserService;
 import com.xweb.common.auth.XWebTokenEnhancer;
 import com.xweb.logger.interceptor.XWebLoggerInterceptor;
@@ -38,6 +39,12 @@ public class Config {
         xAuthAccessTokenEnhancer.setSigningKey(signingKey);
         xAuthAccessTokenEnhancer.setVerifierKey(verifierKey);
         return xAuthAccessTokenEnhancer;
+    }
+
+
+    @Bean
+    public XAuthUserDetailsService xAuthUserDetailsService(IUserService userService){
+        return new XAuthUserDetailsService(userService);
     }
 
     @Bean

@@ -51,6 +51,7 @@ public class XWebAuthInterceptor implements HandlerInterceptor {
                 XWebAuthHelper.setLoginInfo(loginInfo);
 
             } catch (Exception e) {
+                e.printStackTrace();
                 throw new BusinessException(BusinessException.SYSTEM_EXCEPTION, "token error");
             }
             checkRole(auth, loginInfo);

@@ -27,20 +27,19 @@ public class XAuthAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        XAuthWebAuthentication details = (XAuthWebAuthentication) (authentication.getDetails());
 
-        String username = details.getUsername();
+        String username = (String) authentication.getPrincipal();
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         String dbPassword = userDetails.getPassword();
 
-        if(!dbPassword.equals(details.getPassword())){
+        if(!dbPassword.equals(authentication.getCredentials())){
 
             throw new UsernameNotFoundException("用户名密码错误");
         }
 
         Collection<GrantedAuthority> auths =
                 (Collection<GrantedAuthority>) userDetails.getAuthorities();
-        return new UsernamePasswordAuthenticationToken(details.getUsername(), details.getPassword(), auths);
+        return new UsernamePasswordAuthenticationToken(username, "", auths);
 
     }
 
