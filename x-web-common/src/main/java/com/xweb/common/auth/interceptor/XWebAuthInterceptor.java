@@ -61,15 +61,15 @@ public class XWebAuthInterceptor implements HandlerInterceptor {
 
     private void checkRole(Auth annotation, Map<String, Object> loginInfo) throws BusinessException {
         String[] roles = annotation.roles();
-        if (null != roles && roles.length != 0) {
+        if (roles.length > 0) {
             Object userRoles = loginInfo.get(ROLE_KEY);
             if (null == userRoles) {
-                throw new BusinessException(BusinessException.AUTH_EXCEPTION, "无权限");
+                throw new BusinessException(BusinessException.AUTH_EXCEPTION, "无对应角色");
             }
             List tokenRoles = (List)userRoles;
             for (String role : roles) {
                 if (!tokenRoles.contains(role)) {
-                    throw new BusinessException(BusinessException.AUTH_EXCEPTION, "无权限");
+                    throw new BusinessException(BusinessException.AUTH_EXCEPTION, "无对应角色");
                 }
             }
         }
@@ -77,7 +77,7 @@ public class XWebAuthInterceptor implements HandlerInterceptor {
 
     private void checkResource(Auth annotation, Map<String, Object> loginInfo) throws BusinessException {
         String[] resources = annotation.resources();
-        if (null != resources && resources.length != 0) {
+        if (resources.length >0) {
             Object userResources = loginInfo.get(RESOURCE_KEY);
             if (null == userResources) {
                 throw new BusinessException(BusinessException.AUTH_EXCEPTION, "无权限");

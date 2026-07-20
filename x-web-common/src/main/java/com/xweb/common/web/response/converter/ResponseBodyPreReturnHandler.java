@@ -26,6 +26,7 @@ public class ResponseBodyPreReturnHandler implements HandlerMethodReturnValueHan
 
     private ObjectMapper objectMapper;
 
+
     @Override
     public boolean supportsReturnType(MethodParameter methodParameter) {
         Method method = methodParameter.getMethod();

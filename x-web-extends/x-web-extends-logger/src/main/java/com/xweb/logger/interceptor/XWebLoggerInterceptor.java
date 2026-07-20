@@ -57,8 +57,8 @@ public class XWebLoggerInterceptor implements HandlerInterceptor {
                 throw new BusinessException(BusinessException.SYSTEM_EXCEPTION, "token error");
             }
             if (Optional.ofNullable(loginInfo).isPresent()) {
-                Object userId = loginInfo.get("user_id");
-                Object applicationId = loginInfo.get("application_id");
+                Object userId = loginInfo.get("uid");
+                Object applicationId = loginInfo.get("cid");
                 XWebLoggerHelper.setUserId(String.valueOf(userId));
                 XWebLoggerHelper.setClientId(String.valueOf(applicationId));
             }

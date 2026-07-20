@@ -2,6 +2,9 @@ package com.xweb.auth.server.config;
 
 import com.xweb.auth.server.oauth.XAuthAccessTokenEnhancer;
 import com.xweb.auth.server.service.IUserService;
+import com.xweb.common.auth.XWebTokenEnhancer;
+import com.xweb.logger.interceptor.XWebLoggerInterceptor;
+import com.xweb.logger.service.ILoggerService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +38,11 @@ public class Config {
         xAuthAccessTokenEnhancer.setSigningKey(signingKey);
         xAuthAccessTokenEnhancer.setVerifierKey(verifierKey);
         return xAuthAccessTokenEnhancer;
+    }
+
+    @Bean
+    public XWebLoggerInterceptor xWebLoggerInterceptor(ILoggerService loggerService, XWebTokenEnhancer tokenEnhancer){
+        return new  XWebLoggerInterceptor(loggerService,tokenEnhancer);
     }
 
     @Bean

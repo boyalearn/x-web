@@ -1,6 +1,7 @@
 package com.xweb.config.parameter.process;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -13,6 +14,8 @@ import com.xweb.common.web.parameter.converter.NumberEnumConverterFactory;
 import com.xweb.common.web.parameter.resolver.FormParamHandlerMethodArgumentResolver;
 import com.xweb.common.web.response.converter.ResponseBodyPreReturnHandler;
 import com.xweb.common.web.standard.IEnum;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
@@ -78,6 +81,12 @@ public class RestFullStandardConfiguration implements WebMvcConfigurer {
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
 
+        if(converters.isEmpty()){
+            MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
+            messageConverter.setObjectMapper(objectMapper);
+            converters.add(messageConverter);
+            return;
+        }
         for (HttpMessageConverter<?> converter : converters) {
             if (converter instanceof StringHttpMessageConverter) {
                 ((StringHttpMessageConverter) converter).setDefaultCharset(StandardCharsets.UTF_8);
@@ -88,19 +97,20 @@ public class RestFullStandardConfiguration implements WebMvcConfigurer {
         }
     }
 
-
-    @Bean
-    public ResponseBodyPreReturnHandler createResponseBodyReturnHandler(RequestMappingHandlerAdapter requestMappingHandlerAdapter) {
-        ResponseBodyPreReturnHandler responseBodyReturnHandler = new ResponseBodyPreReturnHandler(objectMapper);
-        ArrayList<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<>();
-        returnValueHandlers.add(responseBodyReturnHandler);
-        returnValueHandlers.addAll(requestMappingHandlerAdapter.getReturnValueHandlers());
-        requestMappingHandlerAdapter.setReturnValueHandlers(returnValueHandlers);
-        return responseBodyReturnHandler;
+    @Override
+    public void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> handlers) {
+        handlers.add(new ResponseBodyPreReturnHandler(objectMapper));
     }
 
+    public static void main(String[] args) throws JsonProcessingException {
+        AA a = new AA();
+        a.setCreateTime("BBBBBB");
+        System.out.println(objectMapper.writeValueAsString(a));
+    }
 
-    public static void main(String[] args) {
-
+    @Getter
+    @Setter
+    public static class AA{
+        private String createTime;
     }
 }

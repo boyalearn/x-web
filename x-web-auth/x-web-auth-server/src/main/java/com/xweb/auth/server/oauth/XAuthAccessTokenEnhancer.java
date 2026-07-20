@@ -32,9 +32,9 @@ public class XAuthAccessTokenEnhancer extends XWebTokenEnhancer {
 
     private static final String RESOURCES = "resources";
 
-    private static final Set<String> CUSTOM_GRANT_TYPES = new HashSet<String>(Arrays.asList(new String[]{"password", "implicit"}));
+    private static final String USER_ID = "uid";
 
-    private static JsonParser objectMapper = JsonParserFactory.create();
+    private static final String CLIENT_ID = "cid";
 
     private IUserService userService;
 
@@ -49,14 +49,14 @@ public class XAuthAccessTokenEnhancer extends XWebTokenEnhancer {
         LoginUser loginUser = customInfo(authentication);
         addition.put(ROLES,loginUser.getRoles());
         addition.put(RESOURCES,loginUser.getAuthorities());
+        addition.put(USER_ID,loginUser.getUserId());
+        addition.put(CLIENT_ID,loginUser.getClientId());
         result.setAdditionalInformation(addition);
         result.setValue(this.encode(result, authentication));
         OAuth2RefreshToken refreshToken = result.getRefreshToken();
-        if (refreshToken != null) {
+        if (Optional.ofNullable(refreshToken).isPresent()) {
             XAuthOAuth2AccessToken encodedRefreshToken = new XAuthOAuth2AccessToken(accessToken);
-
             DefaultOAuth2RefreshToken token = new DefaultOAuth2RefreshToken(this.encode(encodedRefreshToken, authentication));
-
             result.setRefreshToken(token);
         }
         return result;
