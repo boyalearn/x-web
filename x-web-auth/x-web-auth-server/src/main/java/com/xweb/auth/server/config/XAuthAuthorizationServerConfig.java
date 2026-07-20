@@ -22,6 +22,8 @@ public class XAuthAuthorizationServerConfig extends AuthorizationServerConfigure
 
     private IUserService userService;
 
+    private XAuthAccessTokenEnhancer xAuthAccessTokenEnhancer;
+
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
@@ -53,7 +55,7 @@ public class XAuthAuthorizationServerConfig extends AuthorizationServerConfigure
         endpoints.authenticationManager(new XAuthAuthenticationManager(new XAuthUserDetailsService(userService)))
                 .tokenStore(new InMemoryTokenStore())
                 .exceptionTranslator(new XAuthWebResponseExceptionTranslator())
-                .tokenEnhancer(new XAuthAccessTokenEnhancer())
+                .tokenEnhancer(xAuthAccessTokenEnhancer)
                 .accessTokenConverter(new XAuthAccessTokenConverter())
                 .userDetailsService(new XAuthUserDetailsService(userService))
                 .pathMapping("/oauth/confirm_access", "/xauth/confirm_access")

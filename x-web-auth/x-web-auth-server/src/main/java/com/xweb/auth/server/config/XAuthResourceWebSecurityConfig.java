@@ -34,4 +34,6 @@ public class XAuthResourceWebSecurityConfig extends WebSecurityConfigurerAdapter
                 "/swagger-resources/**",
                 "/v2/**");
     }
+
+
 }

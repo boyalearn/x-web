@@ -1,7 +1,12 @@
 package com.xweb.auth.server.oauth;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.xweb.auth.server.entity.LoginUser;
+import com.xweb.auth.server.entity.User;
 import com.xweb.auth.server.service.IUserService;
+import com.xweb.common.auth.XWebTokenEnhancer;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
@@ -11,10 +16,7 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /******************************
  * 用途说明:
@@ -23,8 +25,12 @@ import java.util.Set;
  ******************************/
 
 @NoArgsConstructor
-public class XAuthAccessTokenEnhancer extends JwtAccessTokenConverter {
+public class XAuthAccessTokenEnhancer extends XWebTokenEnhancer {
 
+
+    private static final String ROLES = "roles";
+
+    private static final String RESOURCES = "resources";
 
     private static final Set<String> CUSTOM_GRANT_TYPES = new HashSet<String>(Arrays.asList(new String[]{"password", "implicit"}));
 
@@ -39,8 +45,13 @@ public class XAuthAccessTokenEnhancer extends JwtAccessTokenConverter {
     @Override
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
         XAuthOAuth2AccessToken result = new XAuthOAuth2AccessToken(accessToken);
-        OAuth2RefreshToken refreshToken = result.getRefreshToken();
+        Map<String, Object> addition = new HashMap<>();
+        LoginUser loginUser = customInfo(authentication);
+        addition.put(ROLES,loginUser.getRoles());
+        addition.put(RESOURCES,loginUser.getAuthorities());
+        result.setAdditionalInformation(addition);
         result.setValue(this.encode(result, authentication));
+        OAuth2RefreshToken refreshToken = result.getRefreshToken();
         if (refreshToken != null) {
             XAuthOAuth2AccessToken encodedRefreshToken = new XAuthOAuth2AccessToken(accessToken);
 
@@ -49,6 +60,17 @@ public class XAuthAccessTokenEnhancer extends JwtAccessTokenConverter {
             result.setRefreshToken(token);
         }
         return result;
+    }
+
+
+    private LoginUser customInfo(OAuth2Authentication authentication) {
+        User user = new User();
+        user.setAccount(String.valueOf(authentication.getPrincipal()));
+        User dbUser = userService.getOne(new QueryWrapper<>(user));
+        if (!Optional.ofNullable(dbUser).isPresent()) {
+            throw new UsernameNotFoundException("用户名或密码错误");
+        }
+        return userService.createLoginUser(dbUser, XAuthClientDetailsService.CLIENT.get());
     }
 
 }

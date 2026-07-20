@@ -89,6 +89,7 @@ public class TenantController {
      */
     @ApiOperation(value = "查询租户列表")
     @GetMapping()
+    @Auth(roles = {XAuthRole.SUPPER_ADMIN})
     @XWebLogger(model = "租户管理", option = Option.SELECT, description = "查询了租户列表")
     public RespPageResult<Tenant> selectTenants(@FormBody PageRequest request) {
         return RespPageResult.builder()

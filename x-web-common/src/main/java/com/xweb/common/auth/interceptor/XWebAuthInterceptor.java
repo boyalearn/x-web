@@ -11,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -63,12 +64,12 @@ public class XWebAuthInterceptor implements HandlerInterceptor {
         if (null != roles && roles.length != 0) {
             Object userRoles = loginInfo.get(ROLE_KEY);
             if (null == userRoles) {
-                throw new BusinessException(BusinessException.AUTH_EXCEPTION, "your role not access");
+                throw new BusinessException(BusinessException.AUTH_EXCEPTION, "无权限");
             }
-            String roleStr = String.valueOf(userRoles);
+            List tokenRoles = (List)userRoles;
             for (String role : roles) {
-                if (!roleStr.contains(role)) {
-                    throw new BusinessException(BusinessException.AUTH_EXCEPTION, "your role not access");
+                if (!tokenRoles.contains(role)) {
+                    throw new BusinessException(BusinessException.AUTH_EXCEPTION, "无权限");
                 }
             }
         }
@@ -79,12 +80,12 @@ public class XWebAuthInterceptor implements HandlerInterceptor {
         if (null != resources && resources.length != 0) {
             Object userResources = loginInfo.get(RESOURCE_KEY);
             if (null == userResources) {
-                throw new BusinessException(BusinessException.AUTH_EXCEPTION, "your auth not access");
+                throw new BusinessException(BusinessException.AUTH_EXCEPTION, "无权限");
             }
-            String resourceStr = String.valueOf(userResources);
+            List tokenResource = (List)userResources;
             for (String resource : resources) {
-                if (!resourceStr.contains(resource)) {
-                    throw new BusinessException(BusinessException.AUTH_EXCEPTION, "your auth not access");
+                if (!tokenResource.contains(resource)) {
+                    throw new BusinessException(BusinessException.AUTH_EXCEPTION, "无权限");
                 }
             }
         }
