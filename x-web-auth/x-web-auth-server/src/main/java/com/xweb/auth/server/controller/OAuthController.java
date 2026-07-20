@@ -1,10 +1,11 @@
 package com.xweb.auth.server.controller;
 
 
-import com.xweb.auth.server.oauth.XAuthTokenEnhancer;
+import com.xweb.auth.server.oauth.XAuthAccessTokenEnhancer;
 import com.xweb.auth.server.service.IXAuthLoginService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,11 +28,9 @@ public class OAuthController {
 
     private IXAuthLoginService loginService;
 
-    private XAuthTokenEnhancer tokenEnhancer;
 
-    public OAuthController(IXAuthLoginService loginService, XAuthTokenEnhancer tokenEnhancer) {
+    public OAuthController(IXAuthLoginService loginService) {
         this.loginService = loginService;
-        this.tokenEnhancer = tokenEnhancer;
     }
 
     /**
@@ -77,9 +76,21 @@ public class OAuthController {
      * @return
      */
     @GetMapping("/xauth/error")
-    public String error(Model model) {
+    public String getError(Model model,HttpServletRequest request) {
+        System.out.println(request.getQueryString());
+        OAuth2Exception auth2Exception = (OAuth2Exception)request.getAttribute("error");
+        model.addAttribute("error",auth2Exception.getMessage());
         return "xauth-error";
     }
+
+    @PostMapping("/xauth/error")
+    public String postError(Model model,HttpServletRequest request) {
+        System.out.println(request.getQueryString());
+        OAuth2Exception auth2Exception = (OAuth2Exception)request.getAttribute("error");
+        model.addAttribute("error",auth2Exception.getMessage());
+        return "xauth-error";
+    }
+
 
     /**
      * 解析token信息
@@ -91,6 +102,6 @@ public class OAuthController {
     @GetMapping("/xauth/token")
     @ResponseBody
     public Map<String, Object> token(String token) {
-        return tokenEnhancer.decode(token);
+        return null;//tokenEnhancer.decode(token);
     }
 }

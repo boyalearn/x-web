@@ -32,6 +32,9 @@ public class XAuthLoginServiceImpl implements IXAuthLoginService {
 
     private static final String CLIENT_ID = "clientId";
 
+    private static final String CLIENT_NAME = "clientName";
+
+
     private static final String AUTHORIZATION_REQUEST = "authorizationRequest";
 
     @Override
@@ -48,6 +51,8 @@ public class XAuthLoginServiceImpl implements IXAuthLoginService {
         AuthorizationRequest authorizationRequest = (AuthorizationRequest) model.get(AUTHORIZATION_REQUEST);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject(CLIENT_ID, authorizationRequest.getClientId());
+        modelAndView.addObject(CLIENT_NAME, authorizationRequest.getClientId());
+
         modelAndView.addObject(SCOPE, authorizationRequest.getScope());
         modelAndView.setViewName(GRANT_TEMPLATE);
         return modelAndView;

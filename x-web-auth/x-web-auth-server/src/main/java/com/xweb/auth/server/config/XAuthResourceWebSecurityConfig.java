@@ -1,25 +1,12 @@
 package com.xweb.auth.server.config;
 
-import com.xweb.auth.server.oauth.XAuthAuthenticationManager;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 @Configuration
 public class XAuthResourceWebSecurityConfig extends WebSecurityConfigurerAdapter {
-
-    /**
-     * 支持授权码的方式
-     *
-     * @return
-     * @throws Exception
-     */
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return new XAuthAuthenticationManager();
-    }
 
     /**
      * security配置
@@ -30,9 +17,9 @@ public class XAuthResourceWebSecurityConfig extends WebSecurityConfigurerAdapter
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests().mvcMatchers("/xauth/**","/xauth/**/**").permitAll()
+                .mvcMatchers("/oauth/authorize").authenticated()
                 .and()
                 .formLogin().loginPage("/login").loginProcessingUrl("/login")
-                //.authenticationDetailsSource(authenticationDetailsSource)
                 .and()
                 .csrf().disable();
         http.headers().frameOptions().sameOrigin();

@@ -2,6 +2,7 @@ package com.xweb.auth.server.oauth;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 
@@ -16,61 +17,13 @@ import java.util.Set;
  ******************************/
 @Getter
 @Setter
-public class XAuthOAuth2AccessToken implements OAuth2AccessToken {
+public class XAuthOAuth2AccessToken extends DefaultOAuth2AccessToken {
 
-    private Map<String, Object> additionalInformation;
-
-    private Set<String> scope;
-
-    private OAuth2RefreshToken refreshToken;
-
-    private String tokenType;
-
-    private boolean expired;
-
-    private Date expiration;
-
-    private String value;
-
-    private int expiresIn;
-
-    @Override
-    public Map<String, Object> getAdditionalInformation() {
-        return additionalInformation;
+    public XAuthOAuth2AccessToken(String value) {
+        super(value);
     }
 
-    @Override
-    public Set<String> getScope() {
-        return scope;
-    }
-
-    @Override
-    public OAuth2RefreshToken getRefreshToken() {
-        return null;
-    }
-
-    @Override
-    public String getTokenType() {
-        return tokenType;
-    }
-
-    @Override
-    public boolean isExpired() {
-        return expired;
-    }
-
-    @Override
-    public Date getExpiration() {
-        return expiration;
-    }
-
-    @Override
-    public int getExpiresIn() {
-        return expiresIn;
-    }
-
-    @Override
-    public String getValue() {
-        return value;
+    public XAuthOAuth2AccessToken(OAuth2AccessToken accessToken) {
+        super(accessToken);
     }
 }

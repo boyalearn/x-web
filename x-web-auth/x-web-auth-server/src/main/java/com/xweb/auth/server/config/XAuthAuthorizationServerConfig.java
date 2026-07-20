@@ -1,6 +1,8 @@
 package com.xweb.auth.server.config;
 
 import com.xweb.auth.server.oauth.*;
+import com.xweb.auth.server.service.IClientService;
+import com.xweb.auth.server.service.IUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,12 +18,10 @@ import org.springframework.security.oauth2.provider.token.store.InMemoryTokenSto
 @AllArgsConstructor
 public class XAuthAuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    private XAuthClientDetailsService clientDetailsService;
+    private IClientService clientService;
 
-    private XAuthTokenEnhancer xAuthTokenEnhancer;
+    private IUserService userService;
 
-
-    private XAuthUserDetailsService xAuthUserDetailsService;
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
@@ -35,10 +35,11 @@ public class XAuthAuthorizationServerConfig extends AuthorizationServerConfigure
      *
      * @param clients
      * @throws Exception
+     *
      */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.withClientDetails(clientDetailsService);
+        clients.withClientDetails(new XAuthClientDetailsService(clientService));
     }
 
     /**
@@ -49,15 +50,16 @@ public class XAuthAuthorizationServerConfig extends AuthorizationServerConfigure
      */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-
-        endpoints.authenticationManager(new XAuthAuthenticationManager())
-                .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE)
+        endpoints.authenticationManager(new XAuthAuthenticationManager(new XAuthUserDetailsService(userService)))
                 .tokenStore(new InMemoryTokenStore())
-                .tokenEnhancer(xAuthTokenEnhancer)
+                .exceptionTranslator(new XAuthWebResponseExceptionTranslator())
+                .tokenEnhancer(new XAuthAccessTokenEnhancer())
                 .accessTokenConverter(new XAuthAccessTokenConverter())
-                .userDetailsService(xAuthUserDetailsService);
-        endpoints.pathMapping("/oauth/confirm_access", "/xauth/confirm_access")
+                .userDetailsService(new XAuthUserDetailsService(userService))
+                .pathMapping("/oauth/confirm_access", "/xauth/confirm_access")
                 .pathMapping("/oauth/error", "/xauth/error")
-                .allowedTokenEndpointRequestMethods(HttpMethod.POST);
+                .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE);
     }
+
+
 }

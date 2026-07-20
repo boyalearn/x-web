@@ -15,7 +15,6 @@ import java.util.Optional;
  * 作者姓名: zouhuixing
  * 创建时间: 2022/8/28 0:56
  ******************************/
-@Component
 public class XAuthClientDetailsService implements ClientDetailsService {
 
     private IClientService clientService;
