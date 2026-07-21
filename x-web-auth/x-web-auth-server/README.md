@@ -1,0 +1,1 @@
+http://localhost:8082/oauth/authorize?response_type=code&client_id=3907736e-c56b-4b05-8363-d7d70976ca09&state=xyz&redirect_uri=http://localhost:3000
