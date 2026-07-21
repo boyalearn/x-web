@@ -30,24 +30,12 @@ public class XAuthResourceWebSecurityConfig extends WebSecurityConfigurerAdapter
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().mvcMatchers("/roles","/roles/**").permitAll()
-                .mvcMatchers("/oauth/authorize").authenticated()
+        http.authorizeRequests().mvcMatchers("/oauth/authorize").authenticated()
                 .and()
                 .formLogin().loginPage("/login").loginProcessingUrl("/login")
                 .and()
-                .csrf().disable();//.cors().configurationSource(corsConfigurationSource());
+                .csrf().disable();
         http.headers().frameOptions().sameOrigin();
-    }
-
-    // 定义CORS配置源
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")); // 允许的方法列表
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type")); // 允许的头部列表
-        configuration.setAllowCredentials(true); // 允许携带cookie等认证信息
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // 对所有路径应用CORS配置
-        return source;
     }
 
     @Override
