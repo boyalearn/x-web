@@ -19,6 +19,7 @@
         <module>x-web-extends</module>
         <module>x-web-demo</module>
         <module>x-web-spring-boot-starter</module>
+        <module>x-web-akka</module>
     </modules>
 
     <properties>
