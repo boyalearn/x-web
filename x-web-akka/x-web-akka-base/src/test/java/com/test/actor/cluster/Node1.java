@@ -15,9 +15,10 @@ public class Node1 {
         Config config = ConfigFactory
                 .parseResources("application1.conf")
                 .withFallback(ConfigFactory.load());
-        ActorSystem system = ActorSystem.create("Akkademy",config);
+        ActorSystem system = ActorSystem.create("Akkademy", config);
         system.actorOf(Props.create(ClusterController.class), "clusterController");
         ActorRef workers = system.actorOf(new BalancingPool(5).props(Props.create(EchoActor.class)), "workers");
         ((ClusterReceptionistExtension) ClusterReceptionistExtension.apply(system)).registerService(workers);
+
     }
 }

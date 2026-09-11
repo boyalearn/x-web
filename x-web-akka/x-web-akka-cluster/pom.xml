@@ -1,0 +1,69 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.xweb</groupId>
+        <artifactId>x-web-akka</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>x-web-akka-cluster</artifactId>
+
+    <properties>
+        <akka.version>2.6.14</akka.version> <!-- Akka 2.6 最稳定终版 -->
+        <akka.management.version>1.1.4</akka.management.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <!-- 这是akka的基础组件依赖 -->
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-actor_2.13</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+        <dependency>
+            <!-- 这是akka的远程调用依赖 -->
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-remote_2.13</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+        <dependency>
+            <!-- 这是akka的集群配置依赖 -->
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-cluster_2.13</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.typesafe.akka</groupId>-->
+        <!--            <artifactId>akka-contrib_2.13</artifactId>-->
+        <!--            <version>2.5.32</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.scala-lang.modules</groupId>-->
+        <!--            <artifactId>scala-java8-compat_2.13</artifactId>-->
+        <!--            <version>1.0.2</version>-->
+        <!--        </dependency>-->
+        <dependency>
+            <groupId>com.lightbend.akka.management</groupId>
+            <artifactId>akka-management-cluster-http_2.13</artifactId>
+            <version>${akka.management.version}</version>
+        </dependency>
+
+        <dependency>
+            <!-- 这是akka的集群配置依赖 -->
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-testkit_2.13</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
