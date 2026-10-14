@@ -30,8 +30,8 @@ public class LogicPlain {
     }
 
 
-    private void doLogicPlan(Item item, List<SqlOperator> operators){
-        if(item instanceof BaseSelect){
+    private void doLogicPlan(tatement item, List<SqlOperator> operators){
+        if(item instanceof BaseSelect){S
             BaseSelect baseSelect = (BaseSelect) item;
             final List<Table> tableItems = baseSelect.getTableItems();
             if(Optional.ofNullable(tableItems).isPresent() && tableItems.size()>0){
