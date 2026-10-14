@@ -10,6 +10,12 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>x-web-extends</artifactId>
     <packaging>pom</packaging>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
     <modules>
         <module>x-web-extends-logger</module>
         <module>x-web-extends-mybatis</module>
@@ -18,10 +24,8 @@
         <module>x-web-extends-driver</module>
         <module>x-web-extends-excel</module>
         <module>x-web-extends-algorithm</module>
+        <module>x-web-extends-sql-executor</module>
     </modules>
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
+
 
 </project>

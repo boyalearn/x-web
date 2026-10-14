@@ -1,4 +1,4 @@
 package com.xweb.sql.core.common;
 
-public interface Statement {
+public interface Statement extends Item{
 }
