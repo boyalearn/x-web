@@ -1,5 +1,6 @@
 package com.xweb.sql.operator;
 
+import com.xweb.sql.core.common.BooleanExpression;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,11 +8,15 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class JoinTableOperator extends AbstractOperator{
+public class JoinTableOperator implements SqlOperator{
 
-    private String table;
+    private SqlOperator leftOperator;
 
-    private String joinTable;
+    private SqlOperator rightOperator;
+
+    private JoinType joinType;
+
+    private BooleanExpression booleanExpression;
 
     @Override
     public void open() {
@@ -20,11 +25,22 @@ public class JoinTableOperator extends AbstractOperator{
 
     @Override
     public Object next() {
+
+        if(joinType == JoinType.LEFT_JOIN){
+
+        }else if(joinType == JoinType.INNER_JOIN){
+            final Object left = leftOperator.next();
+        }
+
         return null;
     }
 
     @Override
     public void close() {
 
+    }
+
+    public static enum JoinType{
+        LEFT_JOIN,RIGHT_JOIN,OUTER_JOIN,INNER_JOIN;
     }
 }
