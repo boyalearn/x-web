@@ -10,7 +10,7 @@ import java.util.*;
 
 @Getter
 @Setter
-public class TableScanOperator implements SqlOperator{
+public class TableScanOperator extends AbstractOperator{
 
     private String tableName;
 
@@ -21,8 +21,8 @@ public class TableScanOperator implements SqlOperator{
     private BooleanExpression booleanExpression;
 
     private File file;
-    BufferedReader br;
 
+    BufferedReader br;
 
     public TableScanOperator(String tableName){
         this.tableName = tableName;

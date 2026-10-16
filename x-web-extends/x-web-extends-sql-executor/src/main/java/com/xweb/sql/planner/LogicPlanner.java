@@ -39,7 +39,8 @@ public class LogicPlanner {
             if(tableItems.size()>1){
                 for (int i = 1; i < tableItems.size(); i++) {
                     final SqlOperator secondOperator = planTable(tableItems.get(i));
-                    firstOperator = new JoinTableOperator(firstOperator,secondOperator, JoinTableOperator.JoinType.INNER_JOIN, baseSelect.getWhereExpression());
+                    firstOperator = new JoinTableOperator(firstOperator,secondOperator, JoinTableOperator.JoinType.INNER_JOIN,
+                            PlannerUtil.analysisJoinConditionMap(((AbstractOperator)firstOperator).getAlias(),((AbstractOperator)secondOperator).getAlias(),baseSelect.getWhereExpression()));
                 }
             }
             return firstOperator;
@@ -51,10 +52,12 @@ public class LogicPlanner {
 
     private SqlOperator planTable(Table table){
         if(table instanceof SimpleTable){
-            return new TableScanOperator(((SimpleTable) table).getTableName());
+            SimpleTable simpleTable = (SimpleTable) table;
+            final TableScanOperator tableScanOperator = new TableScanOperator(simpleTable.getTableName());
+            tableScanOperator.setAlias(simpleTable.getAlias());
+            return tableScanOperator;
         }else if (table instanceof BaseSelect){
             return planBasicSelect((BaseSelect) table);
-
         }else if(table instanceof UnionTableTable){
             UnionTableTable unionTableTable=(UnionTableTable) table;
             final List<UnionTableTable.UnionTableItem> unionTableItems = unionTableTable.getUnionTableItems();

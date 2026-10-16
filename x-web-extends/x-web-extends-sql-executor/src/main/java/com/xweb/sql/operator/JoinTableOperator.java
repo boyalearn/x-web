@@ -4,11 +4,15 @@ import com.xweb.sql.core.common.BooleanExpression;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
+
+import java.util.Map;
+import java.util.Set;
 
 @AllArgsConstructor
 @Getter
 @Setter
-public class JoinTableOperator implements SqlOperator{
+public class JoinTableOperator extends AbstractOperator{
 
     private SqlOperator leftOperator;
 
@@ -16,7 +20,7 @@ public class JoinTableOperator implements SqlOperator{
 
     private JoinType joinType;
 
-    private BooleanExpression booleanExpression;
+    private Map<String,String> conditionMap;
 
     @Override
     public void open() {
@@ -29,7 +33,18 @@ public class JoinTableOperator implements SqlOperator{
         if(joinType == JoinType.LEFT_JOIN){
 
         }else if(joinType == JoinType.INNER_JOIN){
-            final Object left = leftOperator.next();
+            final Map left = (Map)leftOperator.next();
+            rightOperator.open();
+            Map right = (Map) rightOperator.next();
+            while (null != right){
+                final Set<String> keys = conditionMap.keySet();
+                for (String key : keys) {
+                    if(left.get(key).equals(right.get(conditionMap.get(key)))){
+                        return left;
+                    }
+                }
+                right = (Map)rightOperator.next();
+            }
         }
 
         return null;

@@ -3,7 +3,7 @@ package com.xweb.sql.operator;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class UnionOperator implements SqlOperator{
+public class UnionOperator extends AbstractOperator{
 
     private SqlOperator sqlOperator;
 

@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import java.util.Optional;
 
 @AllArgsConstructor
-public class LimitOperator implements SqlOperator{
+public class LimitOperator extends AbstractOperator{
 
     private SqlOperator operator;
 

@@ -1,6 +1,6 @@
 package com.xweb.sql.operator;
 
-public class ProjectOperator implements SqlOperator{
+public class ProjectOperator extends AbstractOperator{
     @Override
     public void open() {
 
