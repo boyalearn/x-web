@@ -1,5 +1,6 @@
 package com.xweb.sql.operator;
 
+import com.xweb.sql.result.Page;
 import lombok.AllArgsConstructor;
 
 import java.util.Optional;
@@ -19,7 +20,7 @@ public class LimitOperator extends AbstractOperator{
     }
 
     @Override
-    public Object next() {
+    public Page next() {
         final Object nextData = operator.next();
 
         if(index>=limit){

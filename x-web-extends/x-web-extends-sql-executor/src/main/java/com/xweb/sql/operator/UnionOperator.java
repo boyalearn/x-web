@@ -1,5 +1,6 @@
 package com.xweb.sql.operator;
 
+import com.xweb.sql.result.Page;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -17,7 +18,7 @@ public class UnionOperator extends AbstractOperator{
     }
 
     @Override
-    public Object next() {
+    public Page next() {
         return null;
     }
 

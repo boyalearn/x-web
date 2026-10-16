@@ -1,6 +1,7 @@
 package com.xweb.sql.operator;
 
 import com.xweb.sql.core.common.BooleanExpression;
+import com.xweb.sql.result.Page;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,7 +29,7 @@ public class JoinTableOperator extends AbstractOperator{
     }
 
     @Override
-    public Object next() {
+    public Page next() {
 
         if(joinType == JoinType.LEFT_JOIN){
 
@@ -40,7 +41,7 @@ public class JoinTableOperator extends AbstractOperator{
                 final Set<String> keys = conditionMap.keySet();
                 for (String key : keys) {
                     if(left.get(key).equals(right.get(conditionMap.get(key)))){
-                        return left;
+                        return new Page();
                     }
                 }
                 right = (Map)rightOperator.next();

@@ -2,6 +2,7 @@ package com.xweb.sql.operator;
 
 import com.xweb.sql.GlobalConfig;
 import com.xweb.sql.core.common.BooleanExpression;
+import com.xweb.sql.result.Page;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -50,7 +51,7 @@ public class TableScanOperator extends AbstractOperator{
     }
 
     @Override
-    public Object next() {
+    public Page next() {
         try {
             String line = br.readLine();
             final String[] split = line.split(",");
@@ -58,7 +59,7 @@ public class TableScanOperator extends AbstractOperator{
             for (int i = 0; i < tableHeader.size(); i++) {
                 data.put(tableHeader.get(i),split[i]);
             }
-            return data;
+            return new Page();
         } catch (IOException e) {
             e.printStackTrace();
         }
