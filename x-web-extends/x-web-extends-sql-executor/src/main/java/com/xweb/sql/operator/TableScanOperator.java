@@ -1,19 +1,30 @@
 package com.xweb.sql.operator;
 
 import com.xweb.sql.GlobalConfig;
+import com.xweb.sql.core.StringUtil;
 import com.xweb.sql.core.common.BooleanExpression;
-import com.xweb.sql.result.Page;
+import com.xweb.sql.data.DefaultSlice;
+import com.xweb.sql.data.Page;
+import com.xweb.sql.data.Row;
+import com.xweb.sql.metadata.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Getter
 @Setter
 public class TableScanOperator extends AbstractOperator{
 
     private String tableName;
+
+    private String alias;
 
     private List<String> columns;
 
@@ -25,8 +36,9 @@ public class TableScanOperator extends AbstractOperator{
 
     BufferedReader br;
 
-    public TableScanOperator(String tableName){
+    public TableScanOperator(String tableName,String alias){
         this.tableName = tableName;
+        this.alias = alias;
         this.file = new File(GlobalConfig.path+this.tableName+".csv");
         try {
             br = new BufferedReader(new FileReader(this.file));
@@ -52,18 +64,24 @@ public class TableScanOperator extends AbstractOperator{
 
     @Override
     public Page next() {
+        Page page = new Page();
         try {
             String line = br.readLine();
-            final String[] split = line.split(",");
-            Map<String,String> data = new HashMap<>();
-            for (int i = 0; i < tableHeader.size(); i++) {
-                data.put(tableHeader.get(i),split[i]);
+            if(StringUtil.isEmpty(line)){
+                return page;
             }
-            return new Page();
+            final String[] split = line.split(",");
+            Row row = new Row();
+            for (int i = 0; i < tableHeader.size(); i++) {
+                DefaultSlice slice = new DefaultSlice(new Table(tableName,alias),tableHeader.get(i),"String",split[i]);
+                row.addSlice(slice);
+            }
+            page.addRow(row);
+            return page;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return page;
     }
 
     @Override

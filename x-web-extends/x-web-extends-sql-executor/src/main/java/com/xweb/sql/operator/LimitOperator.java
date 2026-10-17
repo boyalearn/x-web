@@ -1,6 +1,6 @@
 package com.xweb.sql.operator;
 
-import com.xweb.sql.result.Page;
+import com.xweb.sql.data.Page;
 import lombok.AllArgsConstructor;
 
 import java.util.Optional;

@@ -53,7 +53,7 @@ public class LogicPlanner {
     private SqlOperator planTable(Table table){
         if(table instanceof SimpleTable){
             SimpleTable simpleTable = (SimpleTable) table;
-            final TableScanOperator tableScanOperator = new TableScanOperator(simpleTable.getTableName());
+            final TableScanOperator tableScanOperator = new TableScanOperator(simpleTable.getTableName(),simpleTable.getAlias());
             tableScanOperator.setAlias(simpleTable.getAlias());
             return tableScanOperator;
         }else if (table instanceof BaseSelect){
