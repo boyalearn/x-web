@@ -1,6 +1,6 @@
 package com.xweb.sql.data;
 
-import com.xweb.sql.metadata.Table;
+import com.xweb.sql.metadata.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,9 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DefaultSlice implements Slice{
 
-    private Table table;
-
-    private String columnName;
+    private Column column;
 
     private String type;
 
@@ -20,12 +18,7 @@ public class DefaultSlice implements Slice{
 
 
     @Override
-    public Table getTable() {
-        return this.table;
-    }
-
-    @Override
-    public String getColumn() {
-        return this.getColumnName();
+    public Column getColumn() {
+        return this.column;
     }
 }

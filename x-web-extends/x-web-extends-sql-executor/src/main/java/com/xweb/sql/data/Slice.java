@@ -1,12 +1,10 @@
 package com.xweb.sql.data;
 
-import com.xweb.sql.metadata.Table;
+import com.xweb.sql.metadata.Column;
 
 public interface Slice {
 
-    Table getTable();
-
-    String getColumn();
+    Column getColumn();
 
     Object getData();
 }

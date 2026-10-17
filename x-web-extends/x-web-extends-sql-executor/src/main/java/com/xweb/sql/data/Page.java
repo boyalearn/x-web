@@ -1,13 +1,8 @@
 package com.xweb.sql.data;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
 public class Page {
 
     private List<Row> rows;
@@ -23,6 +18,10 @@ public class Page {
 
     public void addRows(List<Row> rowList){
         this.rows.addAll(rowList);
+    }
+
+    public List<Row> getRows(){
+        return this.rows;
     }
 
     public boolean isEmpty(){

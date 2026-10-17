@@ -25,11 +25,11 @@ public class Row {
     }
 
     public void addSlice(Slice slice){
-        String tableName = StringUtil.isEmpty(slice.getTable().getTableName())?EMPTY_TABLE_NAME:slice.getTable().getTableName();
+        String tableName = StringUtil.isEmpty(slice.getColumn().getTable().getName())?EMPTY_TABLE_NAME:slice.getColumn().getTable().getName();
         if(this.dic.get(tableName) == null){
             this.dic.put(tableName,new HashMap<>());
         }
-        this.dic.get(tableName).put(slice.getColumn(),slice);
+        this.dic.get(tableName).put(slice.getColumn().getName(),slice);
         this.slices.add(slice);
     }
 
@@ -45,7 +45,7 @@ public class Row {
         String name = StringUtil.isEmpty(tableName)?EMPTY_TABLE_NAME:tableName;
         if(dic.get(name) == null){
             for (Slice slice : this.slices) {
-                if(slice.getTable().getAlias().equals(name)){
+                if(slice.getColumn().getTable().getAlias().equals(name)){
                     return slice;
                 }
             }

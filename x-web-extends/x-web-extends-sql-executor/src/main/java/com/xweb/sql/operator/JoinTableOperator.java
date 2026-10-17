@@ -52,9 +52,9 @@ public class JoinTableOperator extends AbstractOperator{
                     for (Row rightRow : rightRows) {
                         final Set<Column> keys = conditionMap.keySet();
                         for (Column key : keys) {
-                            final Slice leftSlice = row.getSliceByColumnName(key.getTable().getAlias(), key.getColumnName());
+                            final Slice leftSlice = row.getSliceByColumnName(key.getTable().getAlias(), key.getName());
                             Column value = conditionMap.get(key);
-                            final Slice rightSlice = rightRow.getSliceByColumnName(value.getTable().getAlias(), value.getColumnName());
+                            final Slice rightSlice = rightRow.getSliceByColumnName(value.getTable().getAlias(), value.getName());
                             if(leftSlice.getData().equals(rightSlice.getData())){
                                 Row result = new Row();
                                 result.addSlices(row.getSlices());

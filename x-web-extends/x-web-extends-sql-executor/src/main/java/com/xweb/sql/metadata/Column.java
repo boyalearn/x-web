@@ -9,5 +9,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Column {
     private Table table;
-    private String columnName;
+    private String name;
 }
