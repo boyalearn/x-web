@@ -1,8 +1,18 @@
 package com.xweb.sql.operator;
 
+import com.xweb.sql.core.common.Item;
 import com.xweb.sql.data.Page;
+import lombok.AllArgsConstructor;
 
+import java.util.List;
+
+@AllArgsConstructor
 public class ProjectOperator extends AbstractOperator{
+
+    private List<Item> items;
+
+    private SqlOperator operator;
+
     @Override
     public void open() {
 
@@ -10,7 +20,13 @@ public class ProjectOperator extends AbstractOperator{
 
     @Override
     public Page next() {
-        return null;
+        Page page = new Page();
+        Page next = operator.next();
+        while (!next.isEmpty()){
+            page.addRows(next.getRows());
+            next = operator.next();
+        }
+        return page;
     }
 
     @Override

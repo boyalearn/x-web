@@ -43,10 +43,9 @@ public class LogicPlanner {
                             PlannerUtil.analysisJoinConditionMap(((AbstractOperator)firstOperator).getAlias(),((AbstractOperator)secondOperator).getAlias(),baseSelect.getWhereExpression()));
                 }
             }
-            return firstOperator;
         }
 
-        return new ProjectOperator();
+        return new ProjectOperator(baseSelect.getSelectItems(),firstOperator);
 
     }
 
