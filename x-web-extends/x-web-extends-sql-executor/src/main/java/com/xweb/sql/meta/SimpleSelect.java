@@ -3,6 +3,7 @@ package com.xweb.sql.meta;
 
 import com.xweb.sql.meta.expression.BooleanExpression;
 import com.xweb.sql.meta.item.AbstractItem;
+import com.xweb.sql.meta.item.OrderItem;
 import com.xweb.sql.meta.item.TableItem;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +22,7 @@ public class SimpleSelect extends AbstractItem implements Select {
 
     private List<Item> groupItems;
 
-    private List<Item> orderItems;
+    private List<OrderItem> orderItems;
 
     private BooleanExpression havingExpression;
 

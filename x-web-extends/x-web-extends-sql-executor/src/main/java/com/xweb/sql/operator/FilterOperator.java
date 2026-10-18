@@ -8,6 +8,7 @@ import com.xweb.sql.meta.expression.ColumnValueExpression;
 import com.xweb.sql.meta.expression.ComplexBoolExpression;
 import com.xweb.sql.meta.expression.TableAssociationExpression;
 import com.xweb.sql.meta.item.Column;
+import com.xweb.sql.operator.util.CalculatorUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class FilterOperator implements SqlOperator {
         if (!next.isEmpty()) {
             List<Row> rows = next.getRows();
             for (Row row : rows) {
-                if (isMatch(row)) {
+                if (CalculatorUtil.compute(row,booleanExpression)) {
                     result.addRow(row);
                 }
             }

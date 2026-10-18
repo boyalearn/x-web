@@ -5,13 +5,11 @@ import com.xweb.sql.data.Row;
 import com.xweb.sql.data.Slice;
 import com.xweb.sql.meta.expression.TableAssociationExpression;
 import com.xweb.sql.meta.item.Column;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
-@AllArgsConstructor
 @Getter
 @Setter
 public class JoinTableOperator extends AbstractOperator {
@@ -24,6 +22,12 @@ public class JoinTableOperator extends AbstractOperator {
 
     private List<TableAssociationExpression> tableAssociations;
 
+    public JoinTableOperator(SqlOperator left,SqlOperator right,JoinType type){
+        this.leftOperator = left;
+        this.rightOperator = right;
+        this.joinType = type;
+    }
+
     @Override
     public void open() {
 
@@ -32,9 +36,9 @@ public class JoinTableOperator extends AbstractOperator {
     @Override
     public Page next() {
         Page page = new Page();
-        if (joinType == JoinType.LEFT_JOIN) {
+        if (joinType == JoinType.LEFT) {
 
-        } else if (joinType == JoinType.INNER_JOIN) {
+        } else if (joinType == JoinType.INNER) {
             final Page leftPage = leftOperator.next();
             if (leftPage.isEmpty()) {
                 return page;
@@ -91,6 +95,6 @@ public class JoinTableOperator extends AbstractOperator {
     }
 
     public static enum JoinType {
-        LEFT_JOIN, RIGHT_JOIN, OUTER_JOIN, INNER_JOIN;
+        LEFT, RIGHT, OUTER, INNER;
     }
 }
