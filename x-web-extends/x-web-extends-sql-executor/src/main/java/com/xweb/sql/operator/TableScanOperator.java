@@ -6,8 +6,8 @@ import com.xweb.sql.core.common.BooleanExpression;
 import com.xweb.sql.data.DefaultSlice;
 import com.xweb.sql.data.Page;
 import com.xweb.sql.data.Row;
-import com.xweb.sql.metadata.Column;
-import com.xweb.sql.metadata.Table;
+import com.xweb.sql.meta.item.Column;
+import com.xweb.sql.meta.item.SimpleTableItem;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +21,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class TableScanOperator extends AbstractOperator{
+public class TableScanOperator extends AbstractOperator {
 
     private String tableName;
 
@@ -37,10 +37,10 @@ public class TableScanOperator extends AbstractOperator{
 
     BufferedReader br;
 
-    public TableScanOperator(String tableName,String alias){
+    public TableScanOperator(String tableName, String alias) {
         this.tableName = tableName;
         this.alias = alias;
-        this.file = new File(GlobalConfig.path+this.tableName+".csv");
+        this.file = new File(GlobalConfig.path + this.tableName + ".csv");
         try {
             br = new BufferedReader(new FileReader(this.file));
             String line = br.readLine();
@@ -58,7 +58,7 @@ public class TableScanOperator extends AbstractOperator{
             String line = br.readLine();
             final String[] split = line.split(",");
             this.tableHeader = new ArrayList(Arrays.asList(split));
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -68,13 +68,13 @@ public class TableScanOperator extends AbstractOperator{
         Page page = new Page();
         try {
             String line = br.readLine();
-            if(StringUtil.isEmpty(line)){
+            if (StringUtil.isEmpty(line)) {
                 return page;
             }
             final String[] split = line.split(",");
             Row row = new Row();
             for (int i = 0; i < tableHeader.size(); i++) {
-                DefaultSlice slice = new DefaultSlice(new Column(new Table(tableName,alias),tableHeader.get(i)),"String",split[i]);
+                DefaultSlice slice = new DefaultSlice(new Column(new SimpleTableItem(tableName, alias), tableHeader.get(i)), "String", split[i]);
                 row.addSlice(slice);
             }
             page.addRow(row);

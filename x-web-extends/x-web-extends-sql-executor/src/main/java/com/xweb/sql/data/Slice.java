@@ -1,6 +1,7 @@
 package com.xweb.sql.data;
 
-import com.xweb.sql.metadata.Column;
+
+import com.xweb.sql.meta.item.Column;
 
 public interface Slice {
 

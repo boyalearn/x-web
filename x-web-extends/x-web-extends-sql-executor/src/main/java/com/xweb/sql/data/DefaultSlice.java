@@ -1,6 +1,6 @@
 package com.xweb.sql.data;
 
-import com.xweb.sql.metadata.Column;
+import com.xweb.sql.meta.item.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

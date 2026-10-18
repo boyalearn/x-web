@@ -1,13 +1,11 @@
 package com.xweb.sql.planner;
 
-import com.xweb.sql.core.StringUtil;
-import com.xweb.sql.core.common.Item;
-import com.xweb.sql.core.common.Statement;
-import com.xweb.sql.core.common.Table;
-import com.xweb.sql.core.common.select.BaseSelect;
-import com.xweb.sql.core.common.table.SimpleTable;
-import com.xweb.sql.core.common.table.UnionTableTable;
-import com.xweb.sql.core.common.util.CommonSqlUtil;
+import com.xweb.sql.meta.Select;
+import com.xweb.sql.meta.SimpleSelect;
+import com.xweb.sql.meta.expression.BooleanExpression;
+import com.xweb.sql.meta.expression.TableAssociationExpression;
+import com.xweb.sql.meta.item.SimpleTableItem;
+import com.xweb.sql.meta.item.TableItem;
 import com.xweb.sql.operator.*;
 import com.xweb.sql.operator.exception.UnknownOperatorException;
 
@@ -16,67 +14,61 @@ import java.util.Optional;
 
 public class LogicPlanner {
 
-    private String sql;
+    private Select select;
 
-    public LogicPlanner(String sql){
-        this.sql = sql;
+    public LogicPlanner(Select select) {
+        this.select = select;
     }
 
-    public SqlOperator planQuery(){
-        final Statement statement = CommonSqlUtil.commonSqlToAST(this.sql);
-        if(statement instanceof BaseSelect){
-            return planBasicSelect((BaseSelect)statement);
+    public SqlOperator planQuery() {
+        if (this.select instanceof SimpleSelect) {
+            return planSimpleSelect((SimpleSelect) this.select);
         }
         throw new UnknownOperatorException("unknown implement operator!");
     }
 
-    private SqlOperator planBasicSelect(BaseSelect baseSelect){
-        final List<Table> tableItems = baseSelect.getTableItems();
-        SqlOperator firstOperator = null;
-        if(Optional.ofNullable(tableItems).isPresent() && !tableItems.isEmpty()){
-            final Table first = tableItems.get(0);
-            firstOperator = planTable(first);
-            if(tableItems.size()>1){
-                for (int i = 1; i < tableItems.size(); i++) {
-                    final SqlOperator secondOperator = planTable(tableItems.get(i));
-                    firstOperator = new JoinTableOperator(firstOperator,secondOperator, JoinTableOperator.JoinType.INNER_JOIN,
-                            PlannerUtil.analysisJoinConditionMap(((AbstractOperator)firstOperator).getAlias(),((AbstractOperator)secondOperator).getAlias(),baseSelect.getWhereExpression()));
+    private SqlOperator planSimpleSelect(SimpleSelect simpleSelect) {
+        SqlOperator operator = null;
+        List<TableItem> tableItems = simpleSelect.getTableItems();
+        if (!tableItems.isEmpty()) {
+            TableItem firstTableItem = tableItems.get(0);
+            operator = planTableItem(firstTableItem);
+            for (int i = 1; i < tableItems.size(); i++) {
+                TableItem tableItem = tableItems.get(i);
+                SqlOperator current = planTableItem(tableItem);
+                if (current instanceof TableScanOperator) {
+                    List<TableAssociationExpression> tableAssociationExpressions =
+                            TableAssociationAnalysis.analysis(
+                                    new SimpleTableItem("", firstTableItem.getAlias()),
+                                    new SimpleTableItem("", tableItem.getAlias()),
+                                    simpleSelect.getWhereExpression());
+                    operator = new JoinTableOperator(operator, current, JoinTableOperator.JoinType.INNER_JOIN, tableAssociationExpressions);
+                } else if (current instanceof JoinTableOperator) {
+                    JoinTableOperator joinTableOperator = (JoinTableOperator) current;
+                    joinTableOperator.setLeftOperator(operator);
+                    operator = joinTableOperator;
                 }
+                firstTableItem = tableItem;
             }
         }
-
-        return new ProjectOperator(baseSelect.getSelectItems(),firstOperator);
-
+        operator = new ProjectOperator(simpleSelect.getSelectItems(), operator);
+        BooleanExpression whereExpression = simpleSelect.getWhereExpression();
+        if (Optional.ofNullable(whereExpression).isPresent()) {
+            return new FilterOperator(operator, whereExpression);
+        }
+        return operator;
     }
 
-    private SqlOperator planTable(Table table){
-        if(table instanceof SimpleTable){
-            SimpleTable simpleTable = (SimpleTable) table;
-            final TableScanOperator tableScanOperator = new TableScanOperator(simpleTable.getTableName(),simpleTable.getAlias());
-            tableScanOperator.setAlias(simpleTable.getAlias());
-            return tableScanOperator;
-        }else if (table instanceof BaseSelect){
-            return planBasicSelect((BaseSelect) table);
-        }else if(table instanceof UnionTableTable){
-            UnionTableTable unionTableTable=(UnionTableTable) table;
-            final List<UnionTableTable.UnionTableItem> unionTableItems = unionTableTable.getUnionTableItems();
-            SqlOperator sqlOperator;
-            final SqlOperator leftOperator = planItem(unionTableTable.getLeft());
-            final UnionTableTable.UnionTableItem unionTableItem = unionTableItems.get(0);
-            sqlOperator = new UnionOperator(leftOperator,planItem(unionTableItem), StringUtil.isEmpty(unionTableItem.getAll())?Boolean.FALSE:Boolean.TRUE);
-            for (int i = 1; i < unionTableItems.size(); i++) {
-                sqlOperator = new UnionOperator(sqlOperator,planItem(unionTableItem), StringUtil.isEmpty(unionTableItem.getAll())?Boolean.FALSE:Boolean.TRUE);
-            }
-            return sqlOperator;
+    private SqlOperator planTableItem(TableItem tableItem) {
+        if (tableItem instanceof SimpleTableItem) {
+            SimpleTableItem simpleTableItem = (SimpleTableItem) tableItem;
+            LogicPlannerContext.setTableNameAlias(simpleTableItem.getAlias(), simpleTableItem.getName());
+            return new TableScanOperator(simpleTableItem.getName(), simpleTableItem.getAlias());
+        } else if (tableItem instanceof SimpleSelect) {
+            return planSimpleSelect((SimpleSelect) tableItem);
+        } else {
+            throw new RuntimeException();
         }
-        else{
-            throw new UnknownOperatorException("unknown implement operator!");
-        }
-    }
-
-
-    private SqlOperator planItem(Item item){
-        throw new UnknownOperatorException("unknown implement operator!");
     }
 
 

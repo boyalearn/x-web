@@ -1,4 +1,4 @@
-package com.xweb.sql.metadata;
+package com.xweb.sql.meta.item;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Column {
-    private Table table;
-    private String name;
+public class Constant extends AbstractItem {
+    private Object data;
 }

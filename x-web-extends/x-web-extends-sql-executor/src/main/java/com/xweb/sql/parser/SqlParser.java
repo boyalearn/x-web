@@ -1,6 +1,7 @@
 package com.xweb.sql.parser;
 
-import com.xweb.sql.metadata.select.Select;
+
+import com.xweb.sql.meta.Select;
 
 public interface SqlParser {
 

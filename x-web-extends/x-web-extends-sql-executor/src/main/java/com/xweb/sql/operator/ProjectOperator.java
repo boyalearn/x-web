@@ -1,7 +1,7 @@
 package com.xweb.sql.operator;
 
-import com.xweb.sql.core.common.Item;
 import com.xweb.sql.data.Page;
+import com.xweb.sql.meta.Item;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
