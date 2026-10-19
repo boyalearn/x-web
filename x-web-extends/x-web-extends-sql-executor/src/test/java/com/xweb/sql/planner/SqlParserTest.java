@@ -9,7 +9,7 @@ public class SqlParserTest {
     @Test
     public void test_0000000000001() {
         DefaultSqlParser defaultSqlParser = new DefaultSqlParser();
-        Select select = defaultSqlParser.parse("select * from aaaa a,bbbb b where a.aa=b.aab and b.aab='22'");
+        Select select = defaultSqlParser.parse("select a.aa,a.bb from aaaa a,bbbb b where a.aa=b.aab and b.aab='22'");
         System.out.println(select);
     }
 }

@@ -1,18 +1,25 @@
 package com.xweb.sql.operator;
 
 import com.xweb.sql.data.Page;
+import com.xweb.sql.data.Row;
 import lombok.AllArgsConstructor;
 
-import java.util.Optional;
+import java.util.List;
 
 @AllArgsConstructor
 public class LimitOperator extends AbstractOperator{
 
     private SqlOperator operator;
 
+    /**
+     * 条数
+     */
     private Long limit;
 
-    private Long index;
+    /**
+     * 偏移
+     */
+    private Long offset;
 
     @Override
     public void open() {
@@ -21,16 +28,20 @@ public class LimitOperator extends AbstractOperator{
 
     @Override
     public Page next() {
-        final Object nextData = operator.next();
-
-        if(index>=limit){
-            return null;
+        Page result =new Page();
+        long index = 0;
+        Page next = operator.next();
+        while (index<limit+offset && !next.isEmpty()){
+            final List<Row> rows = next.getRows();
+            for (Row row : rows) {
+                if(index>=offset){
+                    result.addRow(row);
+                }
+                index++;
+            }
+            next = operator.next();
         }
-
-        if(Optional.ofNullable(nextData).isPresent()){
-            index ++;
-        }
-        return null;
+        return result;
     }
 
     @Override

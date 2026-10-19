@@ -3,6 +3,7 @@ package com.xweb.sql.planner;
 import com.xweb.sql.meta.Item;
 import com.xweb.sql.meta.SimpleSelect;
 import com.xweb.sql.meta.expression.BooleanExpression;
+import com.xweb.sql.meta.item.Column;
 import com.xweb.sql.meta.item.OrderItem;
 import com.xweb.sql.meta.item.TableItem;
 import com.xweb.sql.operator.*;
@@ -29,6 +30,12 @@ public class SimpleSelectLogicPlanner implements SqlPlanner{
             CalculatorAnalysis.setCalculator(filterOperator, simpleSelect.getWhereExpression());
             operator = filterOperator;
         }
+        for (Item selectItem : selectItems) {
+            if(selectItem instanceof Column){
+                Column column = (Column) selectItem;
+                column.getTable().setName(LogicPlannerContext.getTableNameByAlias(column.getTable().getAlias()));
+            }
+        }
         final List<Item> groupItems =  simpleSelect.getGroupItems();
         final List<OrderItem> orderItems = simpleSelect.getOrderItems();
         if(Optional.ofNullable(groupItems).isPresent()&& !groupItems.isEmpty()){
@@ -38,7 +45,7 @@ public class SimpleSelectLogicPlanner implements SqlPlanner{
             }
             return operator;
         }
-        operator = new ProjectOperator(simpleSelect.getSelectItems(), operator);
+        operator = new ProjectOperator(selectItems, operator);
         if(Optional.ofNullable(orderItems).isPresent() && !orderItems.isEmpty()){
             operator = new OrderOperator(operator,orderItems);
         }

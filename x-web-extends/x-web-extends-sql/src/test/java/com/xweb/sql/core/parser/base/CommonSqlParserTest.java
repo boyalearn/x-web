@@ -28,6 +28,7 @@ public class CommonSqlParserTest {
                 "select id,name from aaa where id = 222",
                 "select * from aaa",
                 "select a.* from aaa a",
+                "select a.aa,a.bb from aaa a",
                 "select 1",
                 "select id,name from aaa where (id = 222 and  age= 22 ) or name= 'xxx'",
                 "select id, name  from aaa group by name,id ",

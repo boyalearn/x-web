@@ -46,7 +46,7 @@ public class DefaultSqlParser implements SqlParser {
         for (Item selectItem : selectItems) {
             if (selectItem instanceof TableColumnItem) {
                 TableColumnItem tableColumnItem = (TableColumnItem) selectItem;
-                Column column = new Column(new SimpleTableItem(tableColumnItem.getTableName()),tableColumnItem.getColumnName());
+                Column column = new Column(new SimpleTableItem("",tableColumnItem.getTableName()),tableColumnItem.getColumnName());
                 select.getSelectItems().add(column);
             } else if (selectItem instanceof SelectAllItem) {
                 AllColumnItem allColumnItem = new AllColumnItem();

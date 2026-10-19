@@ -437,6 +437,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
                 || expression instanceof ArithmeticExpression
                 || expression instanceof ConcatenationExpression
                 || expression instanceof IntervalExpression
+                || expression instanceof TableColumnItem
                 || expression instanceof SubIndexItem) {
             //nothing to do
         } else {
