@@ -682,7 +682,7 @@ public class CommonAstToSqlVisitor {
     public String visit(FunctionCallItem functionCallItem) {
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append(functionCallItem.getName() + LEFT_BRACKET);
-        final List<Object> params = functionCallItem.getParams();
+        final List<Item> params = functionCallItem.getParams();
         for (int i = 0; i < params.size(); i++) {
             if (i != 0) {
                 stringBuffer.append(COMMA);

@@ -333,12 +333,12 @@ public abstract class AbstractReplaceAstVisitor {
     }
 
     protected Object visit(FunctionCallItem functionCallItem) {
-        final List<Object> params = functionCallItem.getParams();
+        final List<Item> params = functionCallItem.getParams();
         if (Optional.ofNullable(params).isPresent()) {
             for (int i = 0; i < params.size(); i++) {
                 final Object param = visit(params.get(i));
                 if (param != params.get(i)) {
-                    params.set(i, param);
+                    params.set(i, (Item)param);
                 }
             }
         }
