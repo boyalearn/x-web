@@ -29,13 +29,14 @@ public class FilterOperator implements SqlOperator {
     public Page next() {
         Page result = new Page();
         Page next = operator.next();
-        if (!next.isEmpty()) {
+        while (result.isEmpty() && !next.isEmpty()) {
             List<Row> rows = next.getRows();
             for (Row row : rows) {
                 if (booleanCalculator.compute(row)) {
                     result.addRow(row);
                 }
             }
+            next = operator.next();
         }
         return result;
     }

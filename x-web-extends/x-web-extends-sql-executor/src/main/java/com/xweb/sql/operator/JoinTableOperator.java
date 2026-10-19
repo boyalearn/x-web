@@ -37,16 +37,25 @@ public class JoinTableOperator extends AbstractOperator {
         if (joinType == JoinType.LEFT) {
 
         } else if (joinType == JoinType.INNER) {
-            final Page leftPage = leftOperator.next();
-            if (leftPage.isEmpty()) {
-                return page;
-            }
-            final List<Row> rows = leftPage.getRows();
+            return innerJoin();
+        }
+
+        return page;
+    }
+
+    private Page innerJoin(){
+        Page page = new Page();
+        Page mainPage = leftOperator.next();
+        if (mainPage.isEmpty()) {
+            return page;
+        }
+        while (page.isEmpty()&&!mainPage.isEmpty()) {
+            final List<Row> rows = mainPage.getRows();
             for (Row row : rows) {
                 rightOperator.open();
                 Page rightPage = rightOperator.next();
                 if (rightPage.isEmpty()) {
-                    return page;
+                    continue;
                 }
                 while (!rightPage.isEmpty()) {
                     final List<Row> rightRows = rightPage.getRows();
@@ -61,9 +70,10 @@ public class JoinTableOperator extends AbstractOperator {
                     rightPage = rightOperator.next();
                 }
             }
-
+            if(page.isEmpty()){
+                mainPage = leftOperator.next();
+            }
         }
-
         return page;
     }
 

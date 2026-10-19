@@ -20,7 +20,7 @@ public class SqlPlannerTest {
 
     @Test
     public void test_00000000000001(){
-        String sql = "select * from aaaa a,bbbb b where a.aa=b.aab and b.aab=22";
+        String sql = "select * from aaaa a,bbbb b where a.aa=b.aab";
         final Page data = sqlExecutor.execute(sql);
         PageUtil.show(data);
     }
