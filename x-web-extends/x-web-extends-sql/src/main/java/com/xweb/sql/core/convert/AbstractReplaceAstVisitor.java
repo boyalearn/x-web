@@ -1,50 +1,22 @@
 package com.xweb.sql.core.convert;
 
-import com.xweb.sql.core.common.BooleanExpression;
-import com.xweb.sql.core.common.Item;
-import com.xweb.sql.core.common.Page;
-import com.xweb.sql.core.common.Select;
-import com.xweb.sql.core.common.Table;
+import com.xweb.sql.core.common.*;
 import com.xweb.sql.core.common.delete.SimpleDelete;
-import com.xweb.sql.core.common.expression.ArithmeticExpression;
-import com.xweb.sql.core.common.expression.BetweenAndExpression;
-import com.xweb.sql.core.common.expression.CommonConditionExpression;
-import com.xweb.sql.core.common.expression.ConcatenationExpression;
-import com.xweb.sql.core.common.expression.ExistExpression;
-import com.xweb.sql.core.common.expression.InExpression;
-import com.xweb.sql.core.common.expression.IntervalExpression;
-import com.xweb.sql.core.common.expression.IsNullExpression;
-import com.xweb.sql.core.common.expression.LeftAndRightExpression;
-import com.xweb.sql.core.common.expression.LikeExpression;
-import com.xweb.sql.core.common.expression.NotBooleanExpression;
-import com.xweb.sql.core.common.expression.PriorityExpression;
+import com.xweb.sql.core.common.expression.*;
 import com.xweb.sql.core.common.insert.AsQueryInsert;
 import com.xweb.sql.core.common.insert.OnDuplicateInsert;
 import com.xweb.sql.core.common.insert.SimpleInsert;
-import com.xweb.sql.core.common.item.CaseItem;
-import com.xweb.sql.core.common.item.ConstantItem;
-import com.xweb.sql.core.common.item.FunctionCallItem;
-import com.xweb.sql.core.common.item.LimitPageItem;
-import com.xweb.sql.core.common.item.OffsetPageItem;
-import com.xweb.sql.core.common.item.SelectAllItem;
-import com.xweb.sql.core.common.item.SubIndexItem;
-import com.xweb.sql.core.common.item.TableColumnItem;
-import com.xweb.sql.core.common.item.UnionSelectItem;
-import com.xweb.sql.core.common.item.WhenThenItem;
-import com.xweb.sql.core.common.merge.DeleteMergeOperator;
-import com.xweb.sql.core.common.merge.InsertMergeOperator;
-import com.xweb.sql.core.common.merge.MergeOperator;
-import com.xweb.sql.core.common.merge.SimpleMerge;
-import com.xweb.sql.core.common.merge.UpdateMergeOperator;
-import com.xweb.sql.core.common.merge.WhenMatchedThenOperatorItem;
+import com.xweb.sql.core.common.item.*;
+import com.xweb.sql.core.common.merge.*;
 import com.xweb.sql.core.common.order.DefaultOrderItem;
 import com.xweb.sql.core.common.order.OrderItem;
+import com.xweb.sql.core.common.page.LimitPageItem;
+import com.xweb.sql.core.common.page.OffsetPageItem;
 import com.xweb.sql.core.common.select.BaseSelect;
 import com.xweb.sql.core.common.select.UnionSelect;
 import com.xweb.sql.core.common.table.SimpleTable;
 import com.xweb.sql.core.common.table.UnionTableTable;
 import com.xweb.sql.core.common.update.SimpleUpdate;
-import lombok.val;
 
 import java.util.List;
 import java.util.Optional;
@@ -598,7 +570,7 @@ public abstract class AbstractReplaceAstVisitor {
         if (Optional.ofNullable(unionTableTable.getLeft()).isPresent()) {
             final Item left = (Item) visit(unionTableTable.getLeft());
             if (left != unionTableTable.getLeft()) {
-                unionTableTable.setLeft(left);
+                unionTableTable.setLeft((Table) left);
             }
         }
         final List<UnionTableTable.UnionTableItem> unionTableItems = unionTableTable.getUnionTableItems();
@@ -615,7 +587,7 @@ public abstract class AbstractReplaceAstVisitor {
     }
 
     protected Object visit(UnionTableTable.UnionTableItem unionTableItem) {
-        final Item right = (Item) visit(unionTableItem.getRight());
+        final Table right = (Table) visit(unionTableItem.getRight());
         if (right != unionTableItem.getRight()) {
             unionTableItem.setRight(right);
         }

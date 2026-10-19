@@ -1,5 +1,10 @@
-package com.xweb.sql.core.common;
+package com.xweb.sql.core.common.ast;
 
+import com.xweb.sql.core.common.BooleanExpression;
+import com.xweb.sql.core.common.Item;
+import com.xweb.sql.core.common.Page;
+import com.xweb.sql.core.common.Select;
+import com.xweb.sql.core.common.Table;
 import com.xweb.sql.core.common.delete.SimpleDelete;
 import com.xweb.sql.core.common.expression.ArithmeticExpression;
 import com.xweb.sql.core.common.expression.BetweenAndExpression;
@@ -18,8 +23,7 @@ import com.xweb.sql.core.common.insert.SimpleInsert;
 import com.xweb.sql.core.common.item.CaseItem;
 import com.xweb.sql.core.common.item.ConstantItem;
 import com.xweb.sql.core.common.item.FunctionCallItem;
-import com.xweb.sql.core.common.item.LimitPageItem;
-import com.xweb.sql.core.common.item.OffsetPageItem;
+import com.xweb.sql.core.common.item.ListItem;
 import com.xweb.sql.core.common.item.SelectAllItem;
 import com.xweb.sql.core.common.item.SubIndexItem;
 import com.xweb.sql.core.common.item.TableColumnItem;
@@ -33,6 +37,8 @@ import com.xweb.sql.core.common.merge.UpdateMergeOperator;
 import com.xweb.sql.core.common.merge.WhenMatchedThenOperatorItem;
 import com.xweb.sql.core.common.order.DefaultOrderItem;
 import com.xweb.sql.core.common.order.OrderItem;
+import com.xweb.sql.core.common.page.LimitPageItem;
+import com.xweb.sql.core.common.page.OffsetPageItem;
 import com.xweb.sql.core.common.select.BaseSelect;
 import com.xweb.sql.core.common.select.UnionSelect;
 import com.xweb.sql.core.common.table.SimpleTable;
@@ -40,33 +46,31 @@ import com.xweb.sql.core.common.table.UnionTableTable;
 import com.xweb.sql.core.common.update.SimpleUpdate;
 import com.xweb.sql.core.parser.SqlBaseBaseVisitor;
 import com.xweb.sql.core.parser.SqlBaseParser;
-import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Getter
-public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
+public class AstBuilder extends SqlBaseBaseVisitor<Item> {
 
 
     @Override
-    public Object visitStatementDefault(SqlBaseParser.StatementDefaultContext ctx) {
+    public Item visitStatementDefault(SqlBaseParser.StatementDefaultContext ctx) {
         return super.visitStatementDefault(ctx);
     }
 
     @Override
-    public Object visitInsertIntoDefault(SqlBaseParser.InsertIntoDefaultContext ctx) {
+    public Item visitInsertIntoDefault(SqlBaseParser.InsertIntoDefaultContext ctx) {
         SimpleInsert simpleInsert = new SimpleInsert();
         simpleInsert.setInsert(ctx.INSERT().getText());
         simpleInsert.setInto(ctx.INTO().getText());
         simpleInsert.setTable(ctx.qualifiedName().getText());
         if (Optional.ofNullable(ctx.columnAliases()).isPresent()) {
-            simpleInsert.setColumns((List) super.visit(ctx.columnAliases()));
+            simpleInsert.setColumns((List<Item>) super.visit(ctx.columnAliases()));
         }
         if (Optional.ofNullable(ctx.valueAliases()).isPresent()) {
-            simpleInsert.setValueItems((List) super.visit(ctx.valueAliases()));
+            simpleInsert.setValueItems((List<Item>) super.visit(ctx.valueAliases()));
         }
         simpleInsert.setValues(ctx.VALUES().getText());
         if (Optional.ofNullable(ctx.onDuplicateCondition()).isPresent()) {
@@ -80,7 +84,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
             onDuplicateInsert.setUpdateColumns(new ArrayList<>());
             final List<SqlBaseParser.ExpressionContext> expressions = onDuplicateConditionContext.expression();
             for (SqlBaseParser.ExpressionContext expression : expressions) {
-                onDuplicateInsert.getUpdateColumns().add((Item) super.visit(expression));
+                onDuplicateInsert.getUpdateColumns().add( super.visit(expression));
             }
             return onDuplicateInsert;
         }
@@ -88,27 +92,27 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitColumnAliases(SqlBaseParser.ColumnAliasesContext ctx) {
-        List<Item> items = new ArrayList<>();
+    public Item visitColumnAliases(SqlBaseParser.ColumnAliasesContext ctx) {
+        ListItem<Item> items = new ListItem();
         final List<SqlBaseParser.IdentifierContext> identifiers = ctx.identifier();
         for (SqlBaseParser.IdentifierContext identifier : identifiers) {
-            items.add((Item) super.visit(identifier));
+            items.add(super.visit(identifier));
         }
         return items;
     }
 
     @Override
-    public Object visitValueAliases(SqlBaseParser.ValueAliasesContext ctx) {
-        List<Item> items = new ArrayList<>();
+    public Item visitValueAliases(SqlBaseParser.ValueAliasesContext ctx) {
+        ListItem<Item> items = new ListItem();
         final List<SqlBaseParser.ExpressionContext> expressions = ctx.expression();
         for (SqlBaseParser.ExpressionContext expression : expressions) {
-            items.add((Item) super.visit(expression));
+            items.add(super.visit(expression));
         }
         return items;
     }
 
     @Override
-    public Object visitInsertIntoAsQuery(SqlBaseParser.InsertIntoAsQueryContext ctx) {
+    public Item visitInsertIntoAsQuery(SqlBaseParser.InsertIntoAsQueryContext ctx) {
         AsQueryInsert asQueryInsert = new AsQueryInsert();
         asQueryInsert.setInsert(ctx.INSERT().getText());
         asQueryInsert.setInto(ctx.INTO().getText());
@@ -121,7 +125,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitDeleteDefault(SqlBaseParser.DeleteDefaultContext ctx) {
+    public Item visitDeleteDefault(SqlBaseParser.DeleteDefaultContext ctx) {
         SimpleDelete simpleDelete = new SimpleDelete();
         simpleDelete.setDelete(ctx.DELETE().getText());
         simpleDelete.setFrom(ctx.FROM().getText());
@@ -136,7 +140,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitUpdateDefault(SqlBaseParser.UpdateDefaultContext ctx) {
+    public Item visitUpdateDefault(SqlBaseParser.UpdateDefaultContext ctx) {
         SimpleUpdate simpleUpdate = new SimpleUpdate();
         simpleUpdate.setUpdate(ctx.UPDATE().getText());
         simpleUpdate.setTable(ctx.qualifiedName().getText());
@@ -144,7 +148,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
         simpleUpdate.setUpdateItems(new ArrayList<>());
         final List<SqlBaseParser.ExpressionContext> expressions = ctx.expression();
         for (SqlBaseParser.ExpressionContext expression : expressions) {
-            simpleUpdate.getUpdateItems().add((Item) super.visit(expression));
+            simpleUpdate.getUpdateItems().add( super.visit(expression));
         }
         if (Optional.ofNullable(ctx.WHERE()).isPresent()) {
             simpleUpdate.setWhere(ctx.WHERE().getText());
@@ -154,13 +158,13 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitMergeDefault(SqlBaseParser.MergeDefaultContext ctx) {
+    public Item visitMergeDefault(SqlBaseParser.MergeDefaultContext ctx) {
         SimpleMerge simpleMerge = new SimpleMerge();
         simpleMerge.setMerge(ctx.MERGE().getText());
         simpleMerge.setInto(ctx.INTO().getText());
-        simpleMerge.setTable((Item) super.visit(ctx.target));
+        simpleMerge.setTable( super.visit(ctx.target));
         simpleMerge.setUsing(ctx.USING().getText());
-        simpleMerge.setUseTable((Item) super.visit(ctx.useTable));
+        simpleMerge.setUseTable(super.visit(ctx.useTable));
         simpleMerge.setOn(ctx.ON().getText());
         simpleMerge.setOnConditionExpression((BooleanExpression) super.visit(ctx.booleanExpression()));
         final List<SqlBaseParser.MatchThenExpressionContext> matchThenExpressionContexts = ctx.matchThenExpression();
@@ -172,7 +176,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitMatchThenExpression(SqlBaseParser.MatchThenExpressionContext ctx) {
+    public Item visitMatchThenExpression(SqlBaseParser.MatchThenExpressionContext ctx) {
         WhenMatchedThenOperatorItem whenMatchedThenOperatorItem = new WhenMatchedThenOperatorItem();
         whenMatchedThenOperatorItem.setWhen(ctx.WHEN().getText());
         if (Optional.ofNullable(ctx.NOT()).isPresent()) {
@@ -191,7 +195,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitMergeUpdateOperator(SqlBaseParser.MergeUpdateOperatorContext ctx) {
+    public Item visitMergeUpdateOperator(SqlBaseParser.MergeUpdateOperatorContext ctx) {
         UpdateMergeOperator updateMergeOperator = new UpdateMergeOperator();
         updateMergeOperator.setUpdate(ctx.UPDATE().getText());
         if (Optional.ofNullable(ctx.KEY()).isPresent()) {
@@ -207,14 +211,14 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitMergeDeleteOperator(SqlBaseParser.MergeDeleteOperatorContext ctx) {
+    public Item visitMergeDeleteOperator(SqlBaseParser.MergeDeleteOperatorContext ctx) {
         DeleteMergeOperator deleteMergeOperator = new DeleteMergeOperator();
         deleteMergeOperator.setDelete(ctx.DELETE().getText());
         return deleteMergeOperator;
     }
 
     @Override
-    public Object visitMergeInsertOperator(SqlBaseParser.MergeInsertOperatorContext ctx) {
+    public Item visitMergeInsertOperator(SqlBaseParser.MergeInsertOperatorContext ctx) {
         InsertMergeOperator insertMergeOperator = new InsertMergeOperator();
         insertMergeOperator.setInsert(ctx.INSERT().getText());
         if (Optional.ofNullable(ctx.qualifiedName()).isPresent()) {
@@ -222,16 +226,16 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
         }
         insertMergeOperator.setValues(ctx.VALUES().getText());
         final SqlBaseParser.ColumnAliasesContext columnAliasesContext = ctx.columnAliases();
-        insertMergeOperator.setColumnItems((List) super.visit(columnAliasesContext));
+        insertMergeOperator.setColumnItems((List<Item>) super.visit(columnAliasesContext));
         if (Optional.ofNullable(ctx.valueAliases()).isPresent()) {
-            insertMergeOperator.setValueItems((List) super.visit(ctx.valueAliases()));
+            insertMergeOperator.setValueItems((List<Item>) super.visit(ctx.valueAliases()));
         }
         return insertMergeOperator;
     }
 
     @Override
-    public Object visitQuery(SqlBaseParser.QueryContext ctx) {
-        Object result = super.visit(ctx.queryItem());
+    public Item visitQuery(SqlBaseParser.QueryContext ctx) {
+        Item result = super.visit(ctx.queryItem());
         if (result instanceof BaseSelect) {
             if (!ctx.unionExpress().isEmpty()) {
                 BaseSelect select = (BaseSelect) result;
@@ -249,45 +253,44 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitUnionExpress(SqlBaseParser.UnionExpressContext ctx) {
+    public Item visitUnionExpress(SqlBaseParser.UnionExpressContext ctx) {
         UnionSelectItem unionSelectItem = new UnionSelectItem();
         unionSelectItem.setUnion(ctx.UNION().getText());
         if (Optional.ofNullable(ctx.setQuantifier()).isPresent()) {
             unionSelectItem.setAll(ctx.setQuantifier().getText());
         }
-        unionSelectItem.setSelect((Item) super.visit(ctx.queryItem()));
+        unionSelectItem.setSelect( super.visit(ctx.queryItem()));
         return unionSelectItem;
     }
 
     @Override
-    public Object visitSubPriorityQueryExpression(SqlBaseParser.SubPriorityQueryExpressionContext ctx) {
-        Object result = super.visit(ctx.query());
-        return new PriorityExpression((Item) result);
+    public Item visitSubPriorityQueryExpression(SqlBaseParser.SubPriorityQueryExpressionContext ctx) {
+        Item result = super.visit(ctx.query());
+        return new PriorityExpression(result);
     }
 
     @Override
-    public Object visitSubQueryExpression(SqlBaseParser.SubQueryExpressionContext ctx) {
-        Object result = super.visitSubQueryExpression(ctx);
-        return result;
+    public Item visitSubQueryExpression(SqlBaseParser.SubQueryExpressionContext ctx) {
+        return super.visitSubQueryExpression(ctx);
     }
 
     @Override
-    public Object visitSubQueryTableExpress(SqlBaseParser.SubQueryTableExpressContext ctx) {
-        Object result = super.visit(ctx.query());
-        return new PriorityExpression((Item) result);
+    public Item visitSubQueryTableExpress(SqlBaseParser.SubQueryTableExpressContext ctx) {
+        Item result = super.visit(ctx.query());
+        return new PriorityExpression(result);
     }
 
     @Override
-    public Object visitSubTableExpressionExpress(SqlBaseParser.SubTableExpressionExpressContext ctx) {
-        Object result = super.visit(ctx.tableExpression());
-        return new PriorityExpression((Item) result);
+    public Item visitSubTableExpressionExpress(SqlBaseParser.SubTableExpressionExpressContext ctx) {
+        Item result = super.visit(ctx.tableExpression());
+        return new PriorityExpression(result);
     }
 
     @Override
-    public Object visitUnionSelectTableExpress(SqlBaseParser.UnionSelectTableExpressContext ctx) {
+    public Item visitUnionSelectTableExpress(SqlBaseParser.UnionSelectTableExpressContext ctx) {
         UnionTableTable unionTableTable = new UnionTableTable();
-        Object left = super.visit(ctx.tableExpression());
-        unionTableTable.setLeft((Item) left);
+        Item left = super.visit(ctx.tableExpression());
+        unionTableTable.setLeft((Table) left);
         final List<SqlBaseParser.UnionTableExpressContext> unionTableExpressContexts = ctx.unionTableExpress();
         unionTableTable.setUnionTableItems(new ArrayList<>());
         for (SqlBaseParser.UnionTableExpressContext unionTableExpressContext : unionTableExpressContexts) {
@@ -297,40 +300,39 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitUnionTableExpress(SqlBaseParser.UnionTableExpressContext ctx) {
+    public Item visitUnionTableExpress(SqlBaseParser.UnionTableExpressContext ctx) {
         UnionTableTable.UnionTableItem unionTableItem = new UnionTableTable.UnionTableItem();
         unionTableItem.setUnion(ctx.UNION().getText());
         if (Optional.ofNullable(ctx.setQuantifier()).isPresent()) {
             unionTableItem.setAll(ctx.setQuantifier().getText());
         }
-        unionTableItem.setRight((Item) super.visit(ctx.tableExpressPrimary()));
+        unionTableItem.setRight((Table) super.visit(ctx.tableExpressPrimary()));
         return unionTableItem;
     }
 
     @Override
-    public Object visitQueryItem(SqlBaseParser.QueryItemContext ctx) {
-        Object result = super.visitQueryItem(ctx);
-        return result;
+    public Item visitQueryItem(SqlBaseParser.QueryItemContext ctx) {
+        return super.visitQueryItem(ctx);
     }
 
     @Override
-    public Object visitOrderByExpression(SqlBaseParser.OrderByExpressionContext ctx) {
-        Object result = super.visit(ctx.expression());
+    public Item visitOrderByExpression(SqlBaseParser.OrderByExpressionContext ctx) {
+        Item result = super.visit(ctx.expression());
         if (result instanceof ConstantItem) {
             DefaultOrderItem defaultOrderItem = new DefaultOrderItem();
-            defaultOrderItem.setItem((Item) result);
+            defaultOrderItem.setItem(result);
             return defaultOrderItem;
         }
         return result;
     }
 
     @Override
-    public Object visitQueryPrimary(SqlBaseParser.QueryPrimaryContext ctx) {
+    public Item visitQueryPrimary(SqlBaseParser.QueryPrimaryContext ctx) {
         BaseSelect select = new BaseSelect();
         select.setSelect(ctx.SELECT().getText());
         final List<SqlBaseParser.SelectItemContext> selectItemContexts = ctx.selectItem();
         for (SqlBaseParser.SelectItemContext selectItemContext : selectItemContexts) {
-            select.getSelectItems().add((Item) super.visit(selectItemContext));
+            select.getSelectItems().add(super.visit(selectItemContext));
         }
 
         if (Optional.ofNullable(ctx.FROM()).isPresent()) {
@@ -351,7 +353,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
             select.setGroup(ctx.GROUP().getText() + " " + ctx.BY().getText());
             final List<SqlBaseParser.GroupByExpressionContext> groupByExpressionContexts = ctx.groupByExpression();
             for (SqlBaseParser.GroupByExpressionContext groupByExpressionContext : groupByExpressionContexts) {
-                select.getGroupItems().add((Item) super.visit(groupByExpressionContext));
+                select.getGroupItems().add(super.visit(groupByExpressionContext));
             }
         }
 
@@ -376,7 +378,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitLimitPageExpress(SqlBaseParser.LimitPageExpressContext ctx) {
+    public Item visitLimitPageExpress(SqlBaseParser.LimitPageExpressContext ctx) {
         LimitPageItem limitPageItem = new LimitPageItem();
         limitPageItem.setLimit(ctx.LIMIT().getText());
         limitPageItem.setLimitItems((List<Item>) super.visit(ctx.limit));
@@ -384,10 +386,10 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitOffsetPageExpress(SqlBaseParser.OffsetPageExpressContext ctx) {
+    public Item visitOffsetPageExpress(SqlBaseParser.OffsetPageExpressContext ctx) {
         OffsetPageItem offsetPageItem = new OffsetPageItem();
         offsetPageItem.setOffset(ctx.OFFSET().getText());
-        offsetPageItem.setStart((Item) super.visit(ctx.offset));
+        offsetPageItem.setStart(super.visit(ctx.offset));
         offsetPageItem.setTagStart(ctx.offsetTag.getText());
 
         if (Optional.ofNullable(ctx.FETCH()).isPresent()) {
@@ -404,7 +406,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
         }
 
         if (Optional.ofNullable(ctx.fetchFirst).isPresent()) {
-            offsetPageItem.setRow((Item) super.visit(ctx.fetchFirst));
+            offsetPageItem.setRow(super.visit(ctx.fetchFirst));
         }
 
         offsetPageItem.setTagRow(ctx.tag.getText());
@@ -420,42 +422,40 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitParenthesizedExpression(SqlBaseParser.ParenthesizedExpressionContext ctx) {
-        Object result = super.visit(ctx.expression());
-        return new PriorityExpression((Item) result);
+    public Item visitParenthesizedExpression(SqlBaseParser.ParenthesizedExpressionContext ctx) {
+        Item result = super.visit(ctx.expression());
+        return new PriorityExpression(result);
     }
 
     @Override
-    public Object visitSelectSingle(SqlBaseParser.SelectSingleContext ctx) {
-        Object expression = super.visit(ctx.expression());
+    public Item visitSelectSingle(SqlBaseParser.SelectSingleContext ctx) {
+        Item expression = super.visit(ctx.expression());
         if (expression instanceof ConstantItem) {
             TableColumnItem tableItem = new TableColumnItem();
-            tableItem.setColumnName(((ConstantItem) expression).getConstant());
+            tableItem.setColumnName(((ConstantItem) expression).getConstant().toString());
             expression = tableItem;
-        } else if (expression instanceof PriorityExpression
+        } else if (!(expression instanceof PriorityExpression
                 || expression instanceof FunctionCallItem
                 || expression instanceof ArithmeticExpression
                 || expression instanceof ConcatenationExpression
                 || expression instanceof IntervalExpression
                 || expression instanceof TableColumnItem
-                || expression instanceof SubIndexItem) {
-            //nothing to do
-        } else {
+                || expression instanceof SubIndexItem)) {
             throw new RuntimeException("select Item BUG 未支持的解析异常: " + expression.getClass().getSimpleName());
         }
 
         if (Optional.ofNullable(ctx.AS()).isPresent()) {
-            ((Item) expression).setAs(ctx.AS().getText());
+            expression.setAs(ctx.AS().getText());
         }
 
         if (Optional.ofNullable(ctx.identifier()).isPresent()) {
-            ((Item) expression).setAlias(ctx.identifier().getText());
+            expression.setAlias(ctx.identifier().getText());
         }
         return expression;
     }
 
     @Override
-    public Object visitSelectAll(SqlBaseParser.SelectAllContext ctx) {
+    public Item visitSelectAll(SqlBaseParser.SelectAllContext ctx) {
         final String text = ctx.getText();
         if (text.length() == 1) {
             return new SelectAllItem(text);
@@ -467,8 +467,8 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
 
 
     @Override
-    public Object visitAliasedTableExpression(SqlBaseParser.AliasedTableExpressionContext ctx) {
-        Object result = super.visit(ctx.tableExpressPrimary());
+    public Item visitAliasedTableExpression(SqlBaseParser.AliasedTableExpressionContext ctx) {
+        Item result = super.visit(ctx.tableExpressPrimary());
         if (result instanceof SimpleTable) {
             SimpleTable simpleTable = (SimpleTable) result;
             if (Optional.ofNullable(ctx.AS()).isPresent()) {
@@ -504,7 +504,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
 
 
     @Override
-    public Object visitTableNameExpress(SqlBaseParser.TableNameExpressContext ctx) {
+    public Item visitTableNameExpress(SqlBaseParser.TableNameExpressContext ctx) {
         SimpleTable simpleTable = new SimpleTable();
         final String text = ctx.getText();
         if (text.contains(".")) {
@@ -518,46 +518,46 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitLimitRowCount(SqlBaseParser.LimitRowCountContext ctx) {
-        List<Item> items = new ArrayList<>();
+    public Item visitLimitRowCount(SqlBaseParser.LimitRowCountContext ctx) {
+        ListItem<Item> items = new ListItem();
         final List<SqlBaseParser.RowCountContext> rowCountContexts = ctx.rowCount();
         for (SqlBaseParser.RowCountContext rowCountContext : rowCountContexts) {
-            items.add((Item) super.visit(rowCountContext));
+            items.add(super.visit(rowCountContext));
         }
         return items;
     }
 
     @Override
-    public Object visitPredicated(SqlBaseParser.PredicatedContext ctx) {
-        final Object value = super.visit(ctx.valueExpression());
+    public Item visitPredicated(SqlBaseParser.PredicatedContext ctx) {
+        final Item value = super.visit(ctx.valueExpression());
         if (null == ctx.predicate()) {
             return value;
         }
-        final Object predicate = super.visit(ctx.predicate());
+        final Item predicate = super.visit(ctx.predicate());
 
         if (predicate instanceof CommonConditionExpression) {
             CommonConditionExpression simpleExpression = (CommonConditionExpression) predicate;
-            simpleExpression.setLeft((Item) value);
+            simpleExpression.setLeft(value);
             return simpleExpression;
         } else if (predicate instanceof BetweenAndExpression) {
             BetweenAndExpression betweenAndExpression = (BetweenAndExpression) predicate;
-            betweenAndExpression.setLeft((Item) value);
+            betweenAndExpression.setLeft(value);
             return betweenAndExpression;
         } else if (predicate instanceof InExpression) {
             InExpression inExpression = (InExpression) predicate;
-            inExpression.setLeft((Item) value);
+            inExpression.setLeft(value);
             return inExpression;
         } else if (predicate instanceof IsNullExpression) {
             IsNullExpression isNullExpression = (IsNullExpression) predicate;
-            isNullExpression.setLeft((Item) value);
+            isNullExpression.setLeft( value);
             return isNullExpression;
         } else if (predicate instanceof LikeExpression) {
             LikeExpression likeExpression = (LikeExpression) predicate;
-            likeExpression.setLeft((Item) value);
+            likeExpression.setLeft( value);
             return likeExpression;
         } else if (predicate instanceof IntervalExpression) {
             IntervalExpression intervalExpression = (IntervalExpression) predicate;
-            intervalExpression.setLeft((Item) value);
+            intervalExpression.setLeft( value);
             return intervalExpression;
         } else {
             throw new RuntimeException("express BUG 未支持的解析异常: " + predicate.getClass().getSimpleName());
@@ -565,38 +565,38 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitArithmeticBinary(SqlBaseParser.ArithmeticBinaryContext ctx) {
-        Object left = super.visit(ctx.left);
-        Object right = super.visit(ctx.right);
+    public Item visitArithmeticBinary(SqlBaseParser.ArithmeticBinaryContext ctx) {
+        Item left = super.visit(ctx.left);
+        Item right = super.visit(ctx.right);
         ArithmeticExpression arithmeticExpressionItem = new ArithmeticExpression();
-        arithmeticExpressionItem.setLeft((Item) left);
+        arithmeticExpressionItem.setLeft( left);
         arithmeticExpressionItem.setOperator(ctx.operator.getText());
-        arithmeticExpressionItem.setRight((Item) right);
+        arithmeticExpressionItem.setRight( right);
         return arithmeticExpressionItem;
     }
 
     @Override
-    public Object visitConcatenationExpression(SqlBaseParser.ConcatenationExpressionContext ctx) {
-        Object left = super.visit(ctx.left);
-        Object right = super.visit(ctx.right);
+    public Item visitConcatenationExpression(SqlBaseParser.ConcatenationExpressionContext ctx) {
+        Item left = super.visit(ctx.left);
+        Item right = super.visit(ctx.right);
         ConcatenationExpression concatenationExpression = new ConcatenationExpression();
-        concatenationExpression.setLeft((Item) left);
+        concatenationExpression.setLeft(left);
         concatenationExpression.setConcatenationOperator(ctx.CONCAT().getText());
-        concatenationExpression.setRight((Item) right);
+        concatenationExpression.setRight(right);
         return concatenationExpression;
     }
 
     @Override
-    public Object visitComparison(SqlBaseParser.ComparisonContext ctx) {
+    public Item visitComparison(SqlBaseParser.ComparisonContext ctx) {
         final SqlBaseParser.ComparisonOperatorContext comparisonOperatorContext = ctx.comparisonOperator();
         CommonConditionExpression simpleExpression = new CommonConditionExpression();
         simpleExpression.setOp(comparisonOperatorContext.getText());
-        simpleExpression.setRight((Item) super.visit(ctx.right));
+        simpleExpression.setRight(super.visit(ctx.right));
         return simpleExpression;
     }
 
     @Override
-    public Object visitLogicalNot(SqlBaseParser.LogicalNotContext ctx) {
+    public Item visitLogicalNot(SqlBaseParser.LogicalNotContext ctx) {
         NotBooleanExpression notBooleanExpression = new NotBooleanExpression();
         notBooleanExpression.setNot(ctx.NOT().getText());
         notBooleanExpression.setExpression((BooleanExpression) super.visit(ctx.booleanExpression()));
@@ -604,18 +604,18 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitLogicalBinary(SqlBaseParser.LogicalBinaryContext ctx) {
-        final Object left = super.visit(ctx.left);
-        final Object right = super.visit(ctx.right);
+    public Item visitLogicalBinary(SqlBaseParser.LogicalBinaryContext ctx) {
+        final Item left = super.visit(ctx.left);
+        final Item right = super.visit(ctx.right);
         CommonConditionExpression commonConditionExpression = new CommonConditionExpression();
-        commonConditionExpression.setLeft((Item) left);
-        commonConditionExpression.setRight((Item) right);
+        commonConditionExpression.setLeft( left);
+        commonConditionExpression.setRight( right);
         commonConditionExpression.setOp(ctx.operator.getText());
         return commonConditionExpression;
     }
 
     @Override
-    public Object visitSimpleCase(SqlBaseParser.SimpleCaseContext ctx) {
+    public Item visitSimpleCase(SqlBaseParser.SimpleCaseContext ctx) {
         CaseItem caseItem = new CaseItem();
         caseItem.setCaseName(ctx.CASE().getText());
         caseItem.setWhenThenItems(new ArrayList<>());
@@ -625,14 +625,14 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
         }
         if (null != ctx.elseExpression) {
             caseItem.setElseName(ctx.ELSE().getText());
-            caseItem.setElseResult((Item) super.visit(ctx.elseExpression));
+            caseItem.setElseResult(super.visit(ctx.elseExpression));
         }
         caseItem.setEnd(ctx.END().getText());
         return caseItem;
     }
 
     @Override
-    public Object visitFunctionCall(SqlBaseParser.FunctionCallContext ctx) {
+    public Item visitFunctionCall(SqlBaseParser.FunctionCallContext ctx) {
         FunctionCallItem functionCallItem = new FunctionCallItem();
         functionCallItem.setName(ctx.qualifiedName().getText());
 
@@ -655,29 +655,29 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitExists(SqlBaseParser.ExistsContext ctx) {
+    public Item visitExists(SqlBaseParser.ExistsContext ctx) {
         ExistExpression existExpression = new ExistExpression();
         existExpression.setExist(ctx.EXISTS().getText());
-        existExpression.setExpression((Item) super.visit(ctx.query()));
+        existExpression.setExpression(super.visit(ctx.query()));
         return existExpression;
     }
 
     @Override
-    public Object visitSubScript(SqlBaseParser.SubScriptContext ctx) {
+    public Item visitSubScript(SqlBaseParser.SubScriptContext ctx) {
         SubIndexItem subIndexItem = new SubIndexItem();
         subIndexItem.setIndexes(new ArrayList<>());
-        subIndexItem.setValue((Item) super.visit(ctx.primaryExpression()));
+        subIndexItem.setValue(super.visit(ctx.primaryExpression()));
         final List<SqlBaseParser.ValueExpressionContext> valueExpressionContexts = ctx.valueExpression();
         for (SqlBaseParser.ValueExpressionContext valueExpressionContext : valueExpressionContexts) {
-            subIndexItem.getIndexes().add((Item) super.visit(valueExpressionContext));
+            subIndexItem.getIndexes().add( super.visit(valueExpressionContext));
         }
         return subIndexItem;
     }
 
     @Override
-    public Object visitWhenClause(SqlBaseParser.WhenClauseContext ctx) {
-        Object condition = super.visit(ctx.condition);
-        Object result = super.visit(ctx.result);
+    public Item visitWhenClause(SqlBaseParser.WhenClauseContext ctx) {
+        Item condition = super.visit(ctx.condition);
+        Item result = super.visit(ctx.result);
         WhenThenItem whenThenItem = new WhenThenItem();
         whenThenItem.setWhen(ctx.WHEN().getText());
         whenThenItem.setCondition((BooleanExpression) condition);
@@ -687,20 +687,20 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitBetween(SqlBaseParser.BetweenContext ctx) {
+    public Item visitBetween(SqlBaseParser.BetweenContext ctx) {
         BetweenAndExpression betweenAndExpression = new BetweenAndExpression();
         if (Optional.ofNullable(ctx.NOT()).isPresent()) {
             betweenAndExpression.setNot(ctx.NOT().getText());
         }
         betweenAndExpression.setBetween(ctx.BETWEEN().getText());
-        betweenAndExpression.setLower((Item) super.visit(ctx.lower));
+        betweenAndExpression.setLower( super.visit(ctx.lower));
         betweenAndExpression.setAnd(ctx.AND().getText());
-        betweenAndExpression.setUpper((Item) super.visit(ctx.upper));
+        betweenAndExpression.setUpper( super.visit(ctx.upper));
         return betweenAndExpression;
     }
 
     @Override
-    public Object visitInList(SqlBaseParser.InListContext ctx) {
+    public Item visitInList(SqlBaseParser.InListContext ctx) {
         InExpression inExpression = new InExpression();
         if (Optional.ofNullable(ctx.NOT()).isPresent()) {
             inExpression.setNot(ctx.NOT().getText());
@@ -709,24 +709,24 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
         inExpression.setItems(new ArrayList<>());
         final List<SqlBaseParser.ExpressionContext> expressions = ctx.expression();
         for (SqlBaseParser.ExpressionContext expression : expressions) {
-            inExpression.getItems().add((Item) super.visit(expression));
+            inExpression.getItems().add(super.visit(expression));
         }
         return inExpression;
     }
 
     @Override
-    public Object visitLike(SqlBaseParser.LikeContext ctx) {
+    public Item visitLike(SqlBaseParser.LikeContext ctx) {
         LikeExpression likeExpression = new LikeExpression();
         if (Optional.ofNullable(ctx.NOT()).isPresent()) {
             likeExpression.setNot(ctx.NOT().getText());
         }
         likeExpression.setLike(ctx.LIKE().getText());
-        likeExpression.setPattern((Item) super.visit(ctx.pattern));
+        likeExpression.setPattern(super.visit(ctx.pattern));
         return likeExpression;
     }
 
     @Override
-    public Object visitNullPredicate(SqlBaseParser.NullPredicateContext ctx) {
+    public Item visitNullPredicate(SqlBaseParser.NullPredicateContext ctx) {
         IsNullExpression isNullExpression = new IsNullExpression();
         isNullExpression.setIs(ctx.IS().getText());
         if (Optional.ofNullable(ctx.NOT()).isPresent()) {
@@ -737,7 +737,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitArithmeticInterval(SqlBaseParser.ArithmeticIntervalContext ctx) {
+    public Item visitArithmeticInterval(SqlBaseParser.ArithmeticIntervalContext ctx) {
         IntervalExpression intervalExpression = (IntervalExpression) super.visit(ctx.interval());
         intervalExpression.setOperator(ctx.operator.getText());
         return intervalExpression;
@@ -745,7 +745,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
 
 
     @Override
-    public Object visitNumberInterval(SqlBaseParser.NumberIntervalContext ctx) {
+    public Item visitNumberInterval(SqlBaseParser.NumberIntervalContext ctx) {
         IntervalExpression intervalExpression = new IntervalExpression();
         intervalExpression.setInterval(ctx.INTERVAL().getText());
         if (Optional.ofNullable(ctx.sign).isPresent()) {
@@ -759,7 +759,7 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitStringInterval(SqlBaseParser.StringIntervalContext ctx) {
+    public Item visitStringInterval(SqlBaseParser.StringIntervalContext ctx) {
         IntervalExpression intervalExpression = new IntervalExpression();
         intervalExpression.setInterval(ctx.INTERVAL().getText());
         if (Optional.ofNullable(ctx.sign).isPresent()) {
@@ -772,21 +772,21 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitDynamicParameter(SqlBaseParser.DynamicParameterContext ctx) {
+    public Item visitDynamicParameter(SqlBaseParser.DynamicParameterContext ctx) {
         ConstantItem constantItem = new ConstantItem();
         constantItem.setConstant(ctx.getText());
         return constantItem;
     }
 
     @Override
-    public Object visitSpecialVariable(SqlBaseParser.SpecialVariableContext ctx) {
+    public Item visitSpecialVariable(SqlBaseParser.SpecialVariableContext ctx) {
         ConstantItem constantItem = new ConstantItem();
         constantItem.setConstant(ctx.getText());
         return constantItem;
     }
 
     @Override
-    public Object visitNullLiteral(SqlBaseParser.NullLiteralContext ctx) {
+    public Item visitNullLiteral(SqlBaseParser.NullLiteralContext ctx) {
         ConstantItem constantItem = new ConstantItem();
         constantItem.setConstant(ctx.getText());
         return constantItem;
@@ -794,14 +794,14 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
 
 
     @Override
-    public Object visitColumnReference(SqlBaseParser.ColumnReferenceContext ctx) {
+    public Item visitColumnReference(SqlBaseParser.ColumnReferenceContext ctx) {
         ConstantItem constantItem = new ConstantItem();
         constantItem.setConstant(ctx.getText());
         return constantItem;
     }
 
     @Override
-    public Object visitDereference(SqlBaseParser.DereferenceContext ctx) {
+    public Item visitDereference(SqlBaseParser.DereferenceContext ctx) {
         TableColumnItem tableColumnItem = new TableColumnItem();
         tableColumnItem.setTableName(ctx.primaryExpression().getText());
         tableColumnItem.setColumnName(ctx.identifier().getText());
@@ -809,45 +809,40 @@ public class CommonSqlBaseVisitor extends SqlBaseBaseVisitor {
     }
 
     @Override
-    public Object visitBasicStringLiteral(SqlBaseParser.BasicStringLiteralContext ctx) {
+    public Item visitBasicStringLiteral(SqlBaseParser.BasicStringLiteralContext ctx) {
         ConstantItem constantItem = new ConstantItem();
         constantItem.setConstant(ctx.getText());
         return constantItem;
     }
 
     @Override
-    public Object visitNumericLiteral(SqlBaseParser.NumericLiteralContext ctx) {
-        final Object o = super.visitNumericLiteral(ctx);
-        ConstantItem constantItem = new ConstantItem();
-        constantItem.setConstant(o.toString());
-        return constantItem;
+    public Item visitNumericLiteral(SqlBaseParser.NumericLiteralContext ctx) {
+        return super.visitNumericLiteral(ctx);
+
     }
 
     @Override
-    public Object visitIntervalLiteral(SqlBaseParser.IntervalLiteralContext ctx) {
-        Object result = super.visit(ctx.interval());
-        return result;
+    public Item visitIntervalLiteral(SqlBaseParser.IntervalLiteralContext ctx) {
+        return super.visit(ctx.interval());
     }
 
     @Override
-    public Object visitDecimalLiteral(SqlBaseParser.DecimalLiteralContext ctx) {
-        return new BigDecimal(ctx.getText());
+    public Item visitDecimalLiteral(SqlBaseParser.DecimalLiteralContext ctx) {
+        return new ConstantItem(new BigDecimal(ctx.getText()));
     }
 
     @Override
-    public Object visitDoubleLiteral(SqlBaseParser.DoubleLiteralContext ctx) {
-        return new Double(ctx.getText());
+    public Item visitDoubleLiteral(SqlBaseParser.DoubleLiteralContext ctx) {
+        return new ConstantItem(new Double(ctx.getText()));
     }
 
     @Override
-    public Object visitIntegerLiteral(SqlBaseParser.IntegerLiteralContext ctx) {
-        return new Integer(ctx.getText());
+    public Item visitIntegerLiteral(SqlBaseParser.IntegerLiteralContext ctx) {
+        return new ConstantItem(new Integer(ctx.getText()));
     }
 
     @Override
-    public Object visitUnquotedIdentifier(SqlBaseParser.UnquotedIdentifierContext ctx) {
-        ConstantItem constantItem = new ConstantItem();
-        constantItem.setConstant(ctx.getText());
-        return constantItem;
+    public Item visitUnquotedIdentifier(SqlBaseParser.UnquotedIdentifierContext ctx) {
+        return new ConstantItem(ctx.getText());
     }
 }

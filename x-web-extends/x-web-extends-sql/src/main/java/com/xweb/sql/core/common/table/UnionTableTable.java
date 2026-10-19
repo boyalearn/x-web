@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 public class UnionTableTable extends AbstractItem implements Table {
 
-    private Item left;
+    private Table left;
 
     private List<UnionTableItem> unionTableItems;
 
@@ -20,6 +20,6 @@ public class UnionTableTable extends AbstractItem implements Table {
 
         private String all;
 
-        private Item right;
+        private Table right;
     }
 }

@@ -1,4 +1,6 @@
 package com.xweb.sql.core.common.order;
 
-public interface OrderItem {
+import com.xweb.sql.core.common.Item;
+
+public interface OrderItem extends Item {
 }

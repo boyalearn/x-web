@@ -38,8 +38,8 @@ public class IndexColumnToSubStrFilter implements MysqlFilter {
             final Item end = indexes.get(indexes.size() - 1);
             final Item start = indexes.get(0);
             if (end instanceof ConstantItem && start instanceof ConstantItem) {
-                int startIndex = Integer.valueOf(((ConstantItem) start).getConstant());
-                int endIndex = Integer.valueOf(((ConstantItem) end).getConstant());
+                int startIndex = Integer.valueOf(((ConstantItem) start).getConstant().toString());
+                int endIndex = Integer.valueOf(((ConstantItem) end).getConstant().toString());
 
                 functionCallItem.getParams().add(new ConstantItem(String.valueOf(startIndex)));
                 functionCallItem.getParams().add(new ConstantItem(String.valueOf(endIndex - startIndex + 1)));

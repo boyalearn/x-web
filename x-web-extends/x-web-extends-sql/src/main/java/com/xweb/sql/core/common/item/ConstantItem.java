@@ -7,14 +7,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ConstantItem implements Item {
-    private String constant;
+    private Object constant;
 
     private String as;
 
     private String alias;
 
 
-    public ConstantItem(String constant){
+    public ConstantItem(Object constant){
         this.constant = constant;
     }
 }

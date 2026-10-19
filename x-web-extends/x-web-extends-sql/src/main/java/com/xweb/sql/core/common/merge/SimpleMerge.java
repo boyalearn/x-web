@@ -1,5 +1,6 @@
 package com.xweb.sql.core.common.merge;
 
+import com.xweb.sql.core.common.AbstractItem;
 import com.xweb.sql.core.common.BooleanExpression;
 import com.xweb.sql.core.common.Item;
 import com.xweb.sql.core.common.Merge;
@@ -9,7 +10,7 @@ import java.util.List;
 
 
 @Data
-public class SimpleMerge implements Merge {
+public class SimpleMerge extends AbstractItem implements Merge {
 
     private String merge;
 

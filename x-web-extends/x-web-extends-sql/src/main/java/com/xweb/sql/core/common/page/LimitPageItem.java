@@ -1,4 +1,4 @@
-package com.xweb.sql.core.common.item;
+package com.xweb.sql.core.common.page;
 
 import com.xweb.sql.core.common.AbstractItem;
 import com.xweb.sql.core.common.Item;

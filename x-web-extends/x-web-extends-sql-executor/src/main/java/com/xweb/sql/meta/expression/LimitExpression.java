@@ -1,4 +1,4 @@
 package com.xweb.sql.meta.expression;
 
-public class LimitExpression {
+public class LimitExpression implements BooleanExpression{
 }

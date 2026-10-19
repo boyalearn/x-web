@@ -36,7 +36,7 @@ public class GroupNumberFilter implements MysqlFilter {
             Item groupItem = groupItems.get(i);
             if (groupItem instanceof ConstantItem) {
                 ConstantItem constantItem = (ConstantItem) groupItem;
-                String constant = constantItem.getConstant();
+                String constant = constantItem.getConstant().toString();
                 try {
                     Integer index = Integer.valueOf(constant);
                     groupItems.set(i, selectItems.get(index - 1));

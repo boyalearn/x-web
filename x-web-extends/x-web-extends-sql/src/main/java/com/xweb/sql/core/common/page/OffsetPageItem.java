@@ -1,4 +1,4 @@
-package com.xweb.sql.core.common.item;
+package com.xweb.sql.core.common.page;
 
 import com.xweb.sql.core.common.AbstractItem;
 import com.xweb.sql.core.common.Item;
@@ -6,7 +6,7 @@ import com.xweb.sql.core.common.Page;
 import lombok.Data;
 
 @Data
-public class OffsetPageItem extends AbstractItem implements Page {
+public class OffsetPageItem  extends AbstractItem implements Page {
 
     private String offset;
 

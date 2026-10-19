@@ -1,8 +1,8 @@
 package com.xweb.sql.core.common.util;
 
 import com.xweb.sql.core.common.CommonAstToSqlVisitor;
-import com.xweb.sql.core.common.CommonSqlBaseVisitor;
 import com.xweb.sql.core.common.Statement;
+import com.xweb.sql.core.common.ast.AstBuilder;
 import com.xweb.sql.core.parser.SqlBaseLexer;
 import com.xweb.sql.core.parser.SqlBaseParser;
 import org.antlr.v4.runtime.CharStreams;
@@ -18,7 +18,7 @@ public final class CommonSqlUtil {
         SqlBaseLexer lexer = new SqlBaseLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         SqlBaseParser parser = new SqlBaseParser(tokens);
-        CommonSqlBaseVisitor visitor = new CommonSqlBaseVisitor();
+        AstBuilder visitor = new AstBuilder();
         return (Statement) visitor.visit(parser.statement());
     }
 

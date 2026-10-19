@@ -1,8 +1,8 @@
 package com.xweb.sql.mysql.filter;
 
 import com.xweb.sql.core.common.Item;
-import com.xweb.sql.core.common.item.LimitPageItem;
-import com.xweb.sql.core.common.item.OffsetPageItem;
+import com.xweb.sql.core.common.page.LimitPageItem;
+import com.xweb.sql.core.common.page.OffsetPageItem;
 
 import java.util.ArrayList;
 
