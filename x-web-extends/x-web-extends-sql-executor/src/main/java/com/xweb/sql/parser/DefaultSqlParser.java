@@ -4,6 +4,7 @@ import com.xweb.sql.core.common.BooleanExpression;
 import com.xweb.sql.core.common.Item;
 import com.xweb.sql.core.common.Statement;
 import com.xweb.sql.core.common.Table;
+import com.xweb.sql.core.common.expression.BetweenAndExpression;
 import com.xweb.sql.core.common.expression.CommonConditionExpression;
 import com.xweb.sql.core.common.expression.ConcatenationExpression;
 import com.xweb.sql.core.common.expression.PriorityExpression;
@@ -13,6 +14,7 @@ import com.xweb.sql.core.common.item.TableColumnItem;
 import com.xweb.sql.core.common.select.BaseSelect;
 import com.xweb.sql.core.common.table.SimpleTable;
 import com.xweb.sql.core.common.util.CommonSqlUtil;
+import com.xweb.sql.meta.Expression;
 import com.xweb.sql.meta.Select;
 import com.xweb.sql.meta.SimpleSelect;
 import com.xweb.sql.meta.expression.ColumnValueExpression;
@@ -26,6 +28,7 @@ import com.xweb.sql.meta.item.SimpleTableItem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class DefaultSqlParser implements SqlParser {
 
@@ -93,7 +96,20 @@ public class DefaultSqlParser implements SqlParser {
         }else if (booleanExpression instanceof PriorityExpression) {
             PriorityExpression priorityExpression = (PriorityExpression) booleanExpression;
             return new PriorityBooleanExpression(toExecutorBooleanExpression(priorityExpression.getExpression()));
-        } else {
+        } else if (booleanExpression instanceof BetweenAndExpression) {
+            BetweenAndExpression betweenAndExpression = (BetweenAndExpression) booleanExpression;
+            final Item left = betweenAndExpression.getLeft();
+            if(left instanceof TableColumnItem){
+                TableColumnItem tableColumnItem = (TableColumnItem) left;
+                Column column = new Column(new SimpleTableItem("",tableColumnItem.getAlias()),tableColumnItem.getColumnName());
+
+                return new ColumnValueExpression(column,
+                        Optional.ofNullable(betweenAndExpression.getNot()).isPresent()?"=":"!=",
+                        new com.xweb.sql.meta.expression.BetweenAndExpression(null,null,null,null));
+            }
+            throw new RuntimeException();
+
+        }else {
             throw new RuntimeException();
         }
     }

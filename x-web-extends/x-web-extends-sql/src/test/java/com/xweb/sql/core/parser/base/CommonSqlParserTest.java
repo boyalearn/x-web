@@ -1,7 +1,6 @@
 package com.xweb.sql.core.parser.base;
 
 import com.xweb.sql.core.StringUtil;
-import com.xweb.sql.core.common.CommonAstToSqlVisitor;
 import com.xweb.sql.core.common.Statement;
 import com.xweb.sql.core.common.ast.AstUtil;
 import com.xweb.sql.core.common.util.CommonSqlUtil;
@@ -14,7 +13,6 @@ public class CommonSqlParserTest {
     private void commonCheck(String sql) {
         System.out.println("S:" + sql);
         Statement statement = CommonSqlUtil.commonSqlToAST(sql);
-        CommonAstToSqlVisitor commonAstToSqlVisitor = new CommonAstToSqlVisitor();
         String recoverSql = AstUtil.toSql(statement);
         System.out.println("D:" + recoverSql);
         Assert.isTrue(StringUtil.replaceAllEmpty(sql).equals(StringUtil.replaceAllEmpty(recoverSql)), "恢复后不一样了");

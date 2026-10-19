@@ -96,7 +96,7 @@ public class AstUtil {
 
     public final static String COMMA = ",";
 
-    private static Map<Class<?>, AstVisitor> VISITOR=new HashMap<>();
+    private static final Map<Class<?>, AstVisitor> VISITOR=new HashMap<>();
 
     static {
         VISITOR.put(BaseSelect.class,new BaseSelectVisitor());
@@ -106,7 +106,6 @@ public class AstUtil {
         VISITOR.put(AsQueryInsert.class,new AsQueryInsertVisitor());
         VISITOR.put(BetweenAndExpression.class,new BetweenAndExpressionVisitor());
         VISITOR.put(CaseItem.class,new CaseItemVisitor());
-
         VISITOR.put(CommonConditionExpression.class,new CommonConditionExpressionVisitor());
         VISITOR.put(ConcatenationExpression.class,new ConcatenationExpressionVisitor());
         VISITOR.put(ConstantItem.class,new ConstantItemVisitor());
@@ -117,7 +116,6 @@ public class AstUtil {
         VISITOR.put(InsertMergeOperator.class,new InsertMergeOperatorVisitor());
         VISITOR.put(IsNullExpression.class,new IsNullExpressionVisitor());
         VISITOR.put(LikeExpression.class,new LikeExpressionVisitor());
-
         VISITOR.put(LimitPageItem.class,new LimitPageItemVisitor());
         VISITOR.put(OffsetPageItem.class,new OffsetPageItemVisitor());
         VISITOR.put(OnDuplicateInsert.class,new OnDuplicateInsertVisitor());
@@ -131,7 +129,6 @@ public class AstUtil {
         VISITOR.put(SubIndexItem.class,new SubIndexItemVisitor());
         VISITOR.put(TableColumnItem.class,new TableColumnItemVisitor());
         VISITOR.put(UnionSelectItem.class,new UnionSelectItemVisitor());
-
         VISITOR.put(UnionSelect.class,new UnionSelectVisitor());
         VISITOR.put(UnionTableTable.UnionTableItem.class,new UnionTableItemVisitor());
         VISITOR.put(UnionTableTable.class,new UnionTableTableVisitor());
@@ -151,23 +148,12 @@ public class AstUtil {
 
 
     public static String toStringCommon(Item item) {
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuffer = new StringBuilder();
         if (isNotEmpty(item.getAs())) {
-            stringBuffer.append(SPACE + item.getAs());
+            stringBuffer.append(SPACE).append(item.getAs());
         }
         if (isNotEmpty(item.getAlias())) {
-            stringBuffer.append(SPACE + item.getAlias());
-        }
-        return stringBuffer.toString();
-    }
-
-    public static String toStringCommon(Table item) {
-        StringBuffer stringBuffer = new StringBuffer();
-        if (isNotEmpty(item.getAs())) {
-            stringBuffer.append(SPACE + item.getAs());
-        }
-        if (isNotEmpty(item.getAlias())) {
-            stringBuffer.append(SPACE + item.getAlias());
+            stringBuffer.append(SPACE).append(item.getAlias());
         }
         return stringBuffer.toString();
     }

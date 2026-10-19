@@ -27,4 +27,11 @@ public class SqlPlannerTest {
         data = sqlExecutor.execute(sql);
         PageUtil.show(data);
     }
+
+    @Test
+    public void test_000000000000002(){
+        String sql = "select a.aa from aaaa a,bbbb b where a.aa=b.aab and a.aa between 11 and 22";
+        Page data = sqlExecutor.execute(sql);
+        PageUtil.show(data);
+    }
 }
