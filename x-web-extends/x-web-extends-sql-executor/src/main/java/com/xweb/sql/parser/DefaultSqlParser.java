@@ -6,6 +6,7 @@ import com.xweb.sql.core.common.Statement;
 import com.xweb.sql.core.common.Table;
 import com.xweb.sql.core.common.expression.CommonConditionExpression;
 import com.xweb.sql.core.common.expression.ConcatenationExpression;
+import com.xweb.sql.core.common.expression.PriorityExpression;
 import com.xweb.sql.core.common.item.ConstantItem;
 import com.xweb.sql.core.common.item.SelectAllItem;
 import com.xweb.sql.core.common.item.TableColumnItem;
@@ -16,6 +17,7 @@ import com.xweb.sql.meta.Select;
 import com.xweb.sql.meta.SimpleSelect;
 import com.xweb.sql.meta.expression.ColumnValueExpression;
 import com.xweb.sql.meta.expression.ComplexBoolExpression;
+import com.xweb.sql.meta.expression.PriorityBooleanExpression;
 import com.xweb.sql.meta.expression.TableAssociationExpression;
 import com.xweb.sql.meta.item.AllColumnItem;
 import com.xweb.sql.meta.item.Column;
@@ -88,6 +90,9 @@ public class DefaultSqlParser implements SqlParser {
                 return new ColumnValueExpression(leftColumn, conditionExpression.getOp(), new Constant(constantItem.getConstant()));
             }
             return new ComplexBoolExpression(toExecutorBooleanExpression(left), conditionExpression.getOp(), toExecutorBooleanExpression(right));
+        }else if (booleanExpression instanceof PriorityExpression) {
+            PriorityExpression priorityExpression = (PriorityExpression) booleanExpression;
+            return new PriorityBooleanExpression(toExecutorBooleanExpression(priorityExpression.getExpression()));
         } else {
             throw new RuntimeException();
         }

@@ -1,9 +1,6 @@
 package com.xweb.sql.operator.calculator;
 
-import com.xweb.sql.meta.expression.BooleanExpression;
-import com.xweb.sql.meta.expression.ColumnValueExpression;
-import com.xweb.sql.meta.expression.ComplexBoolExpression;
-import com.xweb.sql.meta.expression.TableAssociationExpression;
+import com.xweb.sql.meta.expression.*;
 import com.xweb.sql.meta.item.Column;
 import com.xweb.sql.operator.AbstractOperator;
 import com.xweb.sql.operator.FilterOperator;
@@ -38,6 +35,10 @@ public class CalculatorAnalysis {
             final Column column = columnValueExpression.getColumn();
             column.getTable().setName(LogicPlannerContext.getTableNameByAlias(column.getTable().getAlias()));
             return new ColumnValueExpressionCalculator(columnValueExpression);
+        } else if(booleanExpression instanceof PriorityBooleanExpression){
+            PriorityBooleanExpression priorityBooleanExpression = (PriorityBooleanExpression) booleanExpression;
+            return new PriorityBooleanExpressionCalculator(createFilterCalculator(priorityBooleanExpression.getExpression()));
+
         } else if(booleanExpression instanceof TableAssociationExpression){
             TableAssociationExpression tableAssociationExpression = (TableAssociationExpression) booleanExpression;
             setColumnTableName(tableAssociationExpression);
