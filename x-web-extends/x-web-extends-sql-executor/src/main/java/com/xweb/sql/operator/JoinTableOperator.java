@@ -2,9 +2,7 @@ package com.xweb.sql.operator;
 
 import com.xweb.sql.data.Page;
 import com.xweb.sql.data.Row;
-import com.xweb.sql.data.Slice;
-import com.xweb.sql.meta.expression.TableAssociationExpression;
-import com.xweb.sql.meta.item.Column;
+import com.xweb.sql.operator.calculator.BooleanCalculator;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +18,7 @@ public class JoinTableOperator extends AbstractOperator {
 
     private JoinType joinType;
 
-    private List<TableAssociationExpression> tableAssociations;
+    private BooleanCalculator booleanCalculator;
 
     public JoinTableOperator(SqlOperator left,SqlOperator right,JoinType type){
         this.leftOperator = left;
@@ -53,10 +51,10 @@ public class JoinTableOperator extends AbstractOperator {
                 while (!rightPage.isEmpty()) {
                     final List<Row> rightRows = rightPage.getRows();
                     for (Row rightRow : rightRows) {
-                        if (isMatch(row, rightRow)) {
-                            Row matchRow = new Row();
-                            matchRow.addSlices(row.getSlices());
-                            matchRow.addSlices(rightRow.getSlices());
+                        Row matchRow = new Row();
+                        matchRow.addSlices(row.getSlices());
+                        matchRow.addSlices(rightRow.getSlices());
+                        if (booleanCalculator.compute(matchRow)) {
                             page.addRow(matchRow);
                         }
                     }
@@ -64,30 +62,11 @@ public class JoinTableOperator extends AbstractOperator {
                 }
             }
 
-
         }
 
         return page;
     }
 
-    private boolean isMatch(Row left, Row right) {
-        boolean match = true;
-        for (TableAssociationExpression tableAssociation : tableAssociations) {
-            Column first = tableAssociation.getLeft();
-            Column second = tableAssociation.getRight();
-            Slice firstSlice = left.getSliceByColumnName(first.getTable().getName(), first.getName());
-            Slice secondSlice = right.getSliceByColumnName(second.getTable().getName(), second.getName());
-            if (tableAssociation.getOp().equals("=")) {
-                if (!firstSlice.getData().equals(secondSlice.getData())) {
-                    return false;
-                }
-            } else {
-                throw new RuntimeException("未实现");
-            }
-
-        }
-        return match;
-    }
 
     @Override
     public void close() {

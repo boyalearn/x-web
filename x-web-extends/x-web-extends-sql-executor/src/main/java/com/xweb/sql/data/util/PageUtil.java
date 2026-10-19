@@ -10,6 +10,7 @@ public class PageUtil {
     public static void show(Page page){
         if(page.isEmpty()){
             System.out.println("no data");
+            return;
         }
         final List<Row> rows = page.getRows();
         final Row first = rows.get(0);
