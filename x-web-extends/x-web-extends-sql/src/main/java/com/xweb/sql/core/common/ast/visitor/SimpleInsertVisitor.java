@@ -7,13 +7,13 @@ import com.xweb.sql.core.common.insert.SimpleInsert;
 import java.util.List;
 import java.util.Optional;
 
-public class SimpleInsertVisitor implements AstVisitor{
+public class SimpleInsertVisitor implements AstVisitor {
 
     private AbstractInsertVisitor abstractInsertVisitor = new AbstractInsertVisitor();
 
     @Override
     public String visitor(Item item) {
-        SimpleInsert simpleInsert =(SimpleInsert)item;
+        SimpleInsert simpleInsert = (SimpleInsert) item;
         StringBuffer sql = new StringBuffer();
         sql.append(abstractInsertVisitor.visitor(simpleInsert));
         sql.append(AstUtil.SPACE);

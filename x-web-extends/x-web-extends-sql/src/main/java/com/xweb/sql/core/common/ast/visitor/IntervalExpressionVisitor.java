@@ -6,16 +6,16 @@ import com.xweb.sql.core.common.expression.IntervalExpression;
 
 import java.util.Optional;
 
-public class IntervalExpressionVisitor implements AstVisitor{
+public class IntervalExpressionVisitor implements AstVisitor {
     @Override
     public String visitor(Item item) {
-        IntervalExpression intervalExpression= (IntervalExpression)item;
+        IntervalExpression intervalExpression = (IntervalExpression) item;
         StringBuffer sql = new StringBuffer();
         if (Optional.ofNullable(intervalExpression.getLeft()).isPresent()) {
             sql.append(AstUtil.toSql(intervalExpression.getLeft()));
             sql.append(AstUtil.SPACE);
         }
-        if(AstUtil.isNotEmpty(intervalExpression.getOperator())){
+        if (AstUtil.isNotEmpty(intervalExpression.getOperator())) {
             sql.append(intervalExpression.getOperator());
             sql.append(AstUtil.SPACE);
         }

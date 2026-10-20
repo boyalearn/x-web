@@ -7,10 +7,10 @@ import com.xweb.sql.core.common.merge.InsertMergeOperator;
 import java.util.List;
 import java.util.Optional;
 
-public class InsertMergeOperatorVisitor implements AstVisitor{
+public class InsertMergeOperatorVisitor implements AstVisitor {
     @Override
     public String visitor(Item item) {
-        InsertMergeOperator insertMergeOperator = (InsertMergeOperator)item;
+        InsertMergeOperator insertMergeOperator = (InsertMergeOperator) item;
         StringBuffer sql = new StringBuffer();
         sql.append(AstUtil.SPACE);
         sql.append(insertMergeOperator.getInsert());

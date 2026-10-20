@@ -4,10 +4,10 @@ import com.xweb.sql.core.common.Item;
 import com.xweb.sql.core.common.ast.AstUtil;
 import com.xweb.sql.core.common.expression.IsNullExpression;
 
-public class IsNullExpressionVisitor implements AstVisitor{
+public class IsNullExpressionVisitor implements AstVisitor {
     @Override
     public String visitor(Item item) {
-        IsNullExpression isNullExpression =(IsNullExpression)item;
+        IsNullExpression isNullExpression = (IsNullExpression) item;
         StringBuffer sql = new StringBuffer();
         sql.append(AstUtil.toSql(isNullExpression.getLeft()));
         sql.append(AstUtil.SPACE);

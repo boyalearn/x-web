@@ -6,10 +6,10 @@ import com.xweb.sql.core.common.merge.UpdateMergeOperator;
 
 import java.util.List;
 
-public class UpdateMergeOperatorVisitor implements AstVisitor{
+public class UpdateMergeOperatorVisitor implements AstVisitor {
     @Override
     public String visitor(Item item) {
-        UpdateMergeOperator updateMergeOperator = (UpdateMergeOperator)item;
+        UpdateMergeOperator updateMergeOperator = (UpdateMergeOperator) item;
         StringBuffer sql = new StringBuffer();
         sql.append(AstUtil.SPACE);
         sql.append(updateMergeOperator.getUpdate());

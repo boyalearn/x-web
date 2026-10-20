@@ -7,10 +7,10 @@ import com.xweb.sql.core.common.item.WhenThenItem;
 
 import java.util.List;
 
-public class CaseItemVisitor implements AstVisitor{
+public class CaseItemVisitor implements AstVisitor {
     @Override
     public String visitor(Item item) {
-        CaseItem caseItem =(CaseItem)item;
+        CaseItem caseItem = (CaseItem) item;
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append(caseItem.getCaseName() + AstUtil.SPACE);
         final List<WhenThenItem> whenThenItems = caseItem.getWhenThenItems();

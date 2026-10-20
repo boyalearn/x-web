@@ -4,10 +4,10 @@ import com.xweb.sql.core.common.Item;
 import com.xweb.sql.core.common.ast.AstUtil;
 import com.xweb.sql.core.common.item.UnionSelectItem;
 
-public class UnionSelectItemVisitor implements AstVisitor{
+public class UnionSelectItemVisitor implements AstVisitor {
     @Override
     public String visitor(Item item) {
-        UnionSelectItem unionSelectItem =(UnionSelectItem)item;
+        UnionSelectItem unionSelectItem = (UnionSelectItem) item;
         StringBuffer sql = new StringBuffer();
         sql.append(unionSelectItem.getUnion());
         if (AstUtil.isNotEmpty(unionSelectItem.getAll())) {

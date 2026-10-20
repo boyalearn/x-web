@@ -7,10 +7,10 @@ import com.xweb.sql.core.common.merge.WhenMatchedThenOperatorItem;
 
 import java.util.List;
 
-public class SimpleMergeVisitor implements AstVisitor{
+public class SimpleMergeVisitor implements AstVisitor {
     @Override
     public String visitor(Item item) {
-        SimpleMerge simpleMerge = (SimpleMerge)item;
+        SimpleMerge simpleMerge = (SimpleMerge) item;
         StringBuffer sql = new StringBuffer();
         sql.append(simpleMerge.getMerge());
         sql.append(AstUtil.SPACE);

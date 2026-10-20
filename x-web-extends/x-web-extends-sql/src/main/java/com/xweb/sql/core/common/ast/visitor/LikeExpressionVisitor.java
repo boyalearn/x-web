@@ -4,10 +4,10 @@ import com.xweb.sql.core.common.Item;
 import com.xweb.sql.core.common.ast.AstUtil;
 import com.xweb.sql.core.common.expression.LikeExpression;
 
-public class LikeExpressionVisitor implements AstVisitor{
+public class LikeExpressionVisitor implements AstVisitor {
     @Override
     public String visitor(Item item) {
-        LikeExpression likeExpression =(LikeExpression)item;
+        LikeExpression likeExpression = (LikeExpression) item;
         StringBuffer sql = new StringBuffer();
         sql.append(AstUtil.toSql(likeExpression.getLeft()));
         sql.append(AstUtil.SPACE);

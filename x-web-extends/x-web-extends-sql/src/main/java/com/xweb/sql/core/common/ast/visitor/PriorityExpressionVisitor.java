@@ -4,10 +4,10 @@ import com.xweb.sql.core.common.Item;
 import com.xweb.sql.core.common.ast.AstUtil;
 import com.xweb.sql.core.common.expression.PriorityExpression;
 
-public class PriorityExpressionVisitor implements AstVisitor{
+public class PriorityExpressionVisitor implements AstVisitor {
     @Override
     public String visitor(Item item) {
-        PriorityExpression priorityExpression =(PriorityExpression)item;
+        PriorityExpression priorityExpression = (PriorityExpression) item;
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append(AstUtil.LEFT_BRACKET);
         stringBuffer.append(AstUtil.toSql(priorityExpression.getExpression()));

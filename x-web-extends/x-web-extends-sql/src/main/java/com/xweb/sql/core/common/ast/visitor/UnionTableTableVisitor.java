@@ -6,10 +6,10 @@ import com.xweb.sql.core.common.table.UnionTableTable;
 
 import java.util.List;
 
-public class UnionTableTableVisitor implements AstVisitor{
+public class UnionTableTableVisitor implements AstVisitor {
     @Override
     public String visitor(Item item) {
-        UnionTableTable unionTableTable =(UnionTableTable)item;
+        UnionTableTable unionTableTable = (UnionTableTable) item;
         StringBuffer sql = new StringBuffer();
         sql.append(AstUtil.toSql(unionTableTable.getLeft()));
         sql.append(AstUtil.SPACE);

@@ -6,10 +6,10 @@ import com.xweb.sql.core.common.delete.SimpleDelete;
 
 import java.util.Optional;
 
-public class SimpleDeleteVisitor implements AstVisitor{
+public class SimpleDeleteVisitor implements AstVisitor {
     @Override
     public String visitor(Item item) {
-        SimpleDelete simpleDelete =(SimpleDelete)item;
+        SimpleDelete simpleDelete = (SimpleDelete) item;
         StringBuffer sql = new StringBuffer();
         sql.append(simpleDelete.getDelete());
         sql.append(AstUtil.SPACE);

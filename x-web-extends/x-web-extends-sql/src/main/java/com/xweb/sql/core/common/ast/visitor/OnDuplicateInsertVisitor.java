@@ -6,10 +6,10 @@ import com.xweb.sql.core.common.insert.OnDuplicateInsert;
 
 import java.util.List;
 
-public class OnDuplicateInsertVisitor implements AstVisitor{
+public class OnDuplicateInsertVisitor implements AstVisitor {
     @Override
     public String visitor(Item item) {
-        OnDuplicateInsert onDuplicateInsert =(OnDuplicateInsert)item;
+        OnDuplicateInsert onDuplicateInsert = (OnDuplicateInsert) item;
         StringBuffer sql = new StringBuffer();
         sql.append(AstUtil.toSql(onDuplicateInsert.getInsert()));
         sql.append(AstUtil.SPACE);

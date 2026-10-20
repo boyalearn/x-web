@@ -4,10 +4,10 @@ import com.xweb.sql.core.common.Item;
 import com.xweb.sql.core.common.ast.AstUtil;
 import com.xweb.sql.core.common.expression.BetweenAndExpression;
 
-public class BetweenAndExpressionVisitor implements AstVisitor{
+public class BetweenAndExpressionVisitor implements AstVisitor {
     @Override
     public String visitor(Item item) {
-        BetweenAndExpression betweenAndExpression =(BetweenAndExpression)item;
+        BetweenAndExpression betweenAndExpression = (BetweenAndExpression) item;
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append(AstUtil.toSql(betweenAndExpression.getLeft()));
         if (AstUtil.isNotEmpty(betweenAndExpression.getNot())) {

@@ -15,7 +15,7 @@ public class SqlPlannerTest {
     @Before
     public void init(){
         sqlExecutor = new DefaultSqlExecutor();
-        GlobalConfig.path = "E:\\IdeaWrokspace\\x-web\\x-web-extends\\x-web-extends-sql-executor\\src\\test\\resources\\";
+        GlobalConfig.path = "D:\\IdeaWorkspace\\x-web\\x-web-extends\\x-web-extends-sql-executor\\src\\test\\resources\\";
     }
 
     @Test

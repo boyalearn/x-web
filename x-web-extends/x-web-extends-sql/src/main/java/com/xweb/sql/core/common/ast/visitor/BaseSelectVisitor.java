@@ -10,10 +10,10 @@ import com.xweb.sql.core.common.select.BaseSelect;
 import java.util.List;
 import java.util.Optional;
 
-public class BaseSelectVisitor implements AstVisitor{
+public class BaseSelectVisitor implements AstVisitor {
     @Override
     public String visitor(Item item) {
-        BaseSelect select=(BaseSelect) item;
+        BaseSelect select = (BaseSelect) item;
         StringBuffer sql = new StringBuffer();
         sql.append(select.getSelect());
         final List<Item> selectItems = select.getSelectItems();

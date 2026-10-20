@@ -4,10 +4,10 @@ import com.xweb.sql.core.common.Item;
 import com.xweb.sql.core.common.ast.AstUtil;
 import com.xweb.sql.core.common.page.OffsetPageItem;
 
-public class OffsetPageItemVisitor implements AstVisitor{
+public class OffsetPageItemVisitor implements AstVisitor {
     @Override
     public String visitor(Item item) {
-        OffsetPageItem offsetPageItem=(OffsetPageItem)item;
+        OffsetPageItem offsetPageItem = (OffsetPageItem) item;
         StringBuffer sql = new StringBuffer();
         sql.append(offsetPageItem.getOffset());
         sql.append(AstUtil.SPACE);

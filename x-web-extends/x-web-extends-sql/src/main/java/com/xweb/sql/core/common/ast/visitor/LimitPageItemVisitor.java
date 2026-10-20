@@ -6,10 +6,10 @@ import com.xweb.sql.core.common.page.LimitPageItem;
 
 import java.util.List;
 
-public class LimitPageItemVisitor implements AstVisitor{
+public class LimitPageItemVisitor implements AstVisitor {
     @Override
     public String visitor(Item item) {
-        LimitPageItem limitPageItem=(LimitPageItem)item;
+        LimitPageItem limitPageItem = (LimitPageItem) item;
         StringBuffer sql = new StringBuffer();
         sql.append(limitPageItem.getLimit());
         final List<Item> limitItems = limitPageItem.getLimitItems();

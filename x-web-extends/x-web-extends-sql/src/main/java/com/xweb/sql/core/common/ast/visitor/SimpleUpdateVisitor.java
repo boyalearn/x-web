@@ -7,10 +7,10 @@ import com.xweb.sql.core.common.update.SimpleUpdate;
 import java.util.List;
 import java.util.Optional;
 
-public class SimpleUpdateVisitor implements AstVisitor{
+public class SimpleUpdateVisitor implements AstVisitor {
     @Override
     public String visitor(Item item) {
-        SimpleUpdate simpleUpdate = (SimpleUpdate)item;
+        SimpleUpdate simpleUpdate = (SimpleUpdate) item;
         StringBuffer sql = new StringBuffer();
         sql.append(simpleUpdate.getUpdate());
         sql.append(AstUtil.SPACE);

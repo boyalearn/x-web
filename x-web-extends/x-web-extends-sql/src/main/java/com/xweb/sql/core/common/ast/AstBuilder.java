@@ -1,40 +1,13 @@
 package com.xweb.sql.core.common.ast;
 
-import com.xweb.sql.core.common.BooleanExpression;
-import com.xweb.sql.core.common.Item;
-import com.xweb.sql.core.common.Page;
-import com.xweb.sql.core.common.Select;
-import com.xweb.sql.core.common.Table;
+import com.xweb.sql.core.common.*;
 import com.xweb.sql.core.common.delete.SimpleDelete;
-import com.xweb.sql.core.common.expression.ArithmeticExpression;
-import com.xweb.sql.core.common.expression.BetweenAndExpression;
-import com.xweb.sql.core.common.expression.CommonConditionExpression;
-import com.xweb.sql.core.common.expression.ConcatenationExpression;
-import com.xweb.sql.core.common.expression.ExistExpression;
-import com.xweb.sql.core.common.expression.InExpression;
-import com.xweb.sql.core.common.expression.IntervalExpression;
-import com.xweb.sql.core.common.expression.IsNullExpression;
-import com.xweb.sql.core.common.expression.LikeExpression;
-import com.xweb.sql.core.common.expression.NotBooleanExpression;
-import com.xweb.sql.core.common.expression.PriorityExpression;
+import com.xweb.sql.core.common.expression.*;
 import com.xweb.sql.core.common.insert.AsQueryInsert;
 import com.xweb.sql.core.common.insert.OnDuplicateInsert;
 import com.xweb.sql.core.common.insert.SimpleInsert;
-import com.xweb.sql.core.common.item.CaseItem;
-import com.xweb.sql.core.common.item.ConstantItem;
-import com.xweb.sql.core.common.item.FunctionCallItem;
-import com.xweb.sql.core.common.item.ListItem;
-import com.xweb.sql.core.common.item.SelectAllItem;
-import com.xweb.sql.core.common.item.SubIndexItem;
-import com.xweb.sql.core.common.item.TableColumnItem;
-import com.xweb.sql.core.common.item.UnionSelectItem;
-import com.xweb.sql.core.common.item.WhenThenItem;
-import com.xweb.sql.core.common.merge.DeleteMergeOperator;
-import com.xweb.sql.core.common.merge.InsertMergeOperator;
-import com.xweb.sql.core.common.merge.MergeOperator;
-import com.xweb.sql.core.common.merge.SimpleMerge;
-import com.xweb.sql.core.common.merge.UpdateMergeOperator;
-import com.xweb.sql.core.common.merge.WhenMatchedThenOperatorItem;
+import com.xweb.sql.core.common.item.*;
+import com.xweb.sql.core.common.merge.*;
 import com.xweb.sql.core.common.order.DefaultOrderItem;
 import com.xweb.sql.core.common.order.OrderItem;
 import com.xweb.sql.core.common.page.LimitPageItem;
@@ -84,7 +57,7 @@ public class AstBuilder extends SqlBaseBaseVisitor<Item> {
             onDuplicateInsert.setUpdateColumns(new ArrayList<>());
             final List<SqlBaseParser.ExpressionContext> expressions = onDuplicateConditionContext.expression();
             for (SqlBaseParser.ExpressionContext expression : expressions) {
-                onDuplicateInsert.getUpdateColumns().add( super.visit(expression));
+                onDuplicateInsert.getUpdateColumns().add(super.visit(expression));
             }
             return onDuplicateInsert;
         }
@@ -148,7 +121,7 @@ public class AstBuilder extends SqlBaseBaseVisitor<Item> {
         simpleUpdate.setUpdateItems(new ArrayList<>());
         final List<SqlBaseParser.ExpressionContext> expressions = ctx.expression();
         for (SqlBaseParser.ExpressionContext expression : expressions) {
-            simpleUpdate.getUpdateItems().add( super.visit(expression));
+            simpleUpdate.getUpdateItems().add(super.visit(expression));
         }
         if (Optional.ofNullable(ctx.WHERE()).isPresent()) {
             simpleUpdate.setWhere(ctx.WHERE().getText());
@@ -162,7 +135,7 @@ public class AstBuilder extends SqlBaseBaseVisitor<Item> {
         SimpleMerge simpleMerge = new SimpleMerge();
         simpleMerge.setMerge(ctx.MERGE().getText());
         simpleMerge.setInto(ctx.INTO().getText());
-        simpleMerge.setTable( super.visit(ctx.target));
+        simpleMerge.setTable(super.visit(ctx.target));
         simpleMerge.setUsing(ctx.USING().getText());
         simpleMerge.setUseTable(super.visit(ctx.useTable));
         simpleMerge.setOn(ctx.ON().getText());
@@ -259,7 +232,7 @@ public class AstBuilder extends SqlBaseBaseVisitor<Item> {
         if (Optional.ofNullable(ctx.setQuantifier()).isPresent()) {
             unionSelectItem.setAll(ctx.setQuantifier().getText());
         }
-        unionSelectItem.setSelect( super.visit(ctx.queryItem()));
+        unionSelectItem.setSelect(super.visit(ctx.queryItem()));
         return unionSelectItem;
     }
 
@@ -549,15 +522,15 @@ public class AstBuilder extends SqlBaseBaseVisitor<Item> {
             return inExpression;
         } else if (predicate instanceof IsNullExpression) {
             IsNullExpression isNullExpression = (IsNullExpression) predicate;
-            isNullExpression.setLeft( value);
+            isNullExpression.setLeft(value);
             return isNullExpression;
         } else if (predicate instanceof LikeExpression) {
             LikeExpression likeExpression = (LikeExpression) predicate;
-            likeExpression.setLeft( value);
+            likeExpression.setLeft(value);
             return likeExpression;
         } else if (predicate instanceof IntervalExpression) {
             IntervalExpression intervalExpression = (IntervalExpression) predicate;
-            intervalExpression.setLeft( value);
+            intervalExpression.setLeft(value);
             return intervalExpression;
         } else {
             throw new RuntimeException("express BUG 未支持的解析异常: " + predicate.getClass().getSimpleName());
@@ -569,9 +542,9 @@ public class AstBuilder extends SqlBaseBaseVisitor<Item> {
         Item left = super.visit(ctx.left);
         Item right = super.visit(ctx.right);
         ArithmeticExpression arithmeticExpressionItem = new ArithmeticExpression();
-        arithmeticExpressionItem.setLeft( left);
+        arithmeticExpressionItem.setLeft(left);
         arithmeticExpressionItem.setOperator(ctx.operator.getText());
-        arithmeticExpressionItem.setRight( right);
+        arithmeticExpressionItem.setRight(right);
         return arithmeticExpressionItem;
     }
 
@@ -608,8 +581,8 @@ public class AstBuilder extends SqlBaseBaseVisitor<Item> {
         final Item left = super.visit(ctx.left);
         final Item right = super.visit(ctx.right);
         CommonConditionExpression commonConditionExpression = new CommonConditionExpression();
-        commonConditionExpression.setLeft( left);
-        commonConditionExpression.setRight( right);
+        commonConditionExpression.setLeft(left);
+        commonConditionExpression.setRight(right);
         commonConditionExpression.setOp(ctx.operator.getText());
         return commonConditionExpression;
     }
@@ -669,7 +642,7 @@ public class AstBuilder extends SqlBaseBaseVisitor<Item> {
         subIndexItem.setValue(super.visit(ctx.primaryExpression()));
         final List<SqlBaseParser.ValueExpressionContext> valueExpressionContexts = ctx.valueExpression();
         for (SqlBaseParser.ValueExpressionContext valueExpressionContext : valueExpressionContexts) {
-            subIndexItem.getIndexes().add( super.visit(valueExpressionContext));
+            subIndexItem.getIndexes().add(super.visit(valueExpressionContext));
         }
         return subIndexItem;
     }
@@ -693,9 +666,9 @@ public class AstBuilder extends SqlBaseBaseVisitor<Item> {
             betweenAndExpression.setNot(ctx.NOT().getText());
         }
         betweenAndExpression.setBetween(ctx.BETWEEN().getText());
-        betweenAndExpression.setLower( super.visit(ctx.lower));
+        betweenAndExpression.setLower(super.visit(ctx.lower));
         betweenAndExpression.setAnd(ctx.AND().getText());
-        betweenAndExpression.setUpper( super.visit(ctx.upper));
+        betweenAndExpression.setUpper(super.visit(ctx.upper));
         return betweenAndExpression;
     }
 

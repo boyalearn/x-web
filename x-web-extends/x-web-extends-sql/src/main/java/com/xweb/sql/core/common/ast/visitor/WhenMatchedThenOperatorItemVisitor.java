@@ -4,10 +4,10 @@ import com.xweb.sql.core.common.Item;
 import com.xweb.sql.core.common.ast.AstUtil;
 import com.xweb.sql.core.common.merge.WhenMatchedThenOperatorItem;
 
-public class WhenMatchedThenOperatorItemVisitor implements AstVisitor{
+public class WhenMatchedThenOperatorItemVisitor implements AstVisitor {
     @Override
     public String visitor(Item item) {
-        WhenMatchedThenOperatorItem whenMatchedThenOperatorItem =(WhenMatchedThenOperatorItem)item;
+        WhenMatchedThenOperatorItem whenMatchedThenOperatorItem = (WhenMatchedThenOperatorItem) item;
         StringBuffer sql = new StringBuffer();
         sql.append(whenMatchedThenOperatorItem.getWhen());
         if (AstUtil.isNotEmpty(whenMatchedThenOperatorItem.getNot())) {
