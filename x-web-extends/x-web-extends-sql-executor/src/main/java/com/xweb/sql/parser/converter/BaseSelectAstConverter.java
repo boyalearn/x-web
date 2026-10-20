@@ -21,10 +21,10 @@ import com.xweb.sql.meta.item.AllColumnItem;
 import com.xweb.sql.meta.item.Column;
 import com.xweb.sql.meta.item.Constant;
 import com.xweb.sql.meta.item.SimpleTableItem;
+import com.xweb.sql.parser.converter.util.AstConverterUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class BaseSelectAstConverter implements AstConverter {
     @Override
@@ -85,18 +85,7 @@ public class BaseSelectAstConverter implements AstConverter {
             PriorityExpression priorityExpression = (PriorityExpression) booleanExpression;
             return new PriorityBooleanExpression(toExecutorBooleanExpression(priorityExpression.getExpression()));
         } else if (booleanExpression instanceof BetweenAndExpression) {
-            BetweenAndExpression betweenAndExpression = (BetweenAndExpression) booleanExpression;
-            final com.xweb.sql.core.common.Item left = betweenAndExpression.getLeft();
-            if (left instanceof TableColumnItem) {
-                TableColumnItem tableColumnItem = (TableColumnItem) left;
-                Column column = new Column(new SimpleTableItem("", tableColumnItem.getAlias()), tableColumnItem.getColumnName());
-
-                return new ColumnValueExpression(column,
-                        Optional.ofNullable(betweenAndExpression.getNot()).isPresent() ? "=" : "!=",
-                        new com.xweb.sql.meta.expression.BetweenAndExpression(null, null, null, null));
-            }
-            throw new RuntimeException();
-
+            return (com.xweb.sql.meta.expression.BooleanExpression) AstConverterUtil.convert(booleanExpression);
         } else {
             throw new RuntimeException();
         }

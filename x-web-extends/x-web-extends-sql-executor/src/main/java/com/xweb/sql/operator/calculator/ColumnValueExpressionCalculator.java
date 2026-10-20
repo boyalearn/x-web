@@ -3,10 +3,13 @@ package com.xweb.sql.operator.calculator;
 import com.xweb.sql.data.Row;
 import com.xweb.sql.data.Slice;
 import com.xweb.sql.meta.Expression;
+import com.xweb.sql.meta.Item;
 import com.xweb.sql.meta.Select;
+import com.xweb.sql.meta.expression.BetweenAndExpression;
 import com.xweb.sql.meta.expression.ColumnValueExpression;
 import com.xweb.sql.meta.item.Column;
 import com.xweb.sql.meta.item.Constant;
+import com.xweb.sql.operator.calculator.util.CalculatorUtil;
 import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
@@ -41,6 +44,50 @@ public class ColumnValueExpressionCalculator implements BooleanCalculator {
     private boolean computeEqualExpression(Slice slice) {
         final Object data = slice.getData();
         final Object value = computeValueExpression();
+        if (value instanceof BetweenAndExpression) {
+            return computeValueExpressionEqualExpression(data, (BetweenAndExpression) value);
+        } else if (value instanceof Select) {
+            throw new RuntimeException();
+        } else {
+            return computeValueConstantEqualExpression(data, value);
+        }
+
+    }
+
+    private boolean computeValueExpressionEqualExpression(Object data, BetweenAndExpression expression) {
+        String lowerOp = expression.getLowerOp();
+        String upperOp = expression.getUpperOp();
+        Item lower = expression.getLower();
+        Item upper = expression.getUpper();
+
+        if (!(lower instanceof Constant && upper instanceof Constant)) {
+            throw new RuntimeException();
+        }
+        if (lowerOp.equals(">=")) {
+            if (!CalculatorUtil.EGT(data, ((Constant) lower).getData())) {
+                return false;
+            }
+        } else {
+            if (!CalculatorUtil.GT(data, ((Constant) lower).getData())) {
+                return false;
+            }
+        }
+
+        if (upperOp.equals("<=")) {
+            if (CalculatorUtil.GT(data, ((Constant) upper).getData())) {
+                return false;
+            }
+        } else {
+            if (CalculatorUtil.EGT(data, ((Constant) upper).getData())) {
+                return false;
+            }
+        }
+
+        return true;
+
+    }
+
+    private boolean computeValueConstantEqualExpression(Object data, Object value) {
         if (data instanceof String) {
             return data.equals(value.toString());
         } else if (data instanceof Number) {
@@ -60,8 +107,7 @@ public class ColumnValueExpressionCalculator implements BooleanCalculator {
         if (Optional.ofNullable(constant).isPresent()) {
             return constant.getData();
         } else if (Optional.ofNullable(expression).isPresent()) {
-            throw new RuntimeException("value expression error.");
-
+            return expression;
         } else if (Optional.ofNullable(select).isPresent()) {
             throw new RuntimeException("value expression error.");
         } else {

@@ -13,13 +13,13 @@ public class SqlPlannerTest {
     private DefaultSqlExecutor sqlExecutor;
 
     @Before
-    public void init(){
+    public void init() {
         sqlExecutor = new DefaultSqlExecutor();
         GlobalConfig.path = "D:\\IdeaWorkspace\\x-web\\x-web-extends\\x-web-extends-sql-executor\\src\\test\\resources\\";
     }
 
     @Test
-    public void test_00000000000001(){
+    public void test_00000000000001() {
         String sql = "select a.aa,a.bb from aaaa a,bbbb b where a.aa=b.aab";
         Page data = sqlExecutor.execute(sql);
         PageUtil.show(data);
@@ -29,8 +29,8 @@ public class SqlPlannerTest {
     }
 
     @Test
-    public void test_000000000000002(){
-        String sql = "select a.aa from aaaa a,bbbb b where a.aa=b.aab and a.aa between 11 and 22";
+    public void test_000000000000002() {
+        String sql = "select a.aa from aaaa a,bbbb b where a.aa=b.aab and a.aa between 11 and 99";
         Page data = sqlExecutor.execute(sql);
         PageUtil.show(data);
     }

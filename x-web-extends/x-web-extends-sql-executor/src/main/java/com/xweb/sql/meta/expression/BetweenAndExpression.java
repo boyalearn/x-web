@@ -3,7 +3,11 @@ package com.xweb.sql.meta.expression;
 import com.xweb.sql.meta.Expression;
 import com.xweb.sql.meta.Item;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @AllArgsConstructor
 public class BetweenAndExpression implements Expression {
 
