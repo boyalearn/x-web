@@ -4,6 +4,7 @@ import com.xweb.sql.core.common.expression.BetweenAndExpression;
 import com.xweb.sql.core.common.item.ConstantItem;
 import com.xweb.sql.core.common.select.BaseSelect;
 import com.xweb.sql.meta.Item;
+import com.xweb.sql.meta.Node;
 import com.xweb.sql.parser.converter.AstConverter;
 import com.xweb.sql.parser.converter.BaseSelectAstConverter;
 import com.xweb.sql.parser.converter.BetweenAndExpressionAstConverter;
@@ -22,7 +23,7 @@ public class AstConverterUtil {
         CONVERTER.put(ConstantItem.class, new ConstantItemAstConverter());
     }
 
-    public static Item convert(com.xweb.sql.core.common.Item item) {
+    public static Node convert(com.xweb.sql.core.common.Item item) {
         AstConverter astConverter = CONVERTER.get(item.getClass());
         if (null == astConverter) {
             throw new RuntimeException();

@@ -1,7 +1,7 @@
 package com.xweb.sql.meta.expression;
 
 import com.xweb.sql.meta.Expression;
-import com.xweb.sql.meta.Item;
+import com.xweb.sql.meta.Node;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,13 +9,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class BetweenAndExpression implements Expression {
+public class BetweenExpression implements Expression {
 
-    private Item lower;
+    private Node lower;
 
     private String lowerOp;
 
-    private Item upper;
+    private Node upper;
 
     private String upperOp;
 }

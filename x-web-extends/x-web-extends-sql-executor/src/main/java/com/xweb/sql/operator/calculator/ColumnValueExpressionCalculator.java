@@ -4,8 +4,9 @@ import com.xweb.sql.data.Row;
 import com.xweb.sql.data.Slice;
 import com.xweb.sql.meta.Expression;
 import com.xweb.sql.meta.Item;
+import com.xweb.sql.meta.Node;
 import com.xweb.sql.meta.Select;
-import com.xweb.sql.meta.expression.BetweenAndExpression;
+import com.xweb.sql.meta.expression.BetweenExpression;
 import com.xweb.sql.meta.expression.ColumnValueExpression;
 import com.xweb.sql.meta.item.Column;
 import com.xweb.sql.meta.item.Constant;
@@ -44,8 +45,8 @@ public class ColumnValueExpressionCalculator implements BooleanCalculator {
     private boolean computeEqualExpression(Slice slice) {
         final Object data = slice.getData();
         final Object value = computeValueExpression();
-        if (value instanceof BetweenAndExpression) {
-            return computeValueExpressionEqualExpression(data, (BetweenAndExpression) value);
+        if (value instanceof BetweenExpression) {
+            return computeValueExpressionEqualExpression(data, (BetweenExpression) value);
         } else if (value instanceof Select) {
             throw new RuntimeException();
         } else {
@@ -54,11 +55,11 @@ public class ColumnValueExpressionCalculator implements BooleanCalculator {
 
     }
 
-    private boolean computeValueExpressionEqualExpression(Object data, BetweenAndExpression expression) {
+    private boolean computeValueExpressionEqualExpression(Object data, BetweenExpression expression) {
         String lowerOp = expression.getLowerOp();
         String upperOp = expression.getUpperOp();
-        Item lower = expression.getLower();
-        Item upper = expression.getUpper();
+        Node lower = expression.getLower();
+        Node upper = expression.getUpper();
 
         if (!(lower instanceof Constant && upper instanceof Constant)) {
             throw new RuntimeException();

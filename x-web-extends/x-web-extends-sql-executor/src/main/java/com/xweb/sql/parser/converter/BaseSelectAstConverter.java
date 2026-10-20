@@ -1,6 +1,7 @@
 package com.xweb.sql.parser.converter;
 
 import com.xweb.sql.core.common.BooleanExpression;
+import com.xweb.sql.core.common.Item;
 import com.xweb.sql.core.common.Table;
 import com.xweb.sql.core.common.expression.BetweenAndExpression;
 import com.xweb.sql.core.common.expression.CommonConditionExpression;
@@ -11,7 +12,7 @@ import com.xweb.sql.core.common.item.SelectAllItem;
 import com.xweb.sql.core.common.item.TableColumnItem;
 import com.xweb.sql.core.common.select.BaseSelect;
 import com.xweb.sql.core.common.table.SimpleTable;
-import com.xweb.sql.meta.Item;
+import com.xweb.sql.meta.Node;
 import com.xweb.sql.meta.SimpleSelect;
 import com.xweb.sql.meta.expression.ColumnValueExpression;
 import com.xweb.sql.meta.expression.ComplexBoolExpression;
@@ -28,7 +29,7 @@ import java.util.List;
 
 public class BaseSelectAstConverter implements AstConverter {
     @Override
-    public Item convert(com.xweb.sql.core.common.Item item) {
+    public Node convert(Item item) {
 
         BaseSelect baseSelect = (BaseSelect) item;
         SimpleSelect select = new SimpleSelect();
@@ -56,7 +57,7 @@ public class BaseSelectAstConverter implements AstConverter {
         }
 
         BooleanExpression whereExpression = baseSelect.getWhereExpression();
-        select.setWhereExpression(toExecutorBooleanExpression(whereExpression));
+        select.setWhereExpression((com.xweb.sql.meta.expression.BooleanExpression) AstConverterUtil.convert(whereExpression));
         return select;
     }
 

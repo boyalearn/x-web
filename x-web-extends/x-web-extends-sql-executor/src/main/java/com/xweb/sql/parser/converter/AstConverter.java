@@ -1,8 +1,9 @@
 package com.xweb.sql.parser.converter;
 
-import com.xweb.sql.meta.Item;
+import com.xweb.sql.core.common.Item;
+import com.xweb.sql.meta.Node;
 
 public interface AstConverter {
 
-    Item convert(com.xweb.sql.core.common.Item item);
+    Node convert(Item item);
 }
