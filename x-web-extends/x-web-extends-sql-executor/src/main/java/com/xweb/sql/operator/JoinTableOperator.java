@@ -20,7 +20,7 @@ public class JoinTableOperator extends AbstractOperator {
 
     private BooleanCalculator booleanCalculator;
 
-    public JoinTableOperator(SqlOperator left,SqlOperator right,JoinType type){
+    public JoinTableOperator(SqlOperator left, SqlOperator right, JoinType type) {
         this.leftOperator = left;
         this.rightOperator = right;
         this.joinType = type;
@@ -43,13 +43,13 @@ public class JoinTableOperator extends AbstractOperator {
         return page;
     }
 
-    private Page innerJoin(){
+    private Page innerJoin() {
         Page page = new Page();
         Page mainPage = leftOperator.next();
         if (mainPage.isEmpty()) {
             return page;
         }
-        while (page.isEmpty()&&!mainPage.isEmpty()) {
+        while (page.isEmpty() && !mainPage.isEmpty()) {
             final List<Row> rows = mainPage.getRows();
             for (Row row : rows) {
                 rightOperator.open();
@@ -70,7 +70,7 @@ public class JoinTableOperator extends AbstractOperator {
                     rightPage = rightOperator.next();
                 }
             }
-            if(page.isEmpty()){
+            if (page.isEmpty()) {
                 mainPage = leftOperator.next();
             }
         }

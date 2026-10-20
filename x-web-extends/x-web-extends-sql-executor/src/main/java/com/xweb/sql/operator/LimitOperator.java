@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 
 @AllArgsConstructor
-public class LimitOperator extends AbstractOperator{
+public class LimitOperator extends AbstractOperator {
 
     private SqlOperator operator;
 
@@ -28,13 +28,13 @@ public class LimitOperator extends AbstractOperator{
 
     @Override
     public Page next() {
-        Page result =new Page();
+        Page result = new Page();
         long index = 0;
         Page next = operator.next();
-        while (index<limit+offset && !next.isEmpty()){
+        while (index < limit + offset && !next.isEmpty()) {
             final List<Row> rows = next.getRows();
             for (Row row : rows) {
-                if(index>=offset){
+                if (index >= offset) {
                     result.addRow(row);
                 }
                 index++;

@@ -7,7 +7,7 @@ import com.xweb.sql.meta.item.Column;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class TableAssociationExpressionCalculator implements BooleanCalculator{
+public class TableAssociationExpressionCalculator implements BooleanCalculator {
 
     private TableAssociationExpression tableAssociationExpression;
 
@@ -18,7 +18,7 @@ public class TableAssociationExpressionCalculator implements BooleanCalculator{
         final Slice leftSlice = row.getSliceByColumnName(left.getTable().getName(), left.getName());
         final Slice rightSlice = row.getSliceByColumnName(right.getTable().getName(), right.getName());
 
-        if(tableAssociationExpression.getOp().equals("=")){
+        if (tableAssociationExpression.getOp().equals("=")) {
             return leftSlice.getData().equals(rightSlice.getData());
         }
         return false;

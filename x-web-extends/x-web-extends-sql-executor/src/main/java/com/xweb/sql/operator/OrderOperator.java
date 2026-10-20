@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 
 @AllArgsConstructor
-public class OrderOperator implements SqlOperator{
+public class OrderOperator implements SqlOperator {
 
     private SqlOperator operator;
 

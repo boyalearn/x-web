@@ -36,7 +36,7 @@ public class FilterOperator implements SqlOperator {
                     result.addRow(row);
                 }
             }
-            if(result.isEmpty()){
+            if (result.isEmpty()) {
                 next = operator.next();
             }
         }

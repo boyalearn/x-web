@@ -12,7 +12,7 @@ import com.xweb.sql.operator.calculator.CalculatorAnalysis;
 import java.util.List;
 import java.util.Optional;
 
-public class SimpleSelectLogicPlanner implements SqlPlanner{
+public class SimpleSelectLogicPlanner implements SqlPlanner {
 
     private static TableItemLogicPlanner tableItemLogicPlanner = new TableItemLogicPlanner();
 
@@ -20,7 +20,7 @@ public class SimpleSelectLogicPlanner implements SqlPlanner{
         List<TableItem> tableItems = simpleSelect.getTableItems();
         final List<Item> selectItems = simpleSelect.getSelectItems();
         if (tableItems.isEmpty()) {
-            return new ProjectOperator(selectItems,null);
+            return new ProjectOperator(selectItems, null);
         }
         SqlOperator operator = planTables(simpleSelect);
 
@@ -31,41 +31,41 @@ public class SimpleSelectLogicPlanner implements SqlPlanner{
             operator = filterOperator;
         }
         for (Item selectItem : selectItems) {
-            if(selectItem instanceof Column){
+            if (selectItem instanceof Column) {
                 Column column = (Column) selectItem;
                 column.getTable().setName(LogicPlannerContext.getTableNameByAlias(column.getTable().getAlias()));
             }
         }
-        final List<Item> groupItems =  simpleSelect.getGroupItems();
+        final List<Item> groupItems = simpleSelect.getGroupItems();
         final List<OrderItem> orderItems = simpleSelect.getOrderItems();
-        if(Optional.ofNullable(groupItems).isPresent()&& !groupItems.isEmpty()){
-            operator = new GroupOperator(operator,selectItems,groupItems);
-            if(Optional.ofNullable(orderItems).isPresent() && !orderItems.isEmpty()){
-                operator = new OrderOperator(operator,orderItems);
+        if (Optional.ofNullable(groupItems).isPresent() && !groupItems.isEmpty()) {
+            operator = new GroupOperator(operator, selectItems, groupItems);
+            if (Optional.ofNullable(orderItems).isPresent() && !orderItems.isEmpty()) {
+                operator = new OrderOperator(operator, orderItems);
             }
             return operator;
         }
         operator = new ProjectOperator(selectItems, operator);
-        if(Optional.ofNullable(orderItems).isPresent() && !orderItems.isEmpty()){
-            operator = new OrderOperator(operator,orderItems);
+        if (Optional.ofNullable(orderItems).isPresent() && !orderItems.isEmpty()) {
+            operator = new OrderOperator(operator, orderItems);
         }
         return operator;
     }
 
-    private SqlOperator planTables(SimpleSelect simpleSelect){
+    private SqlOperator planTables(SimpleSelect simpleSelect) {
         List<TableItem> tableItems = simpleSelect.getTableItems();
-        SqlOperator operator = tableItemLogicPlanner.plan(tableItems.get(0),simpleSelect.getWhereExpression());
+        SqlOperator operator = tableItemLogicPlanner.plan(tableItems.get(0), simpleSelect.getWhereExpression());
         for (int i = 1; i < tableItems.size(); i++) {
             TableItem tableItem = tableItems.get(i);
-            SqlOperator current = tableItemLogicPlanner.plan(tableItem,simpleSelect.getWhereExpression());
+            SqlOperator current = tableItemLogicPlanner.plan(tableItem, simpleSelect.getWhereExpression());
             if (current instanceof TableScanOperator) {
-                JoinTableOperator joinTableOperator=new JoinTableOperator(operator, current, JoinTableOperator.JoinType.INNER);
-                CalculatorAnalysis.setCalculator(joinTableOperator,simpleSelect.getWhereExpression());
+                JoinTableOperator joinTableOperator = new JoinTableOperator(operator, current, JoinTableOperator.JoinType.INNER);
+                CalculatorAnalysis.setCalculator(joinTableOperator, simpleSelect.getWhereExpression());
                 operator = joinTableOperator;
             } else if (current instanceof JoinTableOperator) {
                 JoinTableOperator joinTableOperator = (JoinTableOperator) current;
                 joinTableOperator.setLeftOperator(operator);
-                CalculatorAnalysis.setCalculator(joinTableOperator,simpleSelect.getWhereExpression());
+                CalculatorAnalysis.setCalculator(joinTableOperator, simpleSelect.getWhereExpression());
                 operator = joinTableOperator;
             }
         }

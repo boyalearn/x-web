@@ -4,7 +4,7 @@ import com.xweb.sql.data.Page;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class UnionOperator extends AbstractOperator{
+public class UnionOperator extends AbstractOperator {
 
     private SqlOperator sqlOperator;
 

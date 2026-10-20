@@ -7,6 +7,7 @@ public interface SqlOperator {
 
     /**
      * 不能返回空
+     *
      * @return
      */
     Page next();

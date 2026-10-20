@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
-public class ProjectOperator extends AbstractOperator{
+public class ProjectOperator extends AbstractOperator {
 
     private List<Item> items;
 
@@ -26,7 +26,7 @@ public class ProjectOperator extends AbstractOperator{
     public Page next() {
         Page result = new Page();
         Page next = operator.next();
-        while (!next.isEmpty()){
+        while (!next.isEmpty()) {
 
             result.addRows(filterItem(next.getRows()));
             next = operator.next();
@@ -34,17 +34,17 @@ public class ProjectOperator extends AbstractOperator{
         return result;
     }
 
-    private List<Row> filterItem(List<Row> rows){
-        if(this.items.size() == 1 && this.items.get(0) instanceof AllColumnItem){
+    private List<Row> filterItem(List<Row> rows) {
+        if (this.items.size() == 1 && this.items.get(0) instanceof AllColumnItem) {
             return rows;
         }
         List<Row> result = new ArrayList<>();
         for (Row row : rows) {
-            Row r= new Row();
+            Row r = new Row();
             for (Item item : this.items) {
-                if(item instanceof Column){
-                    Column column = (Column)item;
-                    r.addSlice(row.getSliceByColumnName(column.getTable().getName(),column.getName()));
+                if (item instanceof Column) {
+                    Column column = (Column) item;
+                    r.addSlice(row.getSliceByColumnName(column.getTable().getName(), column.getName()));
                 }
             }
             result.add(r);

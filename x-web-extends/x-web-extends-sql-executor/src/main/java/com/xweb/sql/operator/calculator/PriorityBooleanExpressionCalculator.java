@@ -4,7 +4,7 @@ import com.xweb.sql.data.Row;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class PriorityBooleanExpressionCalculator implements BooleanCalculator{
+public class PriorityBooleanExpressionCalculator implements BooleanCalculator {
 
     private BooleanCalculator calculator;
 
