@@ -2,7 +2,6 @@ package com.xweb.sql.operator.calculator;
 
 import com.xweb.sql.data.Row;
 import com.xweb.sql.data.Slice;
-import com.xweb.sql.meta.common.BooleanNode;
 import com.xweb.sql.meta.Node;
 import com.xweb.sql.meta.Select;
 import com.xweb.sql.meta.expression.BetweenAndNode;
@@ -13,7 +12,6 @@ import com.xweb.sql.operator.calculator.util.CalculatorUtil;
 import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 @AllArgsConstructor
 public class ColumnValueExpressionCalculator implements BooleanCalculator {
@@ -22,14 +20,14 @@ public class ColumnValueExpressionCalculator implements BooleanCalculator {
 
     private static final String NEQ = "!=";
 
-    private ColumnValueNode columnValueExpression;
+    private ColumnValueNode columnValueNode;
 
     @Override
     public boolean compute(Row row) {
-        ColumnNode column = columnValueExpression.getColumn();
+        ColumnNode column = columnValueNode.getColumn();
         Slice slice = row.getSliceByColumnName(column.getTable().getName(), column.getName());
 
-        switch (columnValueExpression.getOp()) {
+        switch (columnValueNode.getOp()) {
             case EQ:
                 return computeEqualExpression(slice);
             case NEQ:
@@ -101,17 +99,11 @@ public class ColumnValueExpressionCalculator implements BooleanCalculator {
     }
 
     private Object computeValueExpression() {
-        final ConstantNode constant = this.columnValueExpression.getConstant();
-        final BooleanNode expression = this.columnValueExpression.getExpression();
-        final Select select = this.columnValueExpression.getSelect();
-        if (Optional.ofNullable(constant).isPresent()) {
-            return constant.getData();
-        } else if (Optional.ofNullable(expression).isPresent()) {
-            return expression;
-        } else if (Optional.ofNullable(select).isPresent()) {
-            throw new RuntimeException("value expression error.");
+        final Node value = this.columnValueNode.getValue();
+        if (value instanceof ConstantNode) {
+            return ((ConstantNode)value).getData();
         } else {
-            throw new RuntimeException("value expression error.");
+            return value;
         }
     }
 

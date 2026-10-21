@@ -11,10 +11,9 @@ import java.util.List;
 @Getter
 @Setter
 public class FilterOperator implements SqlOperator {
+
     private SqlOperator operator;
-
     private BooleanCalculator booleanCalculator;
-
 
     public FilterOperator(SqlOperator operator) {
         this.operator = operator;

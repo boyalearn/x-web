@@ -16,9 +16,9 @@ public class BetweenAndExpressionAstConverter implements AstConverter {
     @Override
     public Node convert(Item item) {
         BetweenAndExpression betweenAndExpression = (BetweenAndExpression) item;
-        final com.xweb.sql.core.common.Item left = betweenAndExpression.getLeft();
-        com.xweb.sql.core.common.Item lower = betweenAndExpression.getLower();
-        com.xweb.sql.core.common.Item upper = betweenAndExpression.getUpper();
+        final Item left = betweenAndExpression.getLeft();
+        Item lower = betweenAndExpression.getLower();
+        Item upper = betweenAndExpression.getUpper();
         if (left instanceof TableColumnItem) {
             TableColumnItem tableColumnItem = (TableColumnItem) left;
             ColumnNode column = new ColumnNode(new SimpleTableNode("", tableColumnItem.getTableName()), tableColumnItem.getColumnName());

@@ -1,5 +1,6 @@
 package com.xweb.sql.operator.calculator;
 
+import com.xweb.sql.meta.Node;
 import com.xweb.sql.meta.common.BooleanNode;
 import com.xweb.sql.meta.expression.*;
 import com.xweb.sql.meta.node.ColumnNode;
@@ -25,7 +26,7 @@ public class CalculatorAnalysis {
         filterOperator.setBooleanCalculator(createFilterCalculator(booleanExpression));
     }
 
-    private static BooleanCalculator createFilterCalculator(BooleanNode booleanExpression){
+    private static BooleanCalculator createFilterCalculator(Node booleanExpression){
         if(booleanExpression instanceof ComplexBoolNode){
             ComplexBoolNode complexBoolExpression = (ComplexBoolNode) booleanExpression;
             BooleanCalculator left = createFilterCalculator(complexBoolExpression.getLeft());
@@ -36,9 +37,9 @@ public class CalculatorAnalysis {
             final ColumnNode column = columnValueExpression.getColumn();
             column.getTable().setName(LogicPlannerContext.getTableNameByAlias(column.getTable().getAlias()));
             return new ColumnValueExpressionCalculator(columnValueExpression);
-        } else if(booleanExpression instanceof PriorityBooleanNode){
-            PriorityBooleanNode priorityBooleanExpression = (PriorityBooleanNode) booleanExpression;
-            return new PriorityBooleanExpressionCalculator(createFilterCalculator(priorityBooleanExpression.getBooleanNode()));
+        } else if(booleanExpression instanceof PriorityNode){
+            PriorityNode priorityBooleanExpression = (PriorityNode) booleanExpression;
+            return new PriorityBooleanExpressionCalculator(createFilterCalculator(priorityBooleanExpression.getNode()));
 
         } else if(booleanExpression instanceof TableAssociationNode){
             TableAssociationNode tableAssociationExpression = (TableAssociationNode) booleanExpression;

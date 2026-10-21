@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class PriorityBooleanNode implements BooleanNode {
-
     private BooleanNode booleanNode;
+
 }
