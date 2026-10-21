@@ -6,8 +6,8 @@ import com.xweb.sql.core.common.BooleanExpression;
 import com.xweb.sql.data.DefaultSlice;
 import com.xweb.sql.data.Page;
 import com.xweb.sql.data.Row;
-import com.xweb.sql.meta.item.Column;
-import com.xweb.sql.meta.item.SimpleTableItem;
+import com.xweb.sql.meta.node.ColumnNode;
+import com.xweb.sql.meta.table.SimpleTableNode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -74,7 +74,7 @@ public class TableScanOperator extends AbstractOperator {
             final String[] split = line.split(",");
             Row row = new Row();
             for (int i = 0; i < tableHeader.size(); i++) {
-                DefaultSlice slice = new DefaultSlice(new Column(new SimpleTableItem(tableName, alias), tableHeader.get(i)), "String", split[i]);
+                DefaultSlice slice = new DefaultSlice(new ColumnNode(new SimpleTableNode(tableName, alias), tableHeader.get(i)), "String", split[i]);
                 row.addSlice(slice);
             }
             page.addRow(row);

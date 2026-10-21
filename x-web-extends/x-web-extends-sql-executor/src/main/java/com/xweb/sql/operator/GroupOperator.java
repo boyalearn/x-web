@@ -1,7 +1,7 @@
 package com.xweb.sql.operator;
 
 import com.xweb.sql.data.Page;
-import com.xweb.sql.meta.Item;
+import com.xweb.sql.meta.Node;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
@@ -11,9 +11,9 @@ public class GroupOperator implements SqlOperator {
 
     private SqlOperator operator;
 
-    private List<Item> selectItem;
+    private List<Node> selectItem;
 
-    private List<Item> groupItems;
+    private List<Node> groupItems;
 
 
     @Override

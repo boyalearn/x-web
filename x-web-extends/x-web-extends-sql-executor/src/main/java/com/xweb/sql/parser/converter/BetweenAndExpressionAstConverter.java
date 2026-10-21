@@ -6,9 +6,9 @@ import com.xweb.sql.core.common.item.TableColumnItem;
 import com.xweb.sql.meta.Node;
 import com.xweb.sql.meta.expression.BetweenExpression;
 import com.xweb.sql.meta.expression.ColumnValueExpression;
-import com.xweb.sql.meta.item.Column;
-import com.xweb.sql.meta.item.SimpleTableItem;
-import com.xweb.sql.parser.converter.util.AstConverterUtil;
+import com.xweb.sql.meta.node.ColumnNode;
+import com.xweb.sql.meta.table.SimpleTableNode;
+import com.xweb.sql.parser.converter.util.NodeUtil;
 
 import java.util.Optional;
 
@@ -21,11 +21,10 @@ public class BetweenAndExpressionAstConverter implements AstConverter {
         com.xweb.sql.core.common.Item upper = betweenAndExpression.getUpper();
         if (left instanceof TableColumnItem) {
             TableColumnItem tableColumnItem = (TableColumnItem) left;
-            Column column = new Column(new SimpleTableItem("", tableColumnItem.getTableName()), tableColumnItem.getColumnName());
-
-            return new ColumnValueExpression(column,
-                    Optional.ofNullable(betweenAndExpression.getNot()).isPresent() ? "!=" : "=",
-                    new BetweenExpression(AstConverterUtil.convert(lower), ">=", AstConverterUtil.convert(upper), "<="));
+            ColumnNode column = new ColumnNode(new SimpleTableNode("", tableColumnItem.getTableName()), tableColumnItem.getColumnName());
+            String op = Optional.ofNullable(betweenAndExpression.getNot()).isPresent() ? NodeUtil.NEQ : NodeUtil.EQ;
+            BetweenExpression betweenExpression = new BetweenExpression(NodeUtil.convert(lower), NodeUtil.EGT, NodeUtil.convert(upper), NodeUtil.ELT);
+            return new ColumnValueExpression(column, op, betweenExpression);
         } else {
             throw new RuntimeException("未实现");
         }

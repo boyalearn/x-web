@@ -1,7 +1,7 @@
 package com.xweb.sql.planner;
 
-import com.xweb.sql.meta.Select;
-import com.xweb.sql.meta.SimpleSelect;
+import com.xweb.sql.meta.Node;
+import com.xweb.sql.meta.select.SimpleSelect;
 import com.xweb.sql.operator.SqlOperator;
 import com.xweb.sql.operator.exception.UnknownOperatorException;
 
@@ -9,15 +9,15 @@ public class LogicPlanner {
 
     private static SimpleSelectLogicPlanner simpleSelectLogicPlanner = new SimpleSelectLogicPlanner();
 
-    private Select select;
+    private Node node;
 
-    public LogicPlanner(Select select) {
-        this.select = select;
+    public LogicPlanner(Node node) {
+        this.node = node;
     }
 
     public SqlOperator planQuery() {
-        if (this.select instanceof SimpleSelect) {
-            return simpleSelectLogicPlanner.plan((SimpleSelect) this.select);
+        if (this.node instanceof SimpleSelect) {
+            return simpleSelectLogicPlanner.plan((SimpleSelect) this.node);
         }
         throw new UnknownOperatorException("unknown implement operator!");
     }

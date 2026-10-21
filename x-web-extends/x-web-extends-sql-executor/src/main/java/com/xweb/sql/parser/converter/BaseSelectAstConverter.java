@@ -13,16 +13,16 @@ import com.xweb.sql.core.common.item.TableColumnItem;
 import com.xweb.sql.core.common.select.BaseSelect;
 import com.xweb.sql.core.common.table.SimpleTable;
 import com.xweb.sql.meta.Node;
-import com.xweb.sql.meta.SimpleSelect;
+import com.xweb.sql.meta.select.SimpleSelect;
 import com.xweb.sql.meta.expression.ColumnValueExpression;
 import com.xweb.sql.meta.expression.ComplexBoolExpression;
 import com.xweb.sql.meta.expression.PriorityBooleanExpression;
 import com.xweb.sql.meta.expression.TableAssociationExpression;
-import com.xweb.sql.meta.item.AllColumnItem;
-import com.xweb.sql.meta.item.Column;
-import com.xweb.sql.meta.item.Constant;
-import com.xweb.sql.meta.item.SimpleTableItem;
-import com.xweb.sql.parser.converter.util.AstConverterUtil;
+import com.xweb.sql.meta.node.StarColumnNode;
+import com.xweb.sql.meta.node.ColumnNode;
+import com.xweb.sql.meta.node.ConstantNode;
+import com.xweb.sql.meta.table.SimpleTableNode;
+import com.xweb.sql.parser.converter.util.NodeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,19 +30,18 @@ import java.util.List;
 public class BaseSelectAstConverter implements AstConverter {
     @Override
     public Node convert(Item item) {
-
         BaseSelect baseSelect = (BaseSelect) item;
         SimpleSelect select = new SimpleSelect();
-        final List<com.xweb.sql.core.common.Item> selectItems = baseSelect.getSelectItems();
+        final List<Item> selectItems = baseSelect.getSelectItems();
         select.setSelectItems(new ArrayList<>());
-        for (com.xweb.sql.core.common.Item selectItem : selectItems) {
+        for (Item selectItem : selectItems) {
             if (selectItem instanceof TableColumnItem) {
                 TableColumnItem tableColumnItem = (TableColumnItem) selectItem;
-                Column column = new Column(new SimpleTableItem("", tableColumnItem.getTableName()), tableColumnItem.getColumnName());
+                ColumnNode column = new ColumnNode(new SimpleTableNode("", tableColumnItem.getTableName()), tableColumnItem.getColumnName());
                 select.getSelectItems().add(column);
             } else if (selectItem instanceof SelectAllItem) {
-                AllColumnItem allColumnItem = new AllColumnItem();
-                select.getSelectItems().add(allColumnItem);
+                StarColumnNode starColumn = new StarColumnNode();
+                select.getSelectItems().add(starColumn);
             }
         }
         List<Table> tableItems = baseSelect.getTableItems();
@@ -50,15 +49,15 @@ public class BaseSelectAstConverter implements AstConverter {
         for (Table tableItem : tableItems) {
             if (tableItem instanceof SimpleTable) {
                 SimpleTable simpleTable = (SimpleTable) tableItem;
-                SimpleTableItem tableItemTemp = new SimpleTableItem(simpleTable.getTableName());
+                SimpleTableNode tableItemTemp = new SimpleTableNode(simpleTable.getTableName());
                 tableItemTemp.setAlias(simpleTable.getAlias());
                 select.getTableItems().add(tableItemTemp);
             }
         }
 
         BooleanExpression whereExpression = baseSelect.getWhereExpression();
-        select.setWhereExpression((com.xweb.sql.meta.expression.BooleanExpression) AstConverterUtil.convert(whereExpression));
-        return select;
+        select.setWhereExpression((com.xweb.sql.meta.expression.BooleanExpression) NodeUtil.convert(whereExpression));
+        return (Node) select;
     }
 
     private com.xweb.sql.meta.expression.BooleanExpression toExecutorBooleanExpression(com.xweb.sql.core.common.Item booleanExpression) {
@@ -72,21 +71,21 @@ public class BaseSelectAstConverter implements AstConverter {
             if (left instanceof TableColumnItem && right instanceof TableColumnItem) {
                 TableColumnItem leftTableColumnItem = (TableColumnItem) left;
                 TableColumnItem rightTableColumnItem = (TableColumnItem) right;
-                Column leftColumn = new Column(new SimpleTableItem("", leftTableColumnItem.getTableName()), leftTableColumnItem.getColumnName());
-                Column rightColumn = new Column(new SimpleTableItem("", rightTableColumnItem.getTableName()), rightTableColumnItem.getColumnName());
+                ColumnNode leftColumn = new ColumnNode(new SimpleTableNode("", leftTableColumnItem.getTableName()), leftTableColumnItem.getColumnName());
+                ColumnNode rightColumn = new ColumnNode(new SimpleTableNode("", rightTableColumnItem.getTableName()), rightTableColumnItem.getColumnName());
                 return new TableAssociationExpression(leftColumn, conditionExpression.getOp(), rightColumn);
             } else if (left instanceof TableColumnItem && right instanceof ConstantItem) {
                 TableColumnItem leftTableColumnItem = (TableColumnItem) left;
                 ConstantItem constantItem = (ConstantItem) right;
-                Column leftColumn = new Column(new SimpleTableItem("", leftTableColumnItem.getTableName()), leftTableColumnItem.getColumnName());
-                return new ColumnValueExpression(leftColumn, conditionExpression.getOp(), new Constant(constantItem.getConstant()));
+                ColumnNode leftColumn = new ColumnNode(new SimpleTableNode("", leftTableColumnItem.getTableName()), leftTableColumnItem.getColumnName());
+                return new ColumnValueExpression(leftColumn, conditionExpression.getOp(), new ConstantNode(constantItem.getConstant()));
             }
             return new ComplexBoolExpression(toExecutorBooleanExpression(left), conditionExpression.getOp(), toExecutorBooleanExpression(right));
         } else if (booleanExpression instanceof PriorityExpression) {
             PriorityExpression priorityExpression = (PriorityExpression) booleanExpression;
             return new PriorityBooleanExpression(toExecutorBooleanExpression(priorityExpression.getExpression()));
         } else if (booleanExpression instanceof BetweenAndExpression) {
-            return (com.xweb.sql.meta.expression.BooleanExpression) AstConverterUtil.convert(booleanExpression);
+            return (com.xweb.sql.meta.expression.BooleanExpression) NodeUtil.convert(booleanExpression);
         } else {
             throw new RuntimeException();
         }

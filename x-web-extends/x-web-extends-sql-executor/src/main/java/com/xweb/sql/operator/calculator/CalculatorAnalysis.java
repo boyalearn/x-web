@@ -1,7 +1,7 @@
 package com.xweb.sql.operator.calculator;
 
 import com.xweb.sql.meta.expression.*;
-import com.xweb.sql.meta.item.Column;
+import com.xweb.sql.meta.node.ColumnNode;
 import com.xweb.sql.operator.AbstractOperator;
 import com.xweb.sql.operator.FilterOperator;
 import com.xweb.sql.operator.JoinTableOperator;
@@ -32,7 +32,7 @@ public class CalculatorAnalysis {
             return new LogicBooleanCalculator(left,complexBoolExpression.getLogic(),right);
         }  else if(booleanExpression instanceof ColumnValueExpression){
             ColumnValueExpression columnValueExpression = (ColumnValueExpression) booleanExpression;
-            final Column column = columnValueExpression.getColumn();
+            final ColumnNode column = columnValueExpression.getColumn();
             column.getTable().setName(LogicPlannerContext.getTableNameByAlias(column.getTable().getAlias()));
             return new ColumnValueExpressionCalculator(columnValueExpression);
         } else if(booleanExpression instanceof PriorityBooleanExpression){
@@ -67,16 +67,16 @@ public class CalculatorAnalysis {
     }
 
     private static void setColumnTableName(TableAssociationExpression tableAssociationExpression){
-        final Column left = tableAssociationExpression.getLeft();
+        final ColumnNode left = tableAssociationExpression.getLeft();
         left.getTable().setName(LogicPlannerContext.getTableNameByAlias(left.getTable().getAlias()));
-        final Column right = tableAssociationExpression.getRight();
+        final ColumnNode right = tableAssociationExpression.getRight();
         right.getTable().setName(LogicPlannerContext.getTableNameByAlias(right.getTable().getAlias()));
     }
 
 
     private static boolean isTableAssociation(String tableAliasA, String tableAliasB, TableAssociationExpression tableAssociationExpression){
-        final Column left = tableAssociationExpression.getLeft();
-        final Column right = tableAssociationExpression.getRight();
+        final ColumnNode left = tableAssociationExpression.getLeft();
+        final ColumnNode right = tableAssociationExpression.getRight();
         if(tableAliasA.equals(left.getTable().getAlias())&&tableAliasB.equals(right.getTable().getAlias())){
             return true;
         }else if(tableAliasB.equals(left.getTable().getAlias())&&tableAliasA.equals(right.getTable().getAlias())){

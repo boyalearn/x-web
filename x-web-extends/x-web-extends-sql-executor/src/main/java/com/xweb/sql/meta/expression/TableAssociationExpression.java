@@ -1,6 +1,6 @@
 package com.xweb.sql.meta.expression;
 
-import com.xweb.sql.meta.item.Column;
+import com.xweb.sql.meta.node.ColumnNode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,9 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class TableAssociationExpression implements BooleanExpression{
-    private Column left;
+    private ColumnNode left;
 
     private String op;
 
-    private Column right;
+    private ColumnNode right;
 }

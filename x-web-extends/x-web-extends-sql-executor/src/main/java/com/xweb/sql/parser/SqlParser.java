@@ -1,9 +1,9 @@
 package com.xweb.sql.parser;
 
 
-import com.xweb.sql.meta.Select;
+import com.xweb.sql.meta.Node;
 
 public interface SqlParser {
 
-    Select parse(String sql);
+    Node parse(String sql);
 }

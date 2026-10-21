@@ -1,11 +1,11 @@
 package com.xweb.sql.data;
 
 
-import com.xweb.sql.meta.item.Column;
+import com.xweb.sql.meta.node.ColumnNode;
 
 public interface Slice {
 
-    Column getColumn();
+    ColumnNode getColumn();
 
     Object getData();
 }

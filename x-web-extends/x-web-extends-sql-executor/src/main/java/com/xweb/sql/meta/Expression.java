@@ -1,4 +1,4 @@
 package com.xweb.sql.meta;
 
-public interface Expression {
+public interface Expression extends Node{
 }

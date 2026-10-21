@@ -1,6 +1,6 @@
 package com.xweb.sql.meta;
 
-import com.xweb.sql.meta.item.TableItem;
+import com.xweb.sql.meta.common.TableNode;
 
-public interface Select extends TableItem {
+public interface Select extends TableNode {
 }

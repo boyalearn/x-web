@@ -3,13 +3,12 @@ package com.xweb.sql.operator.calculator;
 import com.xweb.sql.data.Row;
 import com.xweb.sql.data.Slice;
 import com.xweb.sql.meta.Expression;
-import com.xweb.sql.meta.Item;
 import com.xweb.sql.meta.Node;
 import com.xweb.sql.meta.Select;
 import com.xweb.sql.meta.expression.BetweenExpression;
 import com.xweb.sql.meta.expression.ColumnValueExpression;
-import com.xweb.sql.meta.item.Column;
-import com.xweb.sql.meta.item.Constant;
+import com.xweb.sql.meta.node.ColumnNode;
+import com.xweb.sql.meta.node.ConstantNode;
 import com.xweb.sql.operator.calculator.util.CalculatorUtil;
 import lombok.AllArgsConstructor;
 
@@ -27,7 +26,7 @@ public class ColumnValueExpressionCalculator implements BooleanCalculator {
 
     @Override
     public boolean compute(Row row) {
-        Column column = columnValueExpression.getColumn();
+        ColumnNode column = columnValueExpression.getColumn();
         Slice slice = row.getSliceByColumnName(column.getTable().getName(), column.getName());
 
         switch (columnValueExpression.getOp()) {
@@ -61,25 +60,25 @@ public class ColumnValueExpressionCalculator implements BooleanCalculator {
         Node lower = expression.getLower();
         Node upper = expression.getUpper();
 
-        if (!(lower instanceof Constant && upper instanceof Constant)) {
+        if (!(lower instanceof ConstantNode && upper instanceof ConstantNode)) {
             throw new RuntimeException();
         }
         if (lowerOp.equals(">=")) {
-            if (!CalculatorUtil.EGT(data, ((Constant) lower).getData())) {
+            if (!CalculatorUtil.EGT(data, ((ConstantNode) lower).getData())) {
                 return false;
             }
         } else {
-            if (!CalculatorUtil.GT(data, ((Constant) lower).getData())) {
+            if (!CalculatorUtil.GT(data, ((ConstantNode) lower).getData())) {
                 return false;
             }
         }
 
         if (upperOp.equals("<=")) {
-            if (CalculatorUtil.GT(data, ((Constant) upper).getData())) {
+            if (CalculatorUtil.GT(data, ((ConstantNode) upper).getData())) {
                 return false;
             }
         } else {
-            if (CalculatorUtil.EGT(data, ((Constant) upper).getData())) {
+            if (CalculatorUtil.EGT(data, ((ConstantNode) upper).getData())) {
                 return false;
             }
         }
@@ -102,7 +101,7 @@ public class ColumnValueExpressionCalculator implements BooleanCalculator {
     }
 
     private Object computeValueExpression() {
-        final Constant constant = this.columnValueExpression.getConstant();
+        final ConstantNode constant = this.columnValueExpression.getConstant();
         final Expression expression = this.columnValueExpression.getExpression();
         final Select select = this.columnValueExpression.getSelect();
         if (Optional.ofNullable(constant).isPresent()) {

@@ -1,6 +1,7 @@
 package com.xweb.sql.executor;
 
 import com.xweb.sql.data.Page;
+import com.xweb.sql.meta.Node;
 import com.xweb.sql.meta.Select;
 import com.xweb.sql.operator.SqlOperator;
 import com.xweb.sql.parser.DefaultSqlParser;
@@ -11,8 +12,8 @@ public class DefaultSqlExecutor implements SqlExecutor{
     @Override
     public Page execute(String sql) {
         SqlParser sqlParser = new DefaultSqlParser();
-        Select select = sqlParser.parse(sql);
-        LogicPlanner logicPlanner = new LogicPlanner(select);
+        Node node = sqlParser.parse(sql);
+        LogicPlanner logicPlanner = new LogicPlanner(node);
 
         final SqlOperator sqlOperator = logicPlanner.planQuery();
 

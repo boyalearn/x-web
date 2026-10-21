@@ -3,7 +3,7 @@ package com.xweb.sql.operator.calculator;
 import com.xweb.sql.data.Row;
 import com.xweb.sql.data.Slice;
 import com.xweb.sql.meta.expression.TableAssociationExpression;
-import com.xweb.sql.meta.item.Column;
+import com.xweb.sql.meta.node.ColumnNode;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -13,8 +13,8 @@ public class TableAssociationExpressionCalculator implements BooleanCalculator {
 
     @Override
     public boolean compute(Row row) {
-        final Column left = tableAssociationExpression.getLeft();
-        final Column right = tableAssociationExpression.getRight();
+        final ColumnNode left = tableAssociationExpression.getLeft();
+        final ColumnNode right = tableAssociationExpression.getRight();
         final Slice leftSlice = row.getSliceByColumnName(left.getTable().getName(), left.getName());
         final Slice rightSlice = row.getSliceByColumnName(right.getTable().getName(), right.getName());
 

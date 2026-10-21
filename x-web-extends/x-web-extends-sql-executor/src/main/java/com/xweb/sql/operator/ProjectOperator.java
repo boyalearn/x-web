@@ -2,9 +2,9 @@ package com.xweb.sql.operator;
 
 import com.xweb.sql.data.Page;
 import com.xweb.sql.data.Row;
-import com.xweb.sql.meta.Item;
-import com.xweb.sql.meta.item.AllColumnItem;
-import com.xweb.sql.meta.item.Column;
+import com.xweb.sql.meta.Node;
+import com.xweb.sql.meta.node.ColumnNode;
+import com.xweb.sql.meta.node.StarColumnNode;
 import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ProjectOperator extends AbstractOperator {
 
-    private List<Item> items;
+    private List<Node> items;
 
     private SqlOperator operator;
 
@@ -35,15 +35,15 @@ public class ProjectOperator extends AbstractOperator {
     }
 
     private List<Row> filterItem(List<Row> rows) {
-        if (this.items.size() == 1 && this.items.get(0) instanceof AllColumnItem) {
+        if (this.items.size() == 1 && this.items.get(0) instanceof StarColumnNode) {
             return rows;
         }
         List<Row> result = new ArrayList<>();
         for (Row row : rows) {
             Row r = new Row();
-            for (Item item : this.items) {
-                if (item instanceof Column) {
-                    Column column = (Column) item;
+            for (Node item : this.items) {
+                if (item instanceof ColumnNode) {
+                    ColumnNode column = (ColumnNode) item;
                     r.addSlice(row.getSliceByColumnName(column.getTable().getName(), column.getName()));
                 }
             }
