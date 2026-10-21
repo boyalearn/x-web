@@ -40,7 +40,7 @@ public class SimpleSelectLogicPlanner implements SqlPlanner {
         for (Node selectItem : selectItems) {
             if (selectItem instanceof ColumnNode) {
                 ColumnNode column = (ColumnNode) selectItem;
-                column.getTable().setName(LogicPlannerContext.getTableNameByAlias(column.getTable().getAlias()));
+                column.getTable().setName(PlanContextHolder.getTableNameByAlias(column.getTable().getAlias()));
             }
         }
         final List<Node> groupItems = simpleSelect.getGroupItems();

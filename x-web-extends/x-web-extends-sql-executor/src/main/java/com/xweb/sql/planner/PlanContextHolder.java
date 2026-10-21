@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class LogicPlannerContext {
+public class PlanContextHolder {
     private static ThreadLocal<Map<String, String>> tableAliasMapping = new ThreadLocal<>();
 
 

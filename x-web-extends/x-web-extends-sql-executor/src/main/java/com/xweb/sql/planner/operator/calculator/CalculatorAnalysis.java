@@ -8,7 +8,7 @@ import com.xweb.sql.meta.node.ColumnNode;
 import com.xweb.sql.planner.operator.AbstractOperator;
 import com.xweb.sql.planner.operator.FilterOperator;
 import com.xweb.sql.planner.operator.JoinTableOperator;
-import com.xweb.sql.planner.LogicPlannerContext;
+import com.xweb.sql.planner.PlanContextHolder;
 
 public class CalculatorAnalysis {
 
@@ -36,7 +36,7 @@ public class CalculatorAnalysis {
         }  else if(booleanExpression instanceof ColumnValueNode){
             ColumnValueNode columnValueExpression = (ColumnValueNode) booleanExpression;
             final ColumnNode column = columnValueExpression.getColumn();
-            column.getTable().setName(LogicPlannerContext.getTableNameByAlias(column.getTable().getAlias()));
+            column.getTable().setName(PlanContextHolder.getTableNameByAlias(column.getTable().getAlias()));
             if(columnValueExpression.getValue() instanceof Select || columnValueExpression.getValue() instanceof PriorityNode){
                 System.out.println("aab");
             }
@@ -74,9 +74,9 @@ public class CalculatorAnalysis {
 
     private static void setColumnTableName(TableAssociationNode tableAssociationExpression){
         final ColumnNode left = tableAssociationExpression.getLeft();
-        left.getTable().setName(LogicPlannerContext.getTableNameByAlias(left.getTable().getAlias()));
+        left.getTable().setName(PlanContextHolder.getTableNameByAlias(left.getTable().getAlias()));
         final ColumnNode right = tableAssociationExpression.getRight();
-        right.getTable().setName(LogicPlannerContext.getTableNameByAlias(right.getTable().getAlias()));
+        right.getTable().setName(PlanContextHolder.getTableNameByAlias(right.getTable().getAlias()));
     }
 
 

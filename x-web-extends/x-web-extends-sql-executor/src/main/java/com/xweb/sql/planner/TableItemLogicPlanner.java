@@ -10,7 +10,7 @@ public class TableItemLogicPlanner implements SqlPlanner{
 
     SqlOperator plan(TableNode tableItem, BooleanNode booleanNode){
         SimpleTableNode simpleTableItem = (SimpleTableNode) tableItem;
-        LogicPlannerContext.setTableNameAlias(simpleTableItem.getAlias(), simpleTableItem.getName());
+        PlanContextHolder.setTableNameAlias(simpleTableItem.getAlias(), simpleTableItem.getName());
         return new TableScanOperator(simpleTableItem.getName(), simpleTableItem.getAlias());
     }
 }
