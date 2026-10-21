@@ -1,5 +1,6 @@
 package com.xweb.sql.meta.expression;
 
+import com.xweb.sql.meta.common.BooleanNode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class PriorityBooleanExpression implements BooleanExpression{
+public class PriorityBooleanNode implements BooleanNode {
 
-    private BooleanExpression expression;
+    private BooleanNode booleanNode;
 }

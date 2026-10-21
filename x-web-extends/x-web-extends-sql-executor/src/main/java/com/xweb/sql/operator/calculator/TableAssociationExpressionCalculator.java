@@ -2,14 +2,14 @@ package com.xweb.sql.operator.calculator;
 
 import com.xweb.sql.data.Row;
 import com.xweb.sql.data.Slice;
-import com.xweb.sql.meta.expression.TableAssociationExpression;
+import com.xweb.sql.meta.expression.TableAssociationNode;
 import com.xweb.sql.meta.node.ColumnNode;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class TableAssociationExpressionCalculator implements BooleanCalculator {
 
-    private TableAssociationExpression tableAssociationExpression;
+    private TableAssociationNode tableAssociationExpression;
 
     @Override
     public boolean compute(Row row) {

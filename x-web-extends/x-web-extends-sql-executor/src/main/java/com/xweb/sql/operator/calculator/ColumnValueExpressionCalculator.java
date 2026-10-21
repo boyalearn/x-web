@@ -2,11 +2,11 @@ package com.xweb.sql.operator.calculator;
 
 import com.xweb.sql.data.Row;
 import com.xweb.sql.data.Slice;
-import com.xweb.sql.meta.Expression;
+import com.xweb.sql.meta.common.BooleanNode;
 import com.xweb.sql.meta.Node;
 import com.xweb.sql.meta.Select;
-import com.xweb.sql.meta.expression.BetweenExpression;
-import com.xweb.sql.meta.expression.ColumnValueExpression;
+import com.xweb.sql.meta.expression.BetweenAndNode;
+import com.xweb.sql.meta.expression.ColumnValueNode;
 import com.xweb.sql.meta.node.ColumnNode;
 import com.xweb.sql.meta.node.ConstantNode;
 import com.xweb.sql.operator.calculator.util.CalculatorUtil;
@@ -22,7 +22,7 @@ public class ColumnValueExpressionCalculator implements BooleanCalculator {
 
     private static final String NEQ = "!=";
 
-    private ColumnValueExpression columnValueExpression;
+    private ColumnValueNode columnValueExpression;
 
     @Override
     public boolean compute(Row row) {
@@ -44,8 +44,8 @@ public class ColumnValueExpressionCalculator implements BooleanCalculator {
     private boolean computeEqualExpression(Slice slice) {
         final Object data = slice.getData();
         final Object value = computeValueExpression();
-        if (value instanceof BetweenExpression) {
-            return computeValueExpressionEqualExpression(data, (BetweenExpression) value);
+        if (value instanceof BetweenAndNode) {
+            return computeValueExpressionEqualExpression(data, (BetweenAndNode) value);
         } else if (value instanceof Select) {
             throw new RuntimeException();
         } else {
@@ -54,7 +54,7 @@ public class ColumnValueExpressionCalculator implements BooleanCalculator {
 
     }
 
-    private boolean computeValueExpressionEqualExpression(Object data, BetweenExpression expression) {
+    private boolean computeValueExpressionEqualExpression(Object data, BetweenAndNode expression) {
         String lowerOp = expression.getLowerOp();
         String upperOp = expression.getUpperOp();
         Node lower = expression.getLower();
@@ -102,7 +102,7 @@ public class ColumnValueExpressionCalculator implements BooleanCalculator {
 
     private Object computeValueExpression() {
         final ConstantNode constant = this.columnValueExpression.getConstant();
-        final Expression expression = this.columnValueExpression.getExpression();
+        final BooleanNode expression = this.columnValueExpression.getExpression();
         final Select select = this.columnValueExpression.getSelect();
         if (Optional.ofNullable(constant).isPresent()) {
             return constant.getData();

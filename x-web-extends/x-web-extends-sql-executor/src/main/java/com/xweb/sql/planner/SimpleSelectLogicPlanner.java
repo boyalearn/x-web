@@ -1,11 +1,11 @@
 package com.xweb.sql.planner;
 
 import com.xweb.sql.meta.Node;
-import com.xweb.sql.meta.select.SimpleSelect;
+import com.xweb.sql.meta.common.BooleanNode;
 import com.xweb.sql.meta.common.OrderNode;
 import com.xweb.sql.meta.common.TableNode;
-import com.xweb.sql.meta.expression.BooleanExpression;
 import com.xweb.sql.meta.node.ColumnNode;
+import com.xweb.sql.meta.select.SimpleSelect;
 import com.xweb.sql.operator.FilterOperator;
 import com.xweb.sql.operator.GroupOperator;
 import com.xweb.sql.operator.JoinTableOperator;
@@ -30,7 +30,7 @@ public class SimpleSelectLogicPlanner implements SqlPlanner {
         }
         SqlOperator operator = planTables(simpleSelect);
 
-        BooleanExpression whereExpression = simpleSelect.getWhereExpression();
+        BooleanNode whereExpression = simpleSelect.getWhereExpression();
         if (Optional.ofNullable(whereExpression).isPresent()) {
             final FilterOperator filterOperator = new FilterOperator(operator);
             CalculatorAnalysis.setCalculator(filterOperator, simpleSelect.getWhereExpression());
