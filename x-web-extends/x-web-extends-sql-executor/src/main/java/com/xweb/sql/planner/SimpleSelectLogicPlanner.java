@@ -22,7 +22,8 @@ public class SimpleSelectLogicPlanner implements SqlPlanner {
 
     private static TableItemLogicPlanner tableItemLogicPlanner = new TableItemLogicPlanner();
 
-    public SqlOperator plan(SimpleSelect simpleSelect) {
+    public SqlOperator plan(Node node) {
+        SimpleSelect simpleSelect = (SimpleSelect)node;
         List<TableNode> tableItems = simpleSelect.getTableItems();
         final List<Node> selectItems = simpleSelect.getSelectItems();
         if (tableItems.isEmpty()) {
