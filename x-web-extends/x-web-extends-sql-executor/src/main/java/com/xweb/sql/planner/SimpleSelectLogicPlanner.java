@@ -61,10 +61,10 @@ public class SimpleSelectLogicPlanner implements SqlPlanner {
 
     private SqlOperator planTables(SimpleSelect simpleSelect) {
         List<TableNode> tableItems = simpleSelect.getTableItems();
-        SqlOperator operator = tableItemLogicPlanner.plan(tableItems.get(0), simpleSelect.getWhereExpression());
+        SqlOperator operator = tableItemLogicPlanner.plan(tableItems.get(0));
         for (int i = 1; i < tableItems.size(); i++) {
             TableNode tableItem = tableItems.get(i);
-            SqlOperator current = tableItemLogicPlanner.plan(tableItem, simpleSelect.getWhereExpression());
+            SqlOperator current = tableItemLogicPlanner.plan(tableItem);
             if (current instanceof TableScanOperator) {
                 JoinTableOperator joinTableOperator = new JoinTableOperator(operator, current, JoinTableOperator.JoinType.INNER);
                 CalculatorAnalysis.setCalculator(joinTableOperator, simpleSelect.getWhereExpression());
