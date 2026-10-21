@@ -2,8 +2,8 @@ package com.xweb.sql.planner;
 
 import com.xweb.sql.meta.Node;
 import com.xweb.sql.meta.select.SimpleSelect;
-import com.xweb.sql.operator.SqlOperator;
-import com.xweb.sql.operator.exception.UnknownOperatorException;
+import com.xweb.sql.planner.operator.SqlOperator;
+import com.xweb.sql.planner.operator.exception.UnknownOperatorException;
 
 public class LogicPlanner {
 

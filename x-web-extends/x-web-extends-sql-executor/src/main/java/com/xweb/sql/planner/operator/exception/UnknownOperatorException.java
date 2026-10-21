@@ -1,4 +1,4 @@
-package com.xweb.sql.operator.exception;
+package com.xweb.sql.planner.operator.exception;
 
 public class UnknownOperatorException extends RuntimeException{
 

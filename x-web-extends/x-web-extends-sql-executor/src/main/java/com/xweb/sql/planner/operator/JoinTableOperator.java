@@ -1,8 +1,8 @@
-package com.xweb.sql.operator;
+package com.xweb.sql.planner.operator;
 
 import com.xweb.sql.data.Page;
 import com.xweb.sql.data.Row;
-import com.xweb.sql.operator.calculator.BooleanCalculator;
+import com.xweb.sql.planner.operator.calculator.BooleanCalculator;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,20 +1,17 @@
-package com.xweb.sql.operator;
+package com.xweb.sql.planner.operator;
 
 import com.xweb.sql.data.Page;
-import com.xweb.sql.meta.Node;
+import com.xweb.sql.meta.common.OrderNode;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
 
 @AllArgsConstructor
-public class GroupOperator implements SqlOperator {
+public class OrderOperator implements SqlOperator {
 
     private SqlOperator operator;
 
-    private List<Node> selectItem;
-
-    private List<Node> groupItems;
-
+    private List<OrderNode> orderItems;
 
     @Override
     public void open() {

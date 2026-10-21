@@ -1,4 +1,4 @@
-package com.xweb.sql.operator.calculator;
+package com.xweb.sql.planner.operator.calculator;
 
 import com.xweb.sql.data.Row;
 import com.xweb.sql.data.Slice;
@@ -8,7 +8,7 @@ import com.xweb.sql.meta.expression.BetweenAndNode;
 import com.xweb.sql.meta.expression.ColumnValueNode;
 import com.xweb.sql.meta.node.ColumnNode;
 import com.xweb.sql.meta.node.ConstantNode;
-import com.xweb.sql.operator.calculator.util.CalculatorUtil;
+import com.xweb.sql.planner.operator.calculator.util.CalculatorUtil;
 import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
@@ -94,7 +94,7 @@ public class ColumnValueExpressionCalculator implements BooleanCalculator {
             }
             return false;
         } else {
-            throw new RuntimeException("");
+            throw new RuntimeException();
         }
     }
 

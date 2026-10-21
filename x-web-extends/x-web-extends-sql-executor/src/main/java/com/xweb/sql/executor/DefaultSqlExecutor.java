@@ -2,8 +2,7 @@ package com.xweb.sql.executor;
 
 import com.xweb.sql.data.Page;
 import com.xweb.sql.meta.Node;
-import com.xweb.sql.meta.Select;
-import com.xweb.sql.operator.SqlOperator;
+import com.xweb.sql.planner.operator.SqlOperator;
 import com.xweb.sql.parser.DefaultSqlParser;
 import com.xweb.sql.parser.SqlParser;
 import com.xweb.sql.planner.LogicPlanner;

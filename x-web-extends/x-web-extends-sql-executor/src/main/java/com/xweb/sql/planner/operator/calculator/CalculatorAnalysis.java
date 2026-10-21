@@ -1,12 +1,13 @@
-package com.xweb.sql.operator.calculator;
+package com.xweb.sql.planner.operator.calculator;
 
 import com.xweb.sql.meta.Node;
+import com.xweb.sql.meta.Select;
 import com.xweb.sql.meta.common.BooleanNode;
 import com.xweb.sql.meta.expression.*;
 import com.xweb.sql.meta.node.ColumnNode;
-import com.xweb.sql.operator.AbstractOperator;
-import com.xweb.sql.operator.FilterOperator;
-import com.xweb.sql.operator.JoinTableOperator;
+import com.xweb.sql.planner.operator.AbstractOperator;
+import com.xweb.sql.planner.operator.FilterOperator;
+import com.xweb.sql.planner.operator.JoinTableOperator;
 import com.xweb.sql.planner.LogicPlannerContext;
 
 public class CalculatorAnalysis {
@@ -36,6 +37,9 @@ public class CalculatorAnalysis {
             ColumnValueNode columnValueExpression = (ColumnValueNode) booleanExpression;
             final ColumnNode column = columnValueExpression.getColumn();
             column.getTable().setName(LogicPlannerContext.getTableNameByAlias(column.getTable().getAlias()));
+            if(columnValueExpression.getValue() instanceof Select || columnValueExpression.getValue() instanceof PriorityNode){
+                System.out.println("aab");
+            }
             return new ColumnValueExpressionCalculator(columnValueExpression);
         } else if(booleanExpression instanceof PriorityNode){
             PriorityNode priorityBooleanExpression = (PriorityNode) booleanExpression;

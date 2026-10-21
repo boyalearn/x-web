@@ -1,4 +1,4 @@
-package com.xweb.sql.operator;
+package com.xweb.sql.planner.operator;
 
 import lombok.Getter;
 import lombok.Setter;
