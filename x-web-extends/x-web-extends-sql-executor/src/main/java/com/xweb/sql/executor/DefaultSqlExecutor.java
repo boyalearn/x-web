@@ -7,7 +7,7 @@ import com.xweb.sql.parser.DefaultSqlParser;
 import com.xweb.sql.parser.SqlParser;
 import com.xweb.sql.planner.LogicPlanner;
 
-public class DefaultSqlExecutor implements SqlExecutor{
+public class DefaultSqlExecutor implements SqlExecutor {
     @Override
     public Page execute(String sql) {
         SqlParser sqlParser = new DefaultSqlParser();
@@ -17,13 +17,10 @@ public class DefaultSqlExecutor implements SqlExecutor{
         final SqlOperator sqlOperator = logicPlanner.planQuery();
 
         Page page = new Page();
-
-        while (true){
-            Page next = sqlOperator.next();
-            if(!next.isEmpty()){
-                page.addRows(next.getRows());
-            }
-            break;
+        Page next = sqlOperator.next();
+        while (!next.isEmpty()) {
+            page.addRows(next.getRows());
+            next = sqlOperator.next();
         }
         return page;
     }

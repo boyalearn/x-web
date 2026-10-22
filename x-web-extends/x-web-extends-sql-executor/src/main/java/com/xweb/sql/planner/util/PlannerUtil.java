@@ -23,7 +23,7 @@ public class PlannerUtil {
         PLANNER.put(SimpleTableNode.class,new SimpleTableNodeLogicPlanner());
     }
 
-    public static final SqlOperator plan(Node node, BooleanNode booleanNode){
+    public static SqlOperator plan(Node node, BooleanNode booleanNode){
         final SqlPlanner sqlPlanner = PLANNER.get(node.getClass());
         if(Optional.ofNullable(sqlPlanner).isPresent()){
             return sqlPlanner.plan(node,booleanNode);

@@ -19,7 +19,7 @@ public class ProjectOperator extends AbstractOperator {
 
     @Override
     public void open() {
-
+        this.operator.open();
     }
 
     @Override

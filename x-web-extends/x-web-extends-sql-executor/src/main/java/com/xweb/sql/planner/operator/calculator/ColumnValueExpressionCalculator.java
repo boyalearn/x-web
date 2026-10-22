@@ -8,7 +8,7 @@ import com.xweb.sql.meta.expression.BetweenAndNode;
 import com.xweb.sql.meta.expression.ColumnValueNode;
 import com.xweb.sql.meta.node.ColumnNode;
 import com.xweb.sql.meta.node.ConstantNode;
-import com.xweb.sql.planner.operator.calculator.util.CalculatorUtil;
+import com.xweb.sql.planner.operator.calculator.util.ComputeUtil;
 import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
@@ -39,7 +39,7 @@ public class ColumnValueExpressionCalculator implements BooleanCalculator {
 
     }
 
-    private boolean computeEqualExpression(Slice slice) {
+    protected boolean computeEqualExpression(Slice slice) {
         final Object data = slice.getData();
         final Object value = computeValueExpression();
         if (value instanceof BetweenAndNode) {
@@ -52,7 +52,7 @@ public class ColumnValueExpressionCalculator implements BooleanCalculator {
 
     }
 
-    private boolean computeValueExpressionEqualExpression(Object data, BetweenAndNode expression) {
+    protected boolean computeValueExpressionEqualExpression(Object data, BetweenAndNode expression) {
         String lowerOp = expression.getLowerOp();
         String upperOp = expression.getUpperOp();
         Node lower = expression.getLower();
@@ -62,21 +62,21 @@ public class ColumnValueExpressionCalculator implements BooleanCalculator {
             throw new RuntimeException();
         }
         if (lowerOp.equals(">=")) {
-            if (!CalculatorUtil.EGT(data, ((ConstantNode) lower).getData())) {
+            if (!ComputeUtil.EGT(data, ((ConstantNode) lower).getData())) {
                 return false;
             }
         } else {
-            if (!CalculatorUtil.GT(data, ((ConstantNode) lower).getData())) {
+            if (!ComputeUtil.GT(data, ((ConstantNode) lower).getData())) {
                 return false;
             }
         }
 
         if (upperOp.equals("<=")) {
-            if (CalculatorUtil.GT(data, ((ConstantNode) upper).getData())) {
+            if (ComputeUtil.GT(data, ((ConstantNode) upper).getData())) {
                 return false;
             }
         } else {
-            if (CalculatorUtil.EGT(data, ((ConstantNode) upper).getData())) {
+            if (ComputeUtil.EGT(data, ((ConstantNode) upper).getData())) {
                 return false;
             }
         }
@@ -85,8 +85,11 @@ public class ColumnValueExpressionCalculator implements BooleanCalculator {
 
     }
 
-    private boolean computeValueConstantEqualExpression(Object data, Object value) {
+    protected boolean computeValueConstantEqualExpression(Object data, Object value) {
         if (data instanceof String) {
+            if (value == null) {
+                return false;
+            }
             return data.equals(value.toString());
         } else if (data instanceof Number) {
             if (value instanceof Number) {
@@ -98,10 +101,10 @@ public class ColumnValueExpressionCalculator implements BooleanCalculator {
         }
     }
 
-    private Object computeValueExpression() {
+    protected Object computeValueExpression() {
         final Node value = this.columnValueNode.getValue();
         if (value instanceof ConstantNode) {
-            return ((ConstantNode)value).getData();
+            return ((ConstantNode) value).getData();
         } else {
             return value;
         }

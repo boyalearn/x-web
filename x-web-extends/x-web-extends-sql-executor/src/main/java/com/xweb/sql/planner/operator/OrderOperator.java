@@ -15,7 +15,7 @@ public class OrderOperator implements SqlOperator {
 
     @Override
     public void open() {
-
+        this.operator.open();
     }
 
     @Override

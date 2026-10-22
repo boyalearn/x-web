@@ -18,7 +18,7 @@ public class GroupOperator implements SqlOperator {
 
     @Override
     public void open() {
-
+        this.operator.open();
     }
 
     @Override

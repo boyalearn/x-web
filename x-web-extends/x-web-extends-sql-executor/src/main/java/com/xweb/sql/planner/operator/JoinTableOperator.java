@@ -28,7 +28,8 @@ public class JoinTableOperator extends AbstractOperator {
 
     @Override
     public void open() {
-
+        this.leftOperator.open();
+        this.rightOperator.open();
     }
 
     @Override

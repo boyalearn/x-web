@@ -7,7 +7,7 @@ import com.xweb.sql.planner.operator.SqlOperator;
 import com.xweb.sql.planner.operator.TableScanOperator;
 import com.xweb.sql.planner.util.PlannerContextHolder;
 
-public class SimpleTableNodeLogicPlanner implements SqlPlanner{
+public class SimpleTableNodeLogicPlanner implements SqlPlanner {
 
     @Override
     public SqlOperator plan(Node node, BooleanNode booleanNode) {

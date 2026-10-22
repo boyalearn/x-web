@@ -15,16 +15,13 @@ public class SqlPlannerTest {
     @Before
     public void init() {
         sqlExecutor = new DefaultSqlExecutor();
-        GlobalConfig.path = "E:\\IdeaWrokspace\\x-web\\x-web-extends\\x-web-extends-sql-executor\\src\\test\\resources\\";
+        GlobalConfig.path = "D:\\IdeaWorkspace\\x-web\\x-web-extends\\x-web-extends-sql-executor\\src\\test\\resources\\";
     }
 
     @Test
     public void test_00000000000001() {
         String sql = "select a.aa,a.bb from aaaa a,bbbb b where a.aa=b.aab";
         Page data = sqlExecutor.execute(sql);
-        PageUtil.show(data);
-        sql = "select a.aa from aaaa a,bbbb b where a.aa=b.aab and (a.aa=77 or b.ccb=22)";
-        data = sqlExecutor.execute(sql);
         PageUtil.show(data);
     }
 
@@ -37,7 +34,14 @@ public class SqlPlannerTest {
 
     @Test
     public void test_000000000000003() {
-        String sql = "select a.aa from aaaa a,bbbb b where a.aa=b.aab and a.aa = (select b.aab from bbbb c where c.bbb=22)";
+        String sql = "select a.aa from aaaa a,bbbb b where a.aa=b.aab and a.aa = (select c.aab from bbbb c where c.bbb=22)";
+        Page data = sqlExecutor.execute(sql);
+        PageUtil.show(data);
+    }
+
+    @Test
+    public void test_000000000000004() {
+        String sql = "select a.aa from aaaa a,bbbb b where a.aa=b.aab and (a.aa=77 or b.ccb=22)";
         Page data = sqlExecutor.execute(sql);
         PageUtil.show(data);
     }

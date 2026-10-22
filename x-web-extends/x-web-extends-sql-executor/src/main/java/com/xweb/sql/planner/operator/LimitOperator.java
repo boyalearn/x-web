@@ -23,7 +23,7 @@ public class LimitOperator extends AbstractOperator {
 
     @Override
     public void open() {
-
+        this.operator.open();
     }
 
     @Override

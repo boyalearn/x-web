@@ -21,7 +21,7 @@ public class FilterOperator implements SqlOperator {
 
     @Override
     public void open() {
-
+        this.operator.open();
     }
 
     @Override

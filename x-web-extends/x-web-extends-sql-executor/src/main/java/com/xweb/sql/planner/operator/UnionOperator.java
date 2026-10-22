@@ -14,7 +14,8 @@ public class UnionOperator extends AbstractOperator {
 
     @Override
     public void open() {
-
+        this.sqlOperator.open();
+        this.unionOperator.open();
     }
 
     @Override
