@@ -45,4 +45,11 @@ public class SqlPlannerTest {
         Page data = sqlExecutor.execute(sql);
         PageUtil.show(data);
     }
+
+    @Test
+    public void test_000000000000005() {
+        String sql = "select a.aa from aaaa a,bbbb b where a.aa=b.aab order by a.aa desc";
+        Page data = sqlExecutor.execute(sql);
+        PageUtil.show(data);
+    }
 }

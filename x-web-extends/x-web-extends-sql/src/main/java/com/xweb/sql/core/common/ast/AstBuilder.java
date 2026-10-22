@@ -335,7 +335,8 @@ public class AstBuilder extends SqlBaseBaseVisitor<Item> {
             select.setOrder(orderByPartContext.ORDER().getText() + " " + orderByPartContext.BY().getText());
             final List<SqlBaseParser.OrderByExpressionContext> orderByExpressionContexts = orderByPartContext.orderByExpression();
             for (SqlBaseParser.OrderByExpressionContext orderByExpressionContext : orderByExpressionContexts) {
-                select.getOrderItems().add((OrderItem) super.visit(orderByExpressionContext));
+                orderByExpressionContext.
+                select.getOrderItems().add(new DefaultOrderItem(super.visit(orderByExpressionContext),""));
             }
         }
 

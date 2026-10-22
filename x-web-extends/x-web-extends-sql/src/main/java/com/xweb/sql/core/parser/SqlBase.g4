@@ -134,7 +134,7 @@ whereExpression
     ;
 
 orderByExpression
-    : expression
+    | expression sort=(DESC|ASC)
     ;
 
 havingExpression
@@ -269,6 +269,10 @@ GROUP
 
 ORDER
     : [Oo][Rr][Dd][Ee][Rr];
+
+DESC: [Dd][Ee]][Ss][Cc];
+
+ASC : [Aa][Ss][Cc];
 
 HAVING
     : [Hh][Aa][Vv][Ii][Nn][Gg];
