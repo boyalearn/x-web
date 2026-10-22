@@ -1,13 +1,10 @@
 package com.xweb.sql.planner;
 
 import com.xweb.sql.meta.Node;
-import com.xweb.sql.meta.select.SimpleSelect;
 import com.xweb.sql.planner.operator.SqlOperator;
-import com.xweb.sql.planner.operator.exception.UnknownOperatorException;
+import com.xweb.sql.planner.util.PlannerUtil;
 
 public class LogicPlanner {
-
-    private static SimpleSelectLogicPlanner simpleSelectLogicPlanner = new SimpleSelectLogicPlanner();
 
     private Node node;
 
@@ -16,9 +13,6 @@ public class LogicPlanner {
     }
 
     public SqlOperator planQuery() {
-        if (this.node instanceof SimpleSelect) {
-            return simpleSelectLogicPlanner.plan((SimpleSelect) this.node);
-        }
-        throw new UnknownOperatorException("unknown implement operator!");
+        return PlannerUtil.plan(this.node,null);
     }
 }

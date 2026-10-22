@@ -19,18 +19,18 @@ public class BaseSelectAstConverter implements AstConverter {
         BaseSelect baseSelect = (BaseSelect) item;
         SimpleSelect select = new SimpleSelect();
         final List<Item> selectItems = baseSelect.getSelectItems();
-        select.setSelectItems(new ArrayList<>());
+        select.setItemNodes(new ArrayList<>());
         for (Item selectItem : selectItems) {
-            select.getSelectItems().add(NodeUtil.convert(selectItem));
+            select.getItemNodes().add(NodeUtil.convert(selectItem));
         }
         List<Table> tableItems = baseSelect.getTableItems();
-        select.setTableItems(new ArrayList<>());
+        select.setTableNodes(new ArrayList<>());
         for (Table tableItem : tableItems) {
-            select.getTableItems().add((TableNode) NodeUtil.convert(tableItem));
+            select.getTableNodes().add((TableNode) NodeUtil.convert(tableItem));
         }
 
         BooleanExpression whereExpression = baseSelect.getWhereExpression();
-        select.setWhereExpression((BooleanNode) NodeUtil.convert(whereExpression));
+        select.setWhereNode((BooleanNode) NodeUtil.convert(whereExpression));
         return select;
     }
 

@@ -14,37 +14,39 @@ import com.xweb.sql.planner.operator.ProjectOperator;
 import com.xweb.sql.planner.operator.SqlOperator;
 import com.xweb.sql.planner.operator.TableScanOperator;
 import com.xweb.sql.planner.operator.calculator.CalculatorAnalysis;
+import com.xweb.sql.planner.util.PlannerContextHolder;
+import com.xweb.sql.planner.util.PlannerUtil;
 
 import java.util.List;
 import java.util.Optional;
 
 public class SimpleSelectLogicPlanner implements SqlPlanner {
 
-    private static TableItemLogicPlanner tableItemLogicPlanner = new TableItemLogicPlanner();
-
-    public SqlOperator plan(Node node) {
-        SimpleSelect simpleSelect = (SimpleSelect)node;
-        List<TableNode> tableItems = simpleSelect.getTableItems();
-        final List<Node> selectItems = simpleSelect.getSelectItems();
-        if (tableItems.isEmpty()) {
+    @Override
+    public SqlOperator plan(Node node, BooleanNode booleanNode) {
+        SimpleSelect select = (SimpleSelect)node;
+        List<TableNode> tables = select.getTableNodes();
+        final List<Node> selectItems = select.getItemNodes();
+        if (tables.isEmpty()) {
             return new ProjectOperator(selectItems, null);
         }
-        SqlOperator operator = planTables(simpleSelect);
 
-        BooleanNode whereExpression = simpleSelect.getWhereExpression();
-        if (Optional.ofNullable(whereExpression).isPresent()) {
+        SqlOperator operator = planTables(select);
+
+        BooleanNode whereNode = select.getWhereNode();
+        if (Optional.ofNullable(whereNode).isPresent()) {
             final FilterOperator filterOperator = new FilterOperator(operator);
-            CalculatorAnalysis.setCalculator(filterOperator, simpleSelect.getWhereExpression());
+            CalculatorAnalysis.setCalculator(filterOperator, select.getWhereNode());
             operator = filterOperator;
         }
         for (Node selectItem : selectItems) {
             if (selectItem instanceof ColumnNode) {
                 ColumnNode column = (ColumnNode) selectItem;
-                column.getTable().setName(PlanContextHolder.getTableNameByAlias(column.getTable().getAlias()));
+                column.getTable().setName(PlannerContextHolder.getTableNameByAlias(column.getTable().getAlias()));
             }
         }
-        final List<Node> groupItems = simpleSelect.getGroupItems();
-        final List<OrderNode> orderItems = simpleSelect.getOrderItems();
+        final List<Node> groupItems = select.getGroupItems();
+        final List<OrderNode> orderItems = select.getOrderNodes();
         if (Optional.ofNullable(groupItems).isPresent() && !groupItems.isEmpty()) {
             operator = new GroupOperator(operator, selectItems, groupItems);
             if (Optional.ofNullable(orderItems).isPresent() && !orderItems.isEmpty()) {
@@ -60,23 +62,22 @@ public class SimpleSelectLogicPlanner implements SqlPlanner {
     }
 
     private SqlOperator planTables(SimpleSelect simpleSelect) {
-        List<TableNode> tableItems = simpleSelect.getTableItems();
-        SqlOperator operator = tableItemLogicPlanner.plan(tableItems.get(0));
+        List<TableNode> tableItems = simpleSelect.getTableNodes();
+        SqlOperator operator = PlannerUtil.plan(tableItems.get(0),simpleSelect.getWhereNode());
         for (int i = 1; i < tableItems.size(); i++) {
             TableNode tableItem = tableItems.get(i);
-            SqlOperator current = tableItemLogicPlanner.plan(tableItem);
+            SqlOperator current = PlannerUtil.plan(tableItem, simpleSelect.getWhereNode());
             if (current instanceof TableScanOperator) {
                 JoinTableOperator joinTableOperator = new JoinTableOperator(operator, current, JoinTableOperator.JoinType.INNER);
-                CalculatorAnalysis.setCalculator(joinTableOperator, simpleSelect.getWhereExpression());
+                CalculatorAnalysis.setCalculator(joinTableOperator, simpleSelect.getWhereNode());
                 operator = joinTableOperator;
             } else if (current instanceof JoinTableOperator) {
                 JoinTableOperator joinTableOperator = (JoinTableOperator) current;
                 joinTableOperator.setLeftOperator(operator);
-                CalculatorAnalysis.setCalculator(joinTableOperator, simpleSelect.getWhereExpression());
+                CalculatorAnalysis.setCalculator(joinTableOperator, simpleSelect.getWhereNode());
                 operator = joinTableOperator;
             }
         }
         return operator;
     }
-
 }

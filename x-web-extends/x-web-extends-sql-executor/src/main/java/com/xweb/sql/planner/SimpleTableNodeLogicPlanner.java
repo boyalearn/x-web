@@ -1,15 +1,18 @@
 package com.xweb.sql.planner;
 
 import com.xweb.sql.meta.Node;
+import com.xweb.sql.meta.common.BooleanNode;
 import com.xweb.sql.meta.table.SimpleTableNode;
 import com.xweb.sql.planner.operator.SqlOperator;
 import com.xweb.sql.planner.operator.TableScanOperator;
+import com.xweb.sql.planner.util.PlannerContextHolder;
 
-public class TableItemLogicPlanner implements SqlPlanner{
+public class SimpleTableNodeLogicPlanner implements SqlPlanner{
 
-    public SqlOperator plan(Node node){
+    @Override
+    public SqlOperator plan(Node node, BooleanNode booleanNode) {
         SimpleTableNode simpleTableItem = (SimpleTableNode) node;
-        PlanContextHolder.setTableNameAlias(simpleTableItem.getAlias(), simpleTableItem.getName());
+        PlannerContextHolder.setTableNameAlias(simpleTableItem.getAlias(), simpleTableItem.getName());
         return new TableScanOperator(simpleTableItem.getName(), simpleTableItem.getAlias());
     }
 }

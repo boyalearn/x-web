@@ -17,19 +17,19 @@ import java.util.List;
 @Setter
 public class SimpleSelect extends AbstractNode implements Select {
 
-    private List<Node> selectItems;
+    private List<Node> itemNodes;
 
-    private List<TableNode> tableItems;
+    private List<TableNode> tableNodes;
 
-    private BooleanNode whereExpression;
+    private BooleanNode whereNode;
 
     private List<Node> groupItems;
 
-    private List<OrderNode> orderItems;
+    private List<OrderNode> orderNodes;
 
-    private BooleanNode havingExpression;
+    private BooleanNode havingNode;
 
-    private Page pageExpression;
+    private Page pageNode;
 
 
 }
