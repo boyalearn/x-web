@@ -25,6 +25,7 @@ public class SimpleTest {
         String sql = "select a.aa,a.bb from aaaa a,bbbb b where a.aa=b.aab";
         Page data = sqlExecutor.execute(sql);
         PageUtil.show(data);
+        assert data.getRows().size() == 5;
     }
 
     @Test
