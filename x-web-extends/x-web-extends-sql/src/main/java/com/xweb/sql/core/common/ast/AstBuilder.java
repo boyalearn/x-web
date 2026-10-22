@@ -291,12 +291,7 @@ public class AstBuilder extends SqlBaseBaseVisitor<Item> {
     @Override
     public Item visitOrderByExpression(SqlBaseParser.OrderByExpressionContext ctx) {
         Item result = super.visit(ctx.expression());
-        if (result instanceof ConstantItem) {
-            DefaultOrderItem defaultOrderItem = new DefaultOrderItem();
-            defaultOrderItem.setItem(result);
-            return defaultOrderItem;
-        }
-        return result;
+        return new DefaultOrderItem(result, Optional.ofNullable(ctx.sort).isPresent() ? ctx.sort.getText() : "");
     }
 
     @Override
@@ -335,8 +330,7 @@ public class AstBuilder extends SqlBaseBaseVisitor<Item> {
             select.setOrder(orderByPartContext.ORDER().getText() + " " + orderByPartContext.BY().getText());
             final List<SqlBaseParser.OrderByExpressionContext> orderByExpressionContexts = orderByPartContext.orderByExpression();
             for (SqlBaseParser.OrderByExpressionContext orderByExpressionContext : orderByExpressionContexts) {
-                orderByExpressionContext.
-                select.getOrderItems().add(new DefaultOrderItem(super.visit(orderByExpressionContext),""));
+                select.getOrderItems().add((OrderItem) super.visit(orderByExpressionContext));
             }
         }
 
@@ -350,6 +344,7 @@ public class AstBuilder extends SqlBaseBaseVisitor<Item> {
         }
         return select;
     }
+
 
     @Override
     public Item visitLimitPageExpress(SqlBaseParser.LimitPageExpressContext ctx) {

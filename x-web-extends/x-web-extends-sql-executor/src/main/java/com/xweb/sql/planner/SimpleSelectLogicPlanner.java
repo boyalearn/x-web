@@ -5,6 +5,7 @@ import com.xweb.sql.meta.common.BooleanNode;
 import com.xweb.sql.meta.common.OrderNode;
 import com.xweb.sql.meta.common.TableNode;
 import com.xweb.sql.meta.node.ColumnNode;
+import com.xweb.sql.meta.node.DefaultOrderNode;
 import com.xweb.sql.meta.select.SimpleSelect;
 import com.xweb.sql.planner.operator.FilterOperator;
 import com.xweb.sql.planner.operator.GroupOperator;
@@ -43,6 +44,8 @@ public class SimpleSelectLogicPlanner implements SqlPlanner {
 
         final List<Node> groupItems = select.getGroupItems();
         final List<OrderNode> orderItems = select.getOrderNodes();
+        fillOrderNodeTableName(orderItems);
+
         if (Optional.ofNullable(groupItems).isPresent() && !groupItems.isEmpty()) {
             operator = new GroupOperator(operator, select.getItemNodes(), groupItems);
             if (Optional.ofNullable(orderItems).isPresent() && !orderItems.isEmpty()) {
@@ -67,6 +70,19 @@ public class SimpleSelectLogicPlanner implements SqlPlanner {
             return filterOperator;
         }
         return null;
+    }
+
+    private void fillOrderNodeTableName(List<OrderNode> nodes) {
+        if (!Optional.ofNullable(nodes).isPresent()) {
+            return;
+        }
+        for (Node node : nodes) {
+            if (node instanceof DefaultOrderNode) {
+                DefaultOrderNode orderNode = (DefaultOrderNode) node;
+                ColumnNode column = (ColumnNode) orderNode.getNode();
+                column.getTable().setName(PlannerContextHolder.getTableNameByAlias(column.getTable().getAlias()));
+            }
+        }
     }
 
     private void fillSelectNodeTableName(List<Node> nodes) {

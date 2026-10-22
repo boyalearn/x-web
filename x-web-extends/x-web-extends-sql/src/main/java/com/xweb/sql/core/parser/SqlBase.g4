@@ -60,7 +60,7 @@ matchThenExpression
     ;
 
 mergeOperator
-    : UPDATE KEY? SET expression (',' expression)?                                              #mergeUpdateOperator
+    : UPDATE KEY? SET expression (',' expression)?                                         #mergeUpdateOperator
     | DELETE                                                                               #mergeDeleteOperator
     | INSERT qualifiedName? columnAliases VALUES valueAliases                              #mergeInsertOperator
     ;
@@ -134,7 +134,7 @@ whereExpression
     ;
 
 orderByExpression
-    | expression sort=(DESC|ASC)
+    : expression sort=( DESC | ASC )?
     ;
 
 havingExpression
@@ -270,7 +270,7 @@ GROUP
 ORDER
     : [Oo][Rr][Dd][Ee][Rr];
 
-DESC: [Dd][Ee]][Ss][Cc];
+DESC: [Dd][Ee][Ss][Cc];
 
 ASC : [Aa][Ss][Cc];
 

@@ -1,4 +1,6 @@
 package com.xweb.sql.meta.common;
 
-public interface OrderNode {
+import com.xweb.sql.meta.Node;
+
+public interface OrderNode extends Node {
 }
